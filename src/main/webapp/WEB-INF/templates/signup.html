@@ -6,6 +6,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
     <body>
-        <div>TODO write content</div>
+        <form method="POST" th:action="@{/signup}">
+
+            <input type="text" name="username" placeholder="Username"/>
+            <p>
+                <div  th:if="${#fields.hasErrors('user.username')}" th:errors="*{user.username}">User name error</div>
+            </p>
+
+            <input type="text" name="password" placeholder="Password"/>
+            <p>
+                <div th:if="${#fields.hasErrors('user.password')}" th:errors="*{user.password}">Pw error here</div>
+            </p>
+
+            <input type="text" name="confirmpassword" placeholder="Confirm password"/>
+            <p>
+                <div th:if="${#fields.hasErrors('user.confirmpassword')}" th:errors="*{user.confirmpassword}">Confirm pw errors be here</div>
+            </p>
+            <input type="submit" value="sign up" />
+        </form>
     </body>
 </html>
