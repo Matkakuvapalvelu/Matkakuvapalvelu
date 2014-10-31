@@ -1,6 +1,7 @@
 package wadp.controller;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,11 +9,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import wadp.domain.form.UserForm;
+import wadp.service.UserService;
+
 import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/signup")
 public class SignUpController {
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(method = RequestMethod.POST)
     public String createUser(@ModelAttribute("user") @Valid UserForm user, BindingResult bindingResult) {
@@ -20,8 +26,8 @@ public class SignUpController {
             return "signup";
         }
 
+        userService.createUser(user.getUsername(), user.getPassword());
 
-        // TODO: Pass username/password to UserService (todo...) that creates and saves new user
         return "redirect:index";
     }
 

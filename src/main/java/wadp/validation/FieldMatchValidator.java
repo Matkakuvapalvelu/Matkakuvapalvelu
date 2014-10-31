@@ -3,8 +3,8 @@ package wadp.validation;
 
 /**
  * Source: http://stackoverflow.com/questions/1972933/cross-field-validation-with-hibernate-validator-jsr-303/2155576#2155576
+ * By stack overflow user Nicko (http://stackoverflow.com/users/261078/nicko)
  *
- * TODO: Possible rewrite due to copy/paste-nature of the code?
  */
 
 import org.apache.commons.beanutils.BeanUtils;
