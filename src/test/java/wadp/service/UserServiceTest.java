@@ -8,15 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import wadp.Application;
 import wadp.repository.UserRepository;
 
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext (classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserServiceTest {
 
     @Autowired
@@ -41,7 +41,6 @@ public class UserServiceTest {
         service.createUser("Foo", "barbarbar");
         assertNotNull(userRepository.findByUsername("Foo"));
     }
-
 
     @Test(expected=UsernameAlreadyTakenException.class)
     public void creatingUserWithSameUsernamethrowsException() {
