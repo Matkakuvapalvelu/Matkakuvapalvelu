@@ -74,7 +74,13 @@
             <artifactId>spring-security-crypto</artifactId>
             <version>3.2.5.RELEASE</version>
         </dependency>
-        
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.2</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

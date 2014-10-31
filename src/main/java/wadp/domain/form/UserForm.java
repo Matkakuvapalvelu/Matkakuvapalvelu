@@ -2,19 +2,21 @@ package wadp.domain.form;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import wadp.validation.FieldMatch;
+
 import javax.validation.constraints.NotNull;
 
+
+@FieldMatch(first = "password", second = "confirmpassword", message = "The password fields must match")
 public class UserForm {
 
-    @NotNull
-    @NotBlank
+    @NotNull(message="Username cannot be null")
+    @NotBlank(message="Username cannot be empty")
     private String username;
 
-    @NotNull
-    @NotBlank
-    @Length(min=8)
+    @NotNull(message="Password cannot be null")
+    @Length(min=8, message="Password must contain at least 8 characters")
     private String password;
-
 
     private String confirmpassword;
 

@@ -13,14 +13,14 @@
                 <div  th:if="${#fields.hasErrors('user.username')}" th:errors="*{user.username}">User name error</div>
             </p>
 
-            <input type="text" name="password" placeholder="Password"/>
+            <input type="password" name="password" placeholder="Password"/>
             <p>
                 <div th:if="${#fields.hasErrors('user.password')}" th:errors="*{user.password}">Pw error here</div>
             </p>
 
-            <input type="text" name="confirmpassword" placeholder="Confirm password"/>
+            <input type="password" name="confirmpassword" placeholder="Confirm password"/>
             <p>
-                <div th:if="${#fields.hasErrors('user.confirmpassword')}" th:errors="*{user.confirmpassword}">Confirm pw errors be here</div>
+                <div th:if="${#fields.hasErrors('user')}" th:errors="*{user}">Confirm pw errors be here</div>
             </p>
             <input type="submit" value="sign up" />
         </form>
