@@ -1,4 +1,4 @@
-package wadp.wadp.repository;
+package wadp.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
