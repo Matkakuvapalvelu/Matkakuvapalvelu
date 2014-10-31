@@ -2,6 +2,7 @@ package wadp.domain;
 
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import javax.persistence.Entity;
 
@@ -26,7 +27,8 @@ public class User extends AbstractPersistable<Long> {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.salt = BCrypt.gensalt();
+        this.password = BCrypt.hashpw(password, salt);
     }
 
     public String getSalt() {
