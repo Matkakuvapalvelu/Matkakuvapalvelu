@@ -5,11 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import wadp.domain.form.UserForm;
 import wadp.service.UserService;
+import wadp.service.UsernameAlreadyTakenException;
 
 import javax.validation.Valid;
 
@@ -26,7 +29,13 @@ public class SignUpController {
             return "signup";
         }
 
-        userService.createUser(user.getUsername(), user.getPassword());
+        // probably cleaner way to handle this, feels kinda hacky (
+        try {
+            userService.createUser(user.getUsername(), user.getPassword());
+        } catch (UsernameAlreadyTakenException ex) {
+            bindingResult.addError(new FieldError("user", "username", "Username already taken"));
+            return "signup";
+        }
 
         return "redirect:index";
     }
