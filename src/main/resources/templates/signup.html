@@ -1,28 +1,48 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>TODO supply a title</title>
+        <title>Sign up</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
     </head>
     <body>
-        <form method="POST" th:action="@{/signup}">
+        <br/>
+        <br/>
+        <div class="container">
+            <form method="POST" class="form-horizontal"  role="form" th:action="@{/signup}">
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">Username</label>
+                    <div class="col-md-10 " th:attrappend="class=${#fields.hasErrors('user.username')}? has-error : ''">
+                        <label th:if="${#fields.hasErrors('user.username')}" class="control-label" for="username" th:errors="*{user.username}">Input with error</label>
+                        <input type="text"  class="form-control" id="username" name="username" placeholder="Username"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">Password</label>
+                    <div class="col-md-10 " th:attrappend="class=${#fields.hasErrors('user.password')}? has-error : ''">
+                        <label th:if="${#fields.hasErrors('user.password')}" class="control-label" for="username" th:errors="*{user.password}">Input with error</label>
+                        <input type="password" id="password" class="form-control" name="password" placeholder="Password"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmpassword" class="col-sm-2 control-label">Confirm password</label>
+                    <div class="col-md-10 " th:attrappend="class=${#fields.hasErrors('user')}? has-error : ''">
+                        <label th:if="${#fields.hasErrors('user')}" class="control-label" for="username" th:errors="*{user}">Input with error</label>
+                        <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm password"/>
+                    </div>
+                </div>
 
-            <input type="text" name="username" placeholder="Username"/>
-            <p>
-                <div  th:if="${#fields.hasErrors('user.username')}" th:errors="*{user.username}">User name error</div>
-            </p>
-
-            <input type="password" name="password" placeholder="Password"/>
-            <p>
-                <div th:if="${#fields.hasErrors('user.password')}" th:errors="*{user.password}">Pw error here</div>
-            </p>
-
-            <input type="password" name="confirmpassword" placeholder="Confirm password"/>
-            <p>
-                <div th:if="${#fields.hasErrors('user')}" th:errors="*{user}">Confirm pw errors be here</div>
-            </p>
-            <input type="submit" value="sign up" />
-        </form>
+                <div class="form-group">
+                    <label for="submitsignup" class="col-sm-2 control-label"></label>
+                    <div class =  "col-md-offset-2 col-md-10">
+                        <input type="submit" id="submitsignup" class="btn btn-default" value="Sign up" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script type="text/javascript" src="/js/signup.js"></script>
     </body>
 </html>

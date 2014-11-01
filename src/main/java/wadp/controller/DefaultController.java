@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 // Probably should be removed later on. Right now just redirects any unhandled addresses to index
 @Controller
-@RequestMapping("*")
+@RequestMapping("/index")
 public class DefaultController {
 
 
