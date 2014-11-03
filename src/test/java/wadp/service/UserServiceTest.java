@@ -6,11 +6,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wadp.Application;
+import wadp.domain.User;
 import wadp.repository.UserRepository;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode;
 
@@ -46,6 +49,25 @@ public class UserServiceTest {
     public void creatingUserWithSameUsernamethrowsException() {
         service.createUser("Foo", "barbarbar");
         service.createUser("Foo", "asfsdfdasf");
+    }
+
+    @Test(expected=AuthenticationException.class)
+    public void authenticateThrowsIfUserDoesNotExist() {
+        service.authenticate("jamesbond", "007");
+    }
+
+    @Test(expected=AuthenticationException.class)
+    public void authenticateThrowsIfPasswordIsIncorrect() {
+        service.createUser("jamesbond", "007");
+        service.authenticate("jamesbond", "42");
+    }
+
+    @Test
+    public void authenticateReturnsUserWhenUsernameAndPasswordAreCorrect() {
+        service.createUser("jamesbond", "007");
+        User user = service.authenticate("jamesbond", "007");
+
+        assertEquals("jamesbond", user.getUsername());
     }
 
 }

@@ -28,7 +28,7 @@ public class SignUpController {
             return "signup";
         }
 
-        // there is probably a cleaner way to handle this, feels kinda hacky 
+        // there is probably a cleaner way to handle this, feels kinda hacky
         try {
             userService.createUser(user.getUsername(), user.getPassword());
         } catch (UsernameAlreadyTakenException ex) {

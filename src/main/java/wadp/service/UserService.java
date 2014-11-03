@@ -2,6 +2,7 @@ package wadp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import wadp.domain.User;
 import wadp.repository.UserRepository;
@@ -23,7 +24,22 @@ public class UserService {
         user.setPassword(password);
 
         userRepository.save(user);
+    }
 
+    public User authenticate(String username, String password) throws AuthenticationException {
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new AuthenticationException("Unable to authenticate user " + username) {
+            };
+        }
+
+        if (!user.passwordEquals(password)) {
+            throw new AuthenticationException("Unable to authenticate user " + username) {
+            };
+        }
+
+        return user;
     }
 
 }

@@ -15,6 +15,12 @@ public class User extends AbstractPersistable<Long> {
     private String password;
     private String salt;
 
+    private String userRole;
+
+
+    public User() {
+        userRole = "USER";
+    }
 
     public String getUsername() {
         return username;
@@ -39,5 +45,19 @@ public class User extends AbstractPersistable<Long> {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+
+    public String getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
+
+
+    public boolean passwordEquals(String plaintextPassword) {
+        return BCrypt.checkpw(plaintextPassword, password);
     }
 }
