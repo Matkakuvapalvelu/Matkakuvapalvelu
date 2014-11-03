@@ -6,8 +6,10 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "USER_TABLE")
 public class User extends AbstractPersistable<Long> {
 
     @Column(unique = true)
