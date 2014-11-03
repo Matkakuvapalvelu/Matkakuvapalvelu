@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,7 +28,7 @@ public class SignUpController {
             return "signup";
         }
 
-        // probably cleaner way to handle this, feels kinda hacky (
+        // there is probably a cleaner way to handle this, feels kinda hacky 
         try {
             userService.createUser(user.getUsername(), user.getPassword());
         } catch (UsernameAlreadyTakenException ex) {
