@@ -25,11 +25,8 @@ public class DefaultController {
         } else {
             model.addAttribute("message", "Authenticated user: " +
                     authenticatedUser.getUsername() + " With hashed password: " +
-                    authenticatedUser.getPassword() + " and salt: " +
-                    authenticatedUser.getSalt());
+                    authenticatedUser.getPassword() );
         }
-
-
 
         return "index";
     }

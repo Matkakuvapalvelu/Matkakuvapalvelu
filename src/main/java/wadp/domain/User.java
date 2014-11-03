@@ -13,7 +13,6 @@ public class User extends AbstractPersistable<Long> {
     @Column(unique = true)
     private String username;
     private String password;
-    private String salt;
 
     private String userRole;
 
@@ -35,18 +34,8 @@ public class User extends AbstractPersistable<Long> {
     }
 
     public void setPassword(String password) {
-        this.salt = BCrypt.gensalt();
-        this.password = BCrypt.hashpw(password, salt);
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
     }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
 
     public String getUserRole() {
         return userRole;
