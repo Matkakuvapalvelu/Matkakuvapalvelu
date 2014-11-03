@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>Log in</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
+</head>
+    <body>
+        <br/>
+        <br/>
+        <div class="container">
+            <form method="POST" class="form-horizontal"  role="form" th:action="@{/authenticate}">
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">Username</label>
+                    <div class="col-md-10">
+                        <input type="text"  class="form-control" id="username" name="username" placeholder="Username"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">Password</label>
+                    <div class="col-md-10">
+                        <input type="password" id="password" class="form-control" name="password" placeholder="Password"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="submitlogin" class="col-sm-2 control-label"></label>
+                    <div class =  "col-md-offset-2 col-md-10">
+                        <input type="submit" id="submitlogin" class="btn btn-default" value="Log in" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="signup" class="col-sm-2 control-label"></label>
+                    <div class="col-md-offset-2 col-md-10">
+                        <a id="signup"  th:href="@{/signup}"> Not a member?</a> <a th:href="@{/signup}">Sign Up Now <span> </span></a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

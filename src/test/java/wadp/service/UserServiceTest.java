@@ -69,5 +69,4 @@ public class UserServiceTest {
 
         assertEquals("jamesbond", user.getUsername());
     }
-
 }
