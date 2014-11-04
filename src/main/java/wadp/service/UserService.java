@@ -31,12 +31,7 @@ public class UserService {
     public User authenticate(String username, String password) throws AuthenticationException {
         User user = userRepository.findByUsername(username);
 
-        if (user == null) {
-            throw new AuthenticationException("Unable to authenticate user " + username) {
-            };
-        }
-
-        if (!user.passwordEquals(password)) {
+        if (user == null || !user.passwordEquals(password)) {
             throw new AuthenticationException("Unable to authenticate user " + username) {
             };
         }
