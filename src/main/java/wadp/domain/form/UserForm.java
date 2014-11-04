@@ -6,7 +6,10 @@ import wadp.validation.FieldMatch;
 
 import javax.validation.constraints.NotNull;
 
-
+/**
+ * Form object for new user creation. Necessary fields are passed to UserService that will create User object that will
+ * be saved to database
+ */
 @FieldMatch(first = "password", second = "confirmpassword", message = "The password fields must match")
 public class UserForm {
 

@@ -8,6 +8,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * User domain class. Contains any information tied to single user account
+ */
 @Entity
 @Table(name = "USER_TABLE")
 public class User extends AbstractPersistable<Long> {
