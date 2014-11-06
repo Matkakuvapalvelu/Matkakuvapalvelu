@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head lang="en">
+        <title>New image</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
+    </head>
+    <body>
+
+
+        <h2>Add new image:</h2>
+
+        <form method="POST" th:action="@{/images}" enctype="multipart/form-data">
+            <label for="file">File</label><input type="file" name="file" id="file"/><br/>
+            <input type="submit" value="Add!"/>
+        </form>
+        
+        <br/>
+        <h2>Existing images</h2>
+        <div th:if="${images != null}">
+            <div th:each="image: ${images}">
+                <h3><span th:text="${image.original.name}">id</span></h3>
+                <p>Latitude:  <span th:if="${image.location != null}" th:text="${image.latitude}">unknown</span></p>
+                <p>Longitude: <span th:if="${image.location != null}" th:text="${image.longitude}">unknown</span></p>
+
+            </div>
+        </div>
+    </body>
+</html>

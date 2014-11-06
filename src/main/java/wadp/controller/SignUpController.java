@@ -1,6 +1,5 @@
 package wadp.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +37,6 @@ public class SignUpController {
 
         return "redirect:index";
     }
-
 
     @RequestMapping(method = RequestMethod.GET)
     public String showSignUpPage(Model model) {
