@@ -6,7 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -22,7 +22,7 @@ public class User extends AbstractPersistable<Long> {
 
     private String userRole;
 
-    @ManyToOne
+    @OneToMany
     private List<Comment> comments;
 
     public User() {

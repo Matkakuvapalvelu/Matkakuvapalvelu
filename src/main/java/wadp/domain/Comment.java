@@ -16,7 +16,6 @@ public class Comment extends AbstractPersistable<Long> {
     
     private boolean visible;
 
-    @OneToMany
     private User user;
 
     public Comment() {
