@@ -13,33 +13,36 @@ import wadp.repository.ImageRepository;
 
 @Service
 public class ImageService {
-    
+
     @Autowired
     MetadataService metadataService;
-    
+
     @Autowired
     ImageRepository imageRepository;
-    
+
     @Autowired
     FileObjectRepository fileObjectRepository;
-    
+
     public void addImage(Image image, String mediatype, String name, byte[] content) throws IOException {
+        if (!validateFormat(mediatype)) {
+            return;
+        }
         FileObject original = new FileObject();
         original.setName(name);
         original.setContentType(mediatype);
         original.setContentLength(new Long(content.length));
         original.setContent(content);
-        
+
         fileObjectRepository.save(original);
-        
+
         image.setOriginal(original);
         setLocation(image);
         imageRepository.save(image);
     }
-    
+
     public Image setLocation(Image image) {
         Metadata metadata = new Metadata();
-        
+
         metadata = metadataService.extractMetadata(image.getOriginal().getContent());
         if (metadata.hasErrors()) {
             return image;
@@ -53,9 +56,13 @@ public class ImageService {
         image.setLocation(true);
         return image;
     }
-    
+
     public List getAllImages() {
         return imageRepository.findAll();
     }
-    
+
+    public boolean validateFormat(String mediaType) {
+        return mediaType.startsWith("image/");
+    }
+
 }
