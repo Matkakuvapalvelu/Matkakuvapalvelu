@@ -2,6 +2,7 @@ package wadp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,11 +33,8 @@ public class PostController {
     * change if needed) and shows button where new post can be created
     * */
     @RequestMapping(method = RequestMethod.GET)
-    public String showPosts() {
-        // todo - add user posts to model
-
-
-
+    public String showPosts(Model model) {
+        model.addAttribute("posts", postService.getUserPosts(userService.getAuthenticatedUser()));
         return "posts";
     }
 
