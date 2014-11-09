@@ -3,13 +3,9 @@ package wadp.domain;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.OneToMany;
 
 /**
  * Post domain class. Contains reference to image associated with the post as well as possible image text and user
@@ -17,12 +13,10 @@ import javax.persistence.OneToMany;
  */
 @Entity
 public class Post extends AbstractPersistable<Long> {
-/**
- * Following classes are yet to be implemented, so this is crude sketching for now
+
     @OneToOne
-    private TravelImage image;
-*/
-    
+    private Image image;
+
     @OneToMany
     private List<Comment> comments;
 
@@ -32,7 +26,45 @@ public class Post extends AbstractPersistable<Long> {
     private String imageText;
 
     @Temporal(TemporalType.TIMESTAMP)
-    Date postDate;
-        
+    private Date postDate;
 
+    public Date getPostDate() {
+        return postDate;
+    }
+
+    public void setPostDate(Date postDate) {
+        this.postDate = postDate;
+    }
+
+    public String getImageText() {
+        return imageText;
+    }
+
+    public void setImageText(String imageText) {
+        this.imageText = imageText;
+    }
+
+    public User getPoster() {
+        return poster;
+    }
+
+    public void setPoster(User poster) {
+        this.poster = poster;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
 }

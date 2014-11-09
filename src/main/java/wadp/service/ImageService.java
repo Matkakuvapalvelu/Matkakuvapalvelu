@@ -23,10 +23,11 @@ public class ImageService {
     @Autowired
     FileObjectRepository fileObjectRepository;
 
-    public void addImage(Image image, String mediatype, String name, byte[] content) throws IOException {
+    public Image addImage(Image image, String mediatype, String name, byte[] content) throws IOException {
         if (!validateFormat(mediatype)) {
-            return;
+            throw new ImageValidationException("Could not validate image format");
         }
+
         FileObject original = new FileObject();
         original.setName(name);
         original.setContentType(mediatype);
@@ -37,7 +38,7 @@ public class ImageService {
 
         image.setOriginal(original);
         setLocation(image);
-        imageRepository.save(image);
+        return imageRepository.save(image);
     }
 
     public Image setLocation(Image image) {
