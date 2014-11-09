@@ -28,4 +28,8 @@ public class PostService {
 
         return postRepository.findByPoster(user);
     }
+
+    public Object getPost(Long id) {
+        return postRepository.findOne(id);
+    }
 }

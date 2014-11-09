@@ -66,4 +66,7 @@ public class ImageService {
         return mediaType.startsWith("image/");
     }
 
+    public Image getImage(Long id) {
+        return imageRepository.findOne(id);
+    }
 }
