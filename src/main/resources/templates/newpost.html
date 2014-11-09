@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>New post</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
+</head>
+<body>
+
+
+<h2>Add new image:</h2>
+
+<form method="POST" th:action="@{/posts}" enctype="multipart/form-data">
+    <label for="file">File</label><br/>
+    <input type="file" name="file" id="file" accept="image/*"/><br/><br/>
+
+    <label for="image_text">Image text</label><br/>
+    <textarea  name="image_text"
+               id="image_text"
+               placeholder="Comment your image here!"
+               cols="55"
+               rows="10"></textarea><br/>
+
+    <input type="submit" value="Add!"/>
+</form>
+
+</body>
+</html>
