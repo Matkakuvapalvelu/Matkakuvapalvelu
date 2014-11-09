@@ -9,6 +9,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 /**
@@ -29,6 +30,9 @@ public class Post extends AbstractPersistable<Long> {
     @ManyToOne
     private User poster;
 
+    @ManyToMany(mappedBy = "posts")
+    private List<Trip> trips;
+    
     private String imageText;
 
     @Temporal(TemporalType.TIMESTAMP)
