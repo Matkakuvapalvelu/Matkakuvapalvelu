@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -25,6 +26,9 @@ public class User extends AbstractPersistable<Long> {
     @OneToMany
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
+    private List<Trip> trips;
+    
     public User() {
         userRole = "USER";
     }
@@ -59,6 +63,14 @@ public class User extends AbstractPersistable<Long> {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
     }
 
     public boolean passwordEquals(String plaintextPassword) {

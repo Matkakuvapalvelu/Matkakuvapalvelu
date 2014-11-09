@@ -9,5 +9,9 @@
         <div th:replace="fragments/header :: header">header</div>
         <div>Message from server:</div>
         <div th:text="${message}">Message</div>
+        <br/>
+        <div id="links"><a href="/trips.html" th:href="@{/trips}">Trips</a></div>
+        <div id="links"><a href="/image.html" th:href="@{/images}">Image</a></div>
+        <div id="links"><a href="/signup.html" th:href="@{/signup}">Signup</a></div>
     </body>
 </html>

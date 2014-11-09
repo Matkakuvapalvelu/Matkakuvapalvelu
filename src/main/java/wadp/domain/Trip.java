@@ -27,6 +27,10 @@ public class Trip extends AbstractPersistable<Long> {
     @ManyToMany
     private List<Post> posts;
 
+    public Trip(){
+        this.creationDate = new Date();
+    }
+    
     public String getDescription() {
         return description;
     }
