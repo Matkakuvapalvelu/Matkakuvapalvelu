@@ -8,6 +8,7 @@ import wadp.domain.User;
 import wadp.repository.PostRepository;
 
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostService {
@@ -24,11 +25,13 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    @Transactional
     public List<Post> getUserPosts(User user) {
 
         return postRepository.findByPoster(user);
     }
 
+    @Transactional
     public Object getPost(Long id) {
         return postRepository.findOne(id);
     }
