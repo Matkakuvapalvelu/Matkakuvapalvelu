@@ -23,7 +23,7 @@ public class ImageController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getImages(Model model) {
-        model.addAttribute("images", imageService.getAllImages());
+        model.addAttribute("images", imageService.findAllImages());
         return "image";
     }
 

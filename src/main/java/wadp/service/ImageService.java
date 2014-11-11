@@ -58,7 +58,7 @@ public class ImageService {
         return image;
     }
 
-    public List getAllImages() {
+    public List findAllImages() {
         return imageRepository.findAll();
     }
 

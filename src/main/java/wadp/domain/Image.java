@@ -75,7 +75,7 @@ public class Image extends AbstractPersistable<Long> {
         this.captureDate = captureDate;
     }
 
-    public boolean isLocation() {
+    public boolean getLocation() {
         return location;
     }
 
