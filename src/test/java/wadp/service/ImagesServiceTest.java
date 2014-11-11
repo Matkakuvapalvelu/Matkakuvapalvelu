@@ -1,14 +1,10 @@
 package wadp.service;
 
-import com.drew.metadata.Metadata;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -22,7 +18,6 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wadp.Application;
-import wadp.domain.FileObject;
 import wadp.domain.Image;
 import wadp.repository.ImageRepository;
 
@@ -108,12 +103,8 @@ public class ImagesServiceTest {
 
     @Test
     public void imageWithLocationIsExtracted() throws IOException {
-        File imageFile = new File("src/test/testimg.jpg");
-        InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
-        byte[] data = IOUtils.toByteArray(is);
-
         Image img = new Image();
-        imageService.addImage(img, "image/", "foo", data);
+        imageService.addImage(img, "image/", "foo", this.data);
 
         assertTrue(imageService.getImage(img.getId()).getLocation());
     }
