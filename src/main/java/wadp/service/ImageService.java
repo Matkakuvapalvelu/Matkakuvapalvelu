@@ -15,17 +15,17 @@ import wadp.repository.ImageRepository;
 public class ImageService {
 
     @Autowired
-    MetadataService metadataService;
+    private MetadataService metadataService;
 
     @Autowired
-    ImageRepository imageRepository;
+    private ImageRepository imageRepository;
 
     @Autowired
-    FileObjectRepository fileObjectRepository;
+    private FileObjectRepository fileObjectRepository;
 
     public Image addImage(Image image, String mediatype, String name, byte[] content) throws IOException {
         if (!validateFormat(mediatype)) {
-            throw new ImageValidationException("Could not validate image format");
+            throw new ImageValidationException("Invalid image format!");
         }
 
         FileObject original = new FileObject();
@@ -42,6 +42,10 @@ public class ImageService {
     }
 
     public Image setLocation(Image image) {
+        if (!validateFormat(image.getOriginal().getContentType())) {
+            image.setLocation(false);
+            return image;
+        }
         Metadata metadata = new Metadata();
 
         metadata = metadataService.extractMetadata(image.getOriginal().getContent());
@@ -62,7 +66,7 @@ public class ImageService {
         return imageRepository.findAll();
     }
 
-    public boolean validateFormat(String mediaType) {
+    private boolean validateFormat(String mediaType) {
         return mediaType.startsWith("image/");
     }
 

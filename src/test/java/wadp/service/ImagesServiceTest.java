@@ -3,6 +3,7 @@ package wadp.service;
 import com.drew.metadata.Metadata;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -42,6 +43,8 @@ public class ImagesServiceTest {
     @Autowired
     private MetadataService metadataService;
 
+    private byte[] data;
+
     public ImagesServiceTest() {
     }
 
@@ -54,7 +57,11 @@ public class ImagesServiceTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws FileNotFoundException, IOException {
+        File imageFile = new File("src/test/testimg.jpg");
+        InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
+        this.data = IOUtils.toByteArray(is);
+
     }
 
     @After
@@ -63,51 +70,39 @@ public class ImagesServiceTest {
 
     @Test
     public void addImage() throws IOException {
-        boolean thrown = false;
         Image img = new Image();
-        img.setOriginal(new FileObject());
-        try {
-            imageService.addImage(img, "image/", "joku", new byte[1]);
-        } catch (ImageValidationException e) {
-            thrown = true;
-        }
-        assertFalse(thrown);
+        imageService.addImage(img, "image/", "foo", this.data);
+
         assertEquals(imageService.getImage(img.getId()), img);
     }
 
     @Test(expected = ImageValidationException.class)
     public void wrongFormatThrowsException() throws IOException {
         Image img = new Image();
-        img.setOriginal(new FileObject());
         imageService.addImage(img, "file/exe", "joku", new byte[1]);
     }
 
     @Test
     public void multipleImages() throws IOException {
         Image img = new Image();
-        img.setOriginal(new FileObject());
-        imageService.addImage(img, "image/", "img1", new byte[1]);
+        imageService.addImage(img, "image/", "img1", this.data);
 
         Image img2 = new Image();
-        img.setOriginal(new FileObject());
-        imageService.addImage(img2, "image/", "img2", new byte[1]);
+        imageService.addImage(img2, "image/", "img2", this.data);
 
         Image img3 = new Image();
-        img.setOriginal(new FileObject());
-        imageService.addImage(img3, "image/", "img3", new byte[1]);
+        imageService.addImage(img3, "image/", "img3", this.data);
 
         assertEquals(imageService.findAllImages().get(0), img);
         assertEquals(imageService.findAllImages().get(1), img2);
         assertEquals(imageService.findAllImages().get(2), img3);
     }
 
-    @Test
+    @Test(expected = ImageValidationException.class)
     public void imageWithoutLocation() throws IOException {
         Image img = new Image();
-        img.setOriginal(new FileObject());
-        imageService.addImage(img, "image/", "img1", new byte[1]);
+        imageService.addImage(img, "asdf/", "img1", new byte[1]);
 
-        imageService.setLocation(img);
         assertFalse(img.getLocation());
     }
 
@@ -116,10 +111,10 @@ public class ImagesServiceTest {
         File imageFile = new File("src/test/testimg.jpg");
         InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
         byte[] data = IOUtils.toByteArray(is);
-        
+
         Image img = new Image();
         imageService.addImage(img, "image/", "foo", data);
-        
+
         assertTrue(imageService.getImage(img.getId()).getLocation());
     }
 }
