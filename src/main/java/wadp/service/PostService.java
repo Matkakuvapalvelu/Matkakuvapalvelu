@@ -14,9 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
     @Autowired
-    PostRepository postRepository;
+    private PostRepository postRepository;
 
     public Post createPost(Image image, String imageText, User poster) {
+
+        if (image == null) {
+            throw new IllegalArgumentException("Image must not be null when creating new post");
+        }
+
         Post post = new Post();
         post.setImageText(imageText);
         post.setImage(image);
@@ -25,6 +30,8 @@ public class PostService {
         return postRepository.save(post);
     }
 
+    // postgresql barfs without the @Transactional annotation as images might be split into multiple values inside database
+    // and therefore database needs multiple queries to fetch all the parts -> requires transaction for safety
     @Transactional
     public List<Post> getUserPosts(User user) {
 
