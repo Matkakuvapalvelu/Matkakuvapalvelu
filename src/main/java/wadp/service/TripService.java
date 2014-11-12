@@ -16,7 +16,7 @@ public class TripService {
     @Autowired
     UserService userService;
     
-    public List getTripsByOwner() {
+    public List<Trip> getAuthenticatedUserTrips() {
         return tripRepository.findByCreator(userService.getAuthenticatedUser());
     }
 
@@ -26,5 +26,8 @@ public class TripService {
         trip = tripRepository.save(trip);
         user.getTrips().add(trip);        
     }
-    
+
+    public Trip getTrip(Long id) {
+        return tripRepository.findOne(id);
+    }
 }

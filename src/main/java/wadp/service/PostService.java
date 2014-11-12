@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wadp.domain.Image;
 import wadp.domain.Post;
+import wadp.domain.Trip;
 import wadp.domain.User;
 import wadp.repository.PostRepository;
 
@@ -19,7 +20,7 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
-    public Post createPost(Image image, String imageText, User poster) {
+    public Post createPost(Image image, String imageText, List<Trip> trips, User poster) {
 
         if (image == null) {
             throw new IllegalArgumentException("Image must not be null when creating new post");
@@ -29,6 +30,7 @@ public class PostService {
         post.setImageText(imageText);
         post.setImage(image);
         post.setPoster(poster);
+        post.setTrips(trips);
 
         return postRepository.save(post);
     }
@@ -37,7 +39,6 @@ public class PostService {
     // and therefore database needs multiple queries to fetch all the parts -> requires transaction for safety
     @Transactional
     public List<Post> getUserPosts(User user) {
-
         return postRepository.findByPoster(user);
     }
 

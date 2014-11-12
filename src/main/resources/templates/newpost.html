@@ -22,9 +22,25 @@
                placeholder="Comment your image here!"
                cols="55"
                rows="10"></textarea><br/>
+    <label for="trips">Trips</label><br/>
+    <select name="trips" id="trips" multiple="multiple">
+        <option th:each="trip : ${trips}" value="Helsinki" th:value="${trip.id}" th:text="${trip.description}">
+            Helsinki
+        </option>
+        <!--/*-->
+        <option value="Tallinna">Tallinna</option>
+        <option value="Moskova">Moskova</option>
+        <option value="Tukholma">Tukholma</option>
+        <option value="Berliini">Berliini</option>
+        <!--*/-->
+    </select>
 
-    <input type="submit" value="Add!"/>
+    <br/><input type="submit" value="Add!"/>
 </form>
 
 </body>
 </html>
+
+<li th:each="post : ${posts}">
+    <a href="#" th:href="@{'/posts/'+${post.id}}" th:text="${post.imageText}"></a>
+</li>

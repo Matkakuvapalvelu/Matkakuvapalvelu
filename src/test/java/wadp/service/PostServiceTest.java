@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wadp.Application;
 import wadp.domain.Image;
 import wadp.domain.Post;
+import wadp.domain.Trip;
 import wadp.domain.User;
 import wadp.repository.PostRepository;
 
@@ -43,12 +44,14 @@ public class PostServiceTest {
     private Image image;
     private User user;
     private Post post;
+    private List<Trip> trips;
 
     @Before
     public void setUp() throws IOException {
+        trips = new ArrayList<>();
         user = userService.createUser("adasdsdaads", "pisadjsods");
         image = imageService.addImage(new Image(), "image/", "foo", new byte[1]);
-        post = postService.createPost(image, "Hello!", user);
+        post = postService.createPost(image, "Hello!", trips, user);
     }
 
     @Test
@@ -59,7 +62,7 @@ public class PostServiceTest {
 
     @Test(expected= IllegalArgumentException.class)
     public void creationThrowsIfImageIsNull() {
-        postService.createPost(null, "daaddas", user);
+        postService.createPost(null, "daaddas", trips, user);
     }
 
     @Test
@@ -91,11 +94,11 @@ public class PostServiceTest {
 
     @Test public void getUserPostsReturnAllUserPosts() {
         User user2 = userService.createUser("dffdsfdfd", "pisadjsods");
-        postService.createPost(image, "Hello2!", user);
-        postService.createPost(image, "Hello3!", user);
-        postService.createPost(image, "Hello4!", user);
-        postService.createPost(image, "Hi!", user2);
-        postService.createPost(image, "Hi2!", user2);
+        postService.createPost(image, "Hello2!", trips, user);
+        postService.createPost(image, "Hello3!", trips, user);
+        postService.createPost(image, "Hello4!", trips, user);
+        postService.createPost(image, "Hi!", trips, user2);
+        postService.createPost(image, "Hi2!", trips, user2);
 
         List<String> imageTexts = Arrays.asList("Hello!", "Hello2!", "Hello3!", "Hello4!");
 

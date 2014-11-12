@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import wadp.domain.Image;
-import wadp.domain.Post;
+import wadp.domain.Trip;
 import wadp.service.ImageService;
 import wadp.service.PostService;
+import wadp.service.TripService;
 import wadp.service.UserService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/posts")
@@ -29,6 +32,9 @@ public class PostController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    TripService tripService;
+
     /*
     * For now, shows list of posts made by user (this functionality should be considered as placeholder; feel free to
     * change if needed) and shows button where new post can be created
@@ -40,25 +46,49 @@ public class PostController {
     }
 
     @RequestMapping(value="/new", method = RequestMethod.GET)
-    public String showNewPostCreation() {
+    public String showNewPostCreation(Model model) {
+        model.addAttribute("trips", tripService.getAuthenticatedUserTrips());
 
         return "newpost";
     }
 
 
     @RequestMapping(method = RequestMethod.POST)
-    public String createNewPost(@RequestParam("file") MultipartFile file, @RequestParam("image_text") String text) throws IOException {
+    public String createNewPost(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("image_text") String text,
+            @RequestParam(value ="trips", required = false) String [] tripIds) throws IOException {
         // TODO: Validate that image is not empty!
-
         Image image = new Image();
 
         // TODO: Catch ImageValidationException and give appropriate error message to user
         image = imageService.addImage(image, file.getContentType(), file.getOriginalFilename(),
                 file.getBytes());
 
-        postService.createPost(image, text, userService.getAuthenticatedUser());
+
+        List<Trip> trips = new ArrayList<>();
+
+        addTripsToList(tripIds, trips);
+
+        postService.createPost(image, text, trips, userService.getAuthenticatedUser());
 
         return "redirect:/posts";
+    }
+
+    private void addTripsToList(String[] tripIds, List<Trip> trips) {
+        if (tripIds != null) {
+            for (String id : tripIds) {
+                try {
+                    Trip trip = tripService.getTrip(Long.parseLong(id));
+                    if (trip != null) {
+                        trips.add(trip);
+                    }
+                } catch (NumberFormatException ex) {
+                    // TODO: Add logging code.
+                    // This shouldn't happen unless someone bypasses the ui and posts malformed requests
+                }
+            }
+        }
     }
 
     @RequestMapping(value="/{id}", method = RequestMethod.GET)
