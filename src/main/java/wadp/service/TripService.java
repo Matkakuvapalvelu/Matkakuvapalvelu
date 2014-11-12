@@ -20,14 +20,19 @@ public class TripService {
         return tripRepository.findByCreator(userService.getAuthenticatedUser());
     }
 
-    public void createTrip(Trip trip) {
+    public Trip createTrip(Trip trip) {
         User user = userService.getAuthenticatedUser();
         trip.setCreator(user);
         trip = tripRepository.save(trip);
-        user.getTrips().add(trip);        
+        user.getTrips().add(trip);
+        return trip;
     }
 
     public Trip getTrip(Long id) {
         return tripRepository.findOne(id);
+    }
+
+    public void updateTrip(Trip trip) {
+        tripRepository.save(trip);
     }
 }

@@ -20,9 +20,12 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    TripService tripService;
+
     public Post createPost(Image image, String imageText, List<Trip> trips, User poster) {
 
-        if (image == null) {
+        if (image == null || trips == null) {
             throw new IllegalArgumentException("Image must not be null when creating new post");
         }
 
@@ -32,7 +35,15 @@ public class PostService {
         post.setPoster(poster);
         post.setTrips(trips);
 
-        return postRepository.save(post);
+
+        post = postRepository.save(post);
+
+        for (Trip trip : trips) {
+            trip.getPosts().add(post);
+            tripService.updateTrip(trip);
+        }
+
+        return post;
     }
 
     // postgresql barfs without the @Transactional annotation as images might be split into multiple values inside database

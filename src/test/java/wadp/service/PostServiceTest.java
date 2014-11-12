@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wadp.Application;
@@ -14,6 +16,7 @@ import wadp.domain.Trip;
 import wadp.domain.User;
 import wadp.repository.PostRepository;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,17 +44,23 @@ public class PostServiceTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TripService tripService;
+
     private Image image;
     private User user;
     private Post post;
-    private List<Trip> trips;
 
     @Before
     public void setUp() throws IOException {
-        trips = new ArrayList<>();
         user = userService.createUser("adasdsdaads", "pisadjsods");
         image = imageService.addImage(new Image(), "image/", "foo", new byte[1]);
-        post = postService.createPost(image, "Hello!", trips, user);
+        post = postService.createPost(image, "Hello!", new ArrayList<Trip>(), user);
+
+        // tripService requires authenticated user for it to work
+        User loggedInUser = userService.createUser("loginuser", "loginuser");
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(loggedInUser.getUsername(), loggedInUser.getPassword()));
     }
 
     @Test
@@ -62,7 +71,12 @@ public class PostServiceTest {
 
     @Test(expected= IllegalArgumentException.class)
     public void creationThrowsIfImageIsNull() {
-        postService.createPost(null, "daaddas", trips, user);
+        postService.createPost(null, "daaddas", new ArrayList<Trip>(), user);
+    }
+
+    @Test(expected= IllegalArgumentException.class)
+    public void creationThrowsIfTripListIsNull() {
+        postService.createPost(new Image(), "daaddas", null, user);
     }
 
     @Test
@@ -92,13 +106,14 @@ public class PostServiceTest {
         assertEquals(post, postService.getPost(post.getId()));
     }
 
-    @Test public void getUserPostsReturnAllUserPosts() {
+    @Test
+    public void getUserPostsReturnAllUserPosts() {
         User user2 = userService.createUser("dffdsfdfd", "pisadjsods");
-        postService.createPost(image, "Hello2!", trips, user);
-        postService.createPost(image, "Hello3!", trips, user);
-        postService.createPost(image, "Hello4!", trips, user);
-        postService.createPost(image, "Hi!", trips, user2);
-        postService.createPost(image, "Hi2!", trips, user2);
+        postService.createPost(image, "Hello2!", new ArrayList<Trip>(), user);
+        postService.createPost(image, "Hello3!", new ArrayList<Trip>(), user);
+        postService.createPost(image, "Hello4!", new ArrayList<Trip>(), user);
+        postService.createPost(image, "Hi!", new ArrayList<Trip>(), user2);
+        postService.createPost(image, "Hi2!", new ArrayList<Trip>(), user2);
 
         List<String> imageTexts = Arrays.asList("Hello!", "Hello2!", "Hello3!", "Hello4!");
 
@@ -112,4 +127,15 @@ public class PostServiceTest {
         }
     }
 
+    @Test
+    @Transactional
+    public void postIsAddedToTripWhenCreatingNewPost() {
+
+        Trip trip = new Trip();
+        trip.setDescription("Description");
+        trip = tripService.createTrip(trip);
+        List<Trip> trips = Arrays.asList(trip);
+        Post post = postService.createPost(new Image(), "Hello", trips, user);
+        assertTrue(trip.getPosts().contains(post));
+    }
 }
