@@ -23,6 +23,9 @@ public class ImageService {
     @Autowired
     private FileObjectRepository fileObjectRepository;
 
+    @Autowired
+    private ThumbnailService thumbnailService;
+
     public Image addImage(Image image, String mediatype, String name, byte[] content) throws IOException {
         if (!validateFormat(mediatype)) {
             throw new ImageValidationException("Invalid image format!");
@@ -36,6 +39,11 @@ public class ImageService {
 
         fileObjectRepository.save(original);
 
+        FileObject galleryThumb = fileObjectRepository.save(thumbnailService.createGalleryThumb(content, name));
+        FileObject postThumb = fileObjectRepository.save(thumbnailService.createPostThumb(content, name));
+
+        image.setGalleryThumbnail(galleryThumb);
+        image.setPostThumbnail(postThumb);
         image.setOriginal(original);
         setLocation(image);
         return imageRepository.save(image);
@@ -46,9 +54,7 @@ public class ImageService {
             image.setLocation(false);
             return image;
         }
-        Metadata metadata = new Metadata();
-
-        metadata = metadataService.extractMetadata(image.getOriginal().getContent());
+        Metadata metadata = metadataService.extractMetadata(image.getOriginal().getContent());
         if (metadata.hasErrors()) {
             return image;
         }

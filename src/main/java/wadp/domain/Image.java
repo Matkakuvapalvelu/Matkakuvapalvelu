@@ -23,7 +23,11 @@ public class Image extends AbstractPersistable<Long> {
 
     @Basic(fetch = FetchType.LAZY)
     @OneToOne
-    private FileObject thumbnail;
+    private FileObject galleryThumbnail;
+
+    @Basic(fetch = FetchType.LAZY)
+    @OneToOne
+    private FileObject postThumbnail;
 
     private double latitude;
     private double longitude;
@@ -41,14 +45,6 @@ public class Image extends AbstractPersistable<Long> {
 
     public void setOriginal(FileObject original) {
         this.original = original;
-    }
-
-    public FileObject getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(FileObject thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     public double getLatitude() {
@@ -81,6 +77,22 @@ public class Image extends AbstractPersistable<Long> {
 
     public void setLocation(boolean location) {
         this.location = location;
+    }
+
+    public FileObject getGalleryThumbnail() {
+        return galleryThumbnail;
+    }
+
+    public void setGalleryThumbnail(FileObject galleryThumbnail) {
+        this.galleryThumbnail = galleryThumbnail;
+    }
+
+    public FileObject getPostThumbnail() {
+        return postThumbnail;
+    }
+
+    public void setPostThumbnail(FileObject postThumbnail) {
+        this.postThumbnail = postThumbnail;
     }
 
 }
