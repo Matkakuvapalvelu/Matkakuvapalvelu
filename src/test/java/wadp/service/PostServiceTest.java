@@ -1,5 +1,7 @@
 package wadp.service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +16,12 @@ import wadp.domain.User;
 import wadp.repository.PostRepository;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.io.IOUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -46,8 +50,12 @@ public class PostServiceTest {
 
     @Before
     public void setUp() throws IOException {
+        File imageFile = new File("src/test/testimg.jpg");
+        InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
+        byte[] data = IOUtils.toByteArray(is);
+                
         user = userService.createUser("adasdsdaads", "pisadjsods");
-        image = imageService.addImage(new Image(), "image/", "foo", new byte[1]);
+        image = imageService.addImage(new Image(), "image/", "foo", data);
         post = postService.createPost(image, "Hello!", user);
     }
 

@@ -39,6 +39,7 @@ public class ImagesServiceTest {
     private MetadataService metadataService;
 
     private byte[] data;
+    private byte[] data2;
 
     public ImagesServiceTest() {
     }
@@ -56,6 +57,10 @@ public class ImagesServiceTest {
         File imageFile = new File("src/test/testimg.jpg");
         InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
         this.data = IOUtils.toByteArray(is);
+
+        File imageFile2 = new File("src/test/testimg2.jpg");
+        InputStream is2 = new FileInputStream(imageFile2.getAbsoluteFile());
+        this.data2 = IOUtils.toByteArray(is2);
 
     }
 
@@ -93,12 +98,13 @@ public class ImagesServiceTest {
         assertEquals(imageService.findAllImages().get(2), img3);
     }
 
-    @Test(expected = ImageValidationException.class)
+    @Test
     public void imageWithoutLocation() throws IOException {
         Image img = new Image();
-        imageService.addImage(img, "asdf/", "img1", new byte[1]);
+        imageService.addImage(img, "image/", "img1", this.data2);
 
-        assertFalse(img.getLocation());
+        assertNotNull(imageService.getImage(img.getId()));
+        assertFalse(imageService.getImage(img.getId()).getLocation());
     }
 
     @Test
