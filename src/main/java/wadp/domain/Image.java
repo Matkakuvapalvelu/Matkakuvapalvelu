@@ -37,6 +37,7 @@ public class Image extends AbstractPersistable<Long> {
 
     public Image() {
         this.location = false;
+        this.captureDate = null;
     }
 
     public FileObject getOriginal() {

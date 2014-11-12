@@ -29,10 +29,14 @@ public class ImageController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String addImage(@RequestParam("file") MultipartFile file) throws IOException {
+        if (!file.isEmpty()) {
+            
+        
         Image image = new Image();
 
         imageService.addImage(image, file.getContentType(), file.getOriginalFilename(),
                 file.getBytes());
+        }
 
         return "redirect:/images";
     }

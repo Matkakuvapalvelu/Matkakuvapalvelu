@@ -16,12 +16,13 @@
             <label for="file">File</label><input type="file" name="file" id="file" accept="image/*"/><br/>
             <input type="submit" value="Add!"/>
         </form>
-        
+
         <br/>
         <h2>Existing images</h2>
         <div th:if="${images != null}">
             <div th:each="image: ${images}">
                 <h3><span th:text="${image.original.name}">id</span></h3>
+                <p>Image captured:  <span th:if="${image.captureDate != null}" th:text="${image.captureDate}">unknown</span></p>
                 <p>Latitude:  <span th:if="${image.location != null}" th:text="${image.latitude}">unknown</span></p>
                 <p>Longitude: <span th:if="${image.location != null}" th:text="${image.longitude}">unknown</span></p>
 

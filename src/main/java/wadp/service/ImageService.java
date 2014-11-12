@@ -1,8 +1,10 @@
 package wadp.service;
 
+import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.GpsDirectory;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,11 +47,11 @@ public class ImageService {
         image.setGalleryThumbnail(galleryThumb);
         image.setPostThumbnail(postThumb);
         image.setOriginal(original);
-        setLocation(image);
+        setMetadataFields(image);
         return imageRepository.save(image);
     }
 
-    public Image setLocation(Image image) {
+    public Image setMetadataFields(Image image) {
         if (!validateFormat(image.getOriginal().getContentType())) {
             image.setLocation(false);
             return image;
@@ -58,6 +60,12 @@ public class ImageService {
         if (metadata.hasErrors()) {
             return image;
         }
+        for (Directory directory : metadata.getDirectories()) {
+            if (directory.containsTag(306)) {                   //306 is tagtype for Date/time
+                image.setCaptureDate(directory.getDate(306));
+                break;
+            }
+        }
         if (metadata.getDirectory(GpsDirectory.class) == null) {
             image.setLocation(false);
             return image;
@@ -65,6 +73,7 @@ public class ImageService {
         image.setLatitude(metadata.getDirectory(GpsDirectory.class).getGeoLocation().getLatitude());
         image.setLongitude(metadata.getDirectory(GpsDirectory.class).getGeoLocation().getLongitude());
         image.setLocation(true);
+
         return image;
     }
 
