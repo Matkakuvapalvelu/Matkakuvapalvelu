@@ -14,7 +14,10 @@ import wadp.domain.User;
 import wadp.repository.PostRepository;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -54,6 +57,11 @@ public class PostServiceTest {
         assertNotNull(postRepository.findOne(post.getId()));
     }
 
+    @Test(expected= IllegalArgumentException.class)
+    public void creationThrowsIfImageIsNull() {
+        postService.createPost(null, "daaddas", user);
+    }
+
     @Test
     public void createdPostHasCorrectImageText() {
         assertEquals("Hello!", post.getImageText());
@@ -76,8 +84,29 @@ public class PostServiceTest {
         assertTrue(date.after(post.getPostDate()));
     }
 
-    @Test(expected= IllegalArgumentException.class)
-    public void creationThrowsIfImageIsNull() {
-        postService.createPost(null, "daaddas", user);
+    @Test
+    public void getPostReturnsCorrectImage() {
+        assertEquals(post, postService.getPost(post.getId()));
     }
+
+    @Test public void getUserPostsReturnAllUserPosts() {
+        User user2 = userService.createUser("dffdsfdfd", "pisadjsods");
+        postService.createPost(image, "Hello2!", user);
+        postService.createPost(image, "Hello3!", user);
+        postService.createPost(image, "Hello4!", user);
+        postService.createPost(image, "Hi!", user2);
+        postService.createPost(image, "Hi2!", user2);
+
+        List<String> imageTexts = Arrays.asList("Hello!", "Hello2!", "Hello3!", "Hello4!");
+
+        List<Post> posts = postService.getUserPosts(user);
+
+        assertEquals(4, posts.size());
+        // check that each posts contains correct poster and correct image texts
+        for (Post p : posts) {
+            assertEquals(user, p.getPoster());
+            assertTrue(imageTexts.contains(p.getImageText()));
+        }
+    }
+
 }
