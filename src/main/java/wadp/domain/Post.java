@@ -31,6 +31,11 @@ public class Post extends AbstractPersistable<Long> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date postDate;
 
+
+    public Post() {
+        postDate = new Date();
+    }
+
     public Date getPostDate() {
         return postDate;
     }
