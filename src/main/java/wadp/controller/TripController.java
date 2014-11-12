@@ -25,7 +25,7 @@ public class TripController {
         
     @RequestMapping(method = RequestMethod.GET)
     public String view(Model model){
-        model.addAttribute("trips", tripService.getTripsByOwner());
+        model.addAttribute("trips", tripService.getAuthenticatedUserTrips());
         
         Map<Trip.Visibility, String> visibilities = new HashMap<>();  
         visibilities.put(Trip.Visibility.PRIVATE, "Private");  

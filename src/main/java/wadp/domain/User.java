@@ -1,5 +1,6 @@
 package wadp.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -30,6 +31,7 @@ public class User extends AbstractPersistable<Long> {
     private List<Trip> trips;
     
     public User() {
+        trips = new ArrayList<>();
         userRole = "USER";
     }
 
@@ -76,4 +78,5 @@ public class User extends AbstractPersistable<Long> {
     public boolean passwordEquals(String plaintextPassword) {
         return BCrypt.checkpw(plaintextPassword, password);
     }
+
 }

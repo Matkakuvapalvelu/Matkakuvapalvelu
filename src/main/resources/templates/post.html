@@ -14,6 +14,11 @@
 <br/><div>Comment</div>
 
 <div th:text="${post.imageText}"></div>
+<br/>
+<div>
+    <div>Post associated with following trips: </div>
+    <a href="#" th:each="trip : ${post.trips}" th:text="${trip.description}"></a>
+</div>
 
 
 </body>

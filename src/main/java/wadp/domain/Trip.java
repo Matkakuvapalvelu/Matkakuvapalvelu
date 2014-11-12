@@ -1,5 +1,6 @@
 package wadp.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
@@ -29,6 +30,7 @@ public class Trip extends AbstractPersistable<Long> {
 
     public Trip(){
         this.creationDate = new Date();
+        posts = new ArrayList<Post>();
     }
     
     public String getDescription() {

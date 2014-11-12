@@ -25,7 +25,7 @@ public class Post extends AbstractPersistable<Long> {
 
     @ManyToMany(mappedBy = "posts")
     private List<Trip> trips;
-    
+
     private String imageText;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -74,5 +74,13 @@ public class Post extends AbstractPersistable<Long> {
 
     public void setImage(Image image) {
         this.image = image;
+    }
+
+    public List<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
     }
 }

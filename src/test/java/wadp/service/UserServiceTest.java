@@ -6,7 +6,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wadp.Application;
@@ -28,9 +30,14 @@ public class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    private User loggedInUser;
 
     @Before
     public void setUp() {
+
+        loggedInUser = service.createUser("loginuser", "loginuser");
+        SecurityContextHolder.getContext().setAuthentication(
+                    new UsernamePasswordAuthenticationToken(loggedInUser.getUsername(), loggedInUser.getPassword()));
 
     }
 
@@ -75,6 +82,12 @@ public class UserServiceTest {
         User user = service.authenticate("jamesbond", "007");
 
         assertEquals("jamesbond", user.getUsername());
+    }
+
+    @Test
+    public void getAuthenticatedUserReturnsLoggedInUser() {
+        User user = service.getAuthenticatedUser();
+        assertEquals(loggedInUser.getUsername(), user.getUsername());
     }
 
 }
