@@ -10,6 +10,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.stereotype.Service;
 
+/**
+ * 
+ * Metadataservice user MetadatExtractor to pull the image metadata if found.
+ */
+
 @Service
 public class MetadataService {
 

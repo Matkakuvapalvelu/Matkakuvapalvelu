@@ -21,10 +21,6 @@ import wadp.Application;
 import wadp.domain.Image;
 import wadp.repository.ImageRepository;
 
-/**
- *
- * @author Mikael Wide
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)

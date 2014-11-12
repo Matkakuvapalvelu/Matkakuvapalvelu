@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 /**
  *
- * @Image contains reference to byteobject and thumbnail of picture The image
+ * @Image contains reference to byteobject and both gallery and postthumnail of picture, image
  * also knows its location and capturetime
  */
 @Entity

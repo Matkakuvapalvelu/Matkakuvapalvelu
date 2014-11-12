@@ -5,13 +5,10 @@ import org.springframework.boot.context.embedded.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- *
- * @author Mikael Wide
- */
 @Configuration
 public class GeneralConfig {
 
+    //Set maxfilesize of multipartfile
     @Bean
     MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();

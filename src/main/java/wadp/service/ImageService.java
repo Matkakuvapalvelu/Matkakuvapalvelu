@@ -4,7 +4,6 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.GpsDirectory;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,12 @@ import wadp.domain.FileObject;
 import wadp.domain.Image;
 import wadp.repository.FileObjectRepository;
 import wadp.repository.ImageRepository;
+/**
+ *  Service that handles saving and viewing of images.
+ *  When saved the metadata is retrieved and set if found, image thumbnails are also created.
+ * 
+ */
+
 
 @Service
 public class ImageService {
@@ -40,7 +45,7 @@ public class ImageService {
         original.setContent(content);
 
         fileObjectRepository.save(original);
-
+        // TODO: Catch exceptions if thrown
         FileObject galleryThumb = fileObjectRepository.save(thumbnailService.createGalleryThumb(content, name));
         FileObject postThumb = fileObjectRepository.save(thumbnailService.createPostThumb(content, name));
 

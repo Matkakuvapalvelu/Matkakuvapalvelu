@@ -13,7 +13,7 @@ import wadp.domain.FileObject;
 
 /**
  *
- * @ThumbnailerService is for creating the thumbnail for both post and gallery
+ * @ThumbnailerService is for creating the thumbnail for both post and gallerythumbnails
  * PostThumbnail = 640x360 px, GalleryThumbnail = 180x180 px
  *
  */
