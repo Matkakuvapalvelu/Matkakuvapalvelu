@@ -45,6 +45,13 @@ public class UserServiceTest {
         assertNotNull(userRepository.findByUsername("Foo"));
     }
 
+
+    @Test
+    public void createUserReturnsReferenceToUser() {
+        User user = service.createUser("foo", "jpdopdfkodkoda");
+        assertNotNull(userRepository.findOne(user.getId()));
+    }
+
     @Test(expected=UsernameAlreadyTakenException.class)
     public void creatingUserWithSameUsernamethrowsException() {
         service.createUser("Foo", "barbarbar");
@@ -69,4 +76,5 @@ public class UserServiceTest {
 
         assertEquals("jamesbond", user.getUsername());
     }
+
 }

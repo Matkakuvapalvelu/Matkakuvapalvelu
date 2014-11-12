@@ -15,7 +15,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public void createUser(String username, String password) {
+    public User createUser(String username, String password) {
 
         if (userRepository.findByUsername(username) != null) {
             throw new UsernameAlreadyTakenException();
@@ -25,7 +25,7 @@ public class UserService {
         user.setUsername(username);
         user.setPassword(password);
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public User authenticate(String username, String password) throws AuthenticationException {
