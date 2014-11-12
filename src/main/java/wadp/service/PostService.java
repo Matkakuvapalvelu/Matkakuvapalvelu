@@ -10,6 +10,9 @@ import wadp.repository.PostRepository;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service that handles anything post related, such as creating and listing posts
+ */
 @Service
 public class PostService {
 

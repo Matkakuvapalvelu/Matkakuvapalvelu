@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import wadp.domain.User;
 import wadp.repository.UserRepository;
 
+/**
+ * Service that handles anything user related, such as creation, authentication and getting the authenticated user
+ */
 @Service
 public class UserService {
 
