@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head lang="en">
+        <title>Edit Trip</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
+    </head>
+    <body>
+        <h2>
+            <label th:if="${trip != null}" th:text="'Edit trip '+${trip.description}" >Edit trip</label>
+        </h2> 
+        <form method="POST" th:action="@{'/trips/'+${trip.id}+'/edit'}" >
+            <label for="description">Trip description</label>
+            <br/>            
+            <input type="text" id="description" name="description" th:value='${trip.description}'/>
+            <br/>
+            <label for="description">Who can see my trip</label>
+            <br/>
+            <select id="visibility" name="visibility"> 
+                <option th:each="visibility : ${visibilities}" th:value="${visibility}" 
+                        th:text="${#strings.capitalizeWords(#strings.toLowerCase(visibility))}"
+                        th:selected="${#strings.toLowerCase(visibility) == #strings.toLowerCase(trip.visibility)}">Option 1</option>
+            </select>
+            <br/>
+            <br/>
+            <input th:if="${trip != null}" type="hidden" name="tripId" th:value="${trip.id}"></input>
+            <input type="submit" value="Save changes"/>
+        </form>
+                
+        <div id="links"><a href="/index.html" th:href="@{/index}">Front page</a></div>
+    </body>
+</html>

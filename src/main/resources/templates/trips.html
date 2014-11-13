@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head lang="en">
-        <title>Trip</title>
+        <title>Trips</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
@@ -19,12 +19,12 @@
             <br/>
             <label for="description">Who can see my trip</label>
             <br/>
-            <select id="visibility" th:field="*{visibilities}">          
-                <option th:each="entry : ${visibilities.entrySet()}" th:value="${entry.key}" th:text="${entry.value}">Option 1</option>
+            <select id="visibility" name="visibility">          
+                <option th:each="visibility : ${visibilities}" th:value="${visibility}" 
+                        th:text="${#strings.capitalizeWords(#strings.toLowerCase(visibility))}">Option 1</option>
             </select>
             <br/>
             <br/>
-            <input th:if="${trip != null}" type="hidden" name="tripId" th:value="${trip.id}"></input>
             <input type="submit" value="Create new trip"/>
         </form>
         
@@ -32,7 +32,8 @@
         <div th:if="${trips != null}">
             <h2>All trips</h2>
             <div th:each="trip: ${trips}">
-                <a href="/trips.html" th:href="@{/trips/(${trip.id})}" th:text="${trip.description}">Trip to Russia</a>
+                <a href="/trips.html" th:href="@{'/trips/'+${trip.id}}" th:text="${trip.description}">Trip to Russia</a>
+                <a href="/trips.html" th:href="@{'/trips/'+${trip.id}+'/edit'}" th:text="Edit">Trip to Russia</a>
                 <label th:text="${trip.creationDate}">Today</label>
             </div>
         </div>

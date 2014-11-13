@@ -20,9 +20,12 @@ public class TripService {
         return tripRepository.findByCreator(userService.getAuthenticatedUser());
     }
 
-    public Trip createTrip(Trip trip) {
-        User user = userService.getAuthenticatedUser();
-        trip.setCreator(user);
+    public Trip createTrip(String description, Trip.Visibility visibility) {
+        Trip trip = new Trip();
+        User user = userService.getAuthenticatedUser();        
+        trip.setDescription(description);
+        trip.setVisibility(visibility);
+        trip.setCreator(user);        
         trip = tripRepository.save(trip);
         user.getTrips().add(trip);
         return trip;
@@ -34,5 +37,12 @@ public class TripService {
 
     public void updateTrip(Trip trip) {
         tripRepository.save(trip);
+    }
+
+    public void updateTripChanges(Long id, String description, Trip.Visibility visibility) {
+        Trip oldTrip = getTrip(id);
+        oldTrip.setDescription(description);
+        oldTrip.setVisibility(visibility);
+        updateTrip(oldTrip);
     }
 }
