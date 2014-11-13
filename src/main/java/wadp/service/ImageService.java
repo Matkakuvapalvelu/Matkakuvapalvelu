@@ -45,7 +45,7 @@ public class ImageService {
         original.setContent(content);
 
         fileObjectRepository.save(original);
-        // TODO: Catch exceptions if thrown
+        // TODO: Catch exceptions
         FileObject galleryThumb = fileObjectRepository.save(thumbnailService.createGalleryThumb(content, name));
         FileObject postThumb = fileObjectRepository.save(thumbnailService.createPostThumb(content, name));
 
