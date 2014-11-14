@@ -4,8 +4,23 @@
     <title>Posts</title>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
+    <style type="text/css">
+        html, body, #googleMap { height: 90%; width: 90%; margin: 0; padding: 0;};
+    </style>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
+    <script type="text/javascript" src="/js/googlemap.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        var latitude = /*[[${post.image.latitude}]]*/ 0;
+        var longitude =  /*[[${post.image.longitude}]]*/ 0;
+    </script>
+    <script type="text/javascript">
+        google.maps.event.addDomListener(window, 'load', function() { initialize(latitude, longitude); });
+    </script>
+
+
+
 </head>
 <body>
 <div th:replace="fragments/header :: header">header</div>
@@ -21,7 +36,7 @@
     <div>Post associated with following trips: </div>
     <a href="#" th:each="trip : ${post.trips}" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.description}"></a>
 </div>
-
+<div id="googleMap"></div>
 
 </body>
 </html>
