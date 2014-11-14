@@ -12,9 +12,20 @@
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
     <script type="text/javascript" src="/js/googlemap.js"></script>
     <script type="text/javascript" th:inline="javascript">
-        var latitude = /*[[${post.image.latitude}]]*/ 0;
-        var longitude =  /*[[${post.image.longitude}]]*/ 0;
-        google.maps.event.addDomListener(window, 'load', function() { initialize(latitude, longitude); });
+        function initializeMap() {
+            var hasLocationData  = /*[[${post.image.location}]]*/ false;
+
+            if (hasLocationData) {
+                var latitude = /*[[${post.image.latitude}]]*/ 0;
+                var longitude = /*[[${post.image.longitude}]]*/ 0;
+
+                google.maps.event.addDomListener(window, 'load', function () {
+                    initialize(latitude, longitude);
+                });
+            }
+        }
+
+        initializeMap();
     </script>
 </head>
 <body>

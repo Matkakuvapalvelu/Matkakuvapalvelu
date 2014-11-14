@@ -8,6 +8,9 @@ var infoWindow  = new google.maps.InfoWindow({
 });
 
 function initialize(latitude, longitude) {
+    if (latitude == null || longitude == null) {
+        return;
+    }
 
     var mapOptions = {
         center: { lat: latitude, lng: longitude},
