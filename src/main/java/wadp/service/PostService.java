@@ -54,7 +54,7 @@ public class PostService {
     }
 
     @Transactional
-    public Object getPost(Long id) {
+    public Post getPost(Long id) {
         return postRepository.findOne(id);
     }
 }
