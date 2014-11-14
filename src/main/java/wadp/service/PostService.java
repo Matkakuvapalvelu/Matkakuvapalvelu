@@ -11,6 +11,9 @@ import wadp.repository.PostRepository;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
+// postgresql barfs without the @Transactional annotation as images might be split into multiple values inside database
+// and therefore database needs multiple queries to fetch all the parts -> requires transaction for safety
+
 /**
  * Service that handles anything post related, such as creating and listing posts
  */
@@ -32,6 +35,8 @@ public class PostService {
      * @param poster User who created this post. Mandatory
      * @return Instance of post after it is saved to database
      */
+
+    @Transactional
     public Post createPost(Image image, String imageText, List<Trip> trips, User poster) {
 
         if (image == null || trips == null) {
@@ -63,8 +68,6 @@ public class PostService {
      * @param user User whose posts are wanted
      * @return List of posts by the user
      */
-    // postgresql barfs without the @Transactional annotation as images might be split into multiple values inside database
-    // and therefore database needs multiple queries to fetch all the parts -> requires transaction for safety
     @Transactional
     public List<Post> getUserPosts(User user) {
         return postRepository.findByPoster(user);
