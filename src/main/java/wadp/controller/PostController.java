@@ -77,9 +77,9 @@ public class PostController {
 
         addTripsToList(tripIds, trips);
 
-        postService.createPost(image, text, trips, userService.getAuthenticatedUser());
+        Post post = postService.createPost(image, text, trips, userService.getAuthenticatedUser());
 
-        return "redirect:/posts";
+        return "redirect:/posts/" + post.getId();
     }
     
     @RequestMapping(value = "/{id}/comment", method = RequestMethod.POST)
@@ -88,7 +88,7 @@ public class PostController {
             @PathVariable Long id) {        
         Post post = postService.getPost(id);
         commentService.addCommentToPost(comment, post);
-        return "redirect:/posts";
+        return "redirect:/posts/" + id;
     }
 
     private void addTripsToList(String[] tripIds, List<Trip> trips) {

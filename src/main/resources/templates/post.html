@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/post.css"/>
         <style type="text/css">
             html, body, #googleMap { height: 90%; width: 90%; margin: 0; padding: 0;};
         </style>
@@ -31,18 +32,24 @@
     <body>
         <div th:replace="fragments/header :: header">header</div>
         <div>Post image</div><br/>
-        <a href="#" th:href="@{'/images/' + ${post.image.id} + '/original'}">
-            <img th:attr="src=@{'/images/' + ${post.image.id} + '/postthumbnail'}"/>
-        </a>
-        <br/><div>Comment</div>
 
-        <div th:text="${post.imageText}"></div>
+        <div class="image-side-by-side">
+            <a href="#" th:href="@{'/images/' + ${post.image.id} + '/original'}">
+                <img id="user-image" th:attr="src=@{'/images/' + ${post.image.id} + '/postthumbnail'}"/>
+            </a>
+            <label for="user-image" th:text="${post.imageText}"></label>
+        </div>
+
+
+        <div class="map-size image-side-by-side" id="googleMap"></div>
+        <p class="end-image"/>
+
         <br/>
         <div>
             <div>Post associated with following trips: </div>
             <a href="#" th:each="trip : ${post.trips}" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.description}"></a>
         </div>
-        <div id="googleMap"></div>
+        <br/><br/>
 
         <div>
             <h3>Comments</h3><br />
@@ -54,7 +61,10 @@
         </div>
         <form method="POST" th:action="@{'/posts/' + ${post.id} + '/comment'}">
             <label for="commentText">Post a comment</label><br />
-            <textarea name="commentText"
+            <textarea
+                      cols="80"
+                      rows="5"
+                      name="commentText"
                       id="commentText"
                       placeholder="Type your comment here."></textarea>
             <input type="submit" value="post"/>

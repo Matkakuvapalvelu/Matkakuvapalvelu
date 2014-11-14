@@ -1,0 +1,15 @@
+.image-side-by-side {
+    float: left;
+    width: 30%;
+    margin-right: 15%;
+    margin-bottom: 0.5em
+}
+
+.end-image {
+    clear: both;
+}
+
+.map-size {
+    max-width:400px;
+    max-height:400px
+}
