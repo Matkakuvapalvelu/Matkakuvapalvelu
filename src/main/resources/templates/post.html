@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
 </head>
 <body>
-
+<div th:replace="fragments/header :: header">header</div>
 <div>Post image</div><br/>
 <a href="#" th:href="@{'/images/' + ${post.image.id} + '/original'}">
     <img th:attr="src=@{'/images/' + ${post.image.id} + '/postthumbnail'}"/>

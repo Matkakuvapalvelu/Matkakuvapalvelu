@@ -23,6 +23,15 @@ public class PostService {
     @Autowired
     TripService tripService;
 
+    /**
+     * This method creates and saves new post into database and returns the resulting object.
+     *
+     * @param image Image associated with the post. This is mandatory and must not be null
+     * @param imageText Image text. Can be empty
+     * @param trips List of trips this image is associated with. Can be empty
+     * @param poster User who created this post. Mandatory
+     * @return Instance of post after it is saved to database
+     */
     public Post createPost(Image image, String imageText, List<Trip> trips, User poster) {
 
         if (image == null || trips == null) {
@@ -46,6 +55,14 @@ public class PostService {
         return post;
     }
 
+
+
+    /**
+     * This method returns list of posts made by given user
+     *
+     * @param user User whose posts are wanted
+     * @return List of posts by the user
+     */
     // postgresql barfs without the @Transactional annotation as images might be split into multiple values inside database
     // and therefore database needs multiple queries to fetch all the parts -> requires transaction for safety
     @Transactional
@@ -53,6 +70,11 @@ public class PostService {
         return postRepository.findByPoster(user);
     }
 
+    /**
+     *  Returns single post with given id or null if post does not exist
+     * @param id Post id
+     * @return Post with id or null if post does not exist
+     */
     @Transactional
     public Post getPost(Long id) {
         return postRepository.findOne(id);

@@ -6,9 +6,9 @@
 <body>
 <div th:fragment="header">
 
+    <a href="/index">Index</a>
     <a href="/login">Login</a>
     <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
-
     <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
 
 </div>
