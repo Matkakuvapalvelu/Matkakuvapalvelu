@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Posts</title>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
-</head>
-<body>
+    <head>
+        <title>Posts</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
+    </head>
+    <body>
 
-<div>Post image</div><br/>
-<img th:attr="src=@{'/images/' + ${post.image.id} + '/original'}"/>
-<br/><div>Comment</div>
+        <div>Post image</div><br/>
+        <img th:attr="src=@{'/images/' + ${post.image.id} + '/original'}"/>
+        <br/><div>Comment</div>
 
-<div th:text="${post.imageText}"></div>
-<br/>
-<div>
-    <div>Post associated with following trips: </div>
-    <a href="#" th:each="trip : ${post.trips}" th:text="${trip.description}"></a>
-</div>
+        <div th:text="${post.imageText}"></div>
+        <br/>
+        <div>
+            <div>Post associated with following trips: </div>
+            <a href="#" th:each="trip : ${post.trips}" th:text="${trip.description}"></a>
+        </div>
+
+        <div>
+            <h3>Comments</h3><br />
+            <div  th:each="comment : ${comments}">
+                <span th:if="${comment.user != null}" th:text="${comment.user.username}" >Anonymous</span><br />
+                <span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span>
+                <p th:text="${comment.commentText}">There are no comments on this post.</p>
+            </div>
+        </div>
+        <form method="POST" th:action="@{'/posts/' + ${post.id} + '/comment'}">
+            <label for="commentText">Post a comment</label><br />
+            <textarea name="commentText"
+                      id="commentText"
+                      placeholder="Type your comment here."></textarea>
+            <input type="submit" value="post"/>
+        </form>
 
 
-</body>
+    </body>
 </html>
