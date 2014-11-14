@@ -5,12 +5,17 @@
 </head>
 <body>
 <div th:fragment="header">
-
     <a href="/index">Index</a>
-    <a href="/login">Login</a>
-    <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
-    <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
-
+    <span th:switch="${#authentication} ? ${#authorization.expression('isAuthenticated()')}  : ${false}">
+        <span th:case="${true}">
+            <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
+            <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
+        </span>
+        <span th:case="${false}">
+            <a href="/login">Login</a>
+        </span>
+    </span>
+    <br/><br/>
 </div>
 </body>
 </html>
