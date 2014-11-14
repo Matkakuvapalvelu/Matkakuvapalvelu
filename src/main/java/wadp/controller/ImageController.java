@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import wadp.domain.FileObject;
 import wadp.domain.Image;
 import wadp.service.ImageService;
 
@@ -44,20 +45,34 @@ public class ImageController {
 
     @RequestMapping(value="/{id}/original", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<byte[]> getImage(@PathVariable Long id){
+    public ResponseEntity<byte[]> getOriginalImage(@PathVariable Long id){
         // TODO: Check that user actually has right to see the image in question
         // TODO: Send 304 if browser has image cached
 
-        final HttpHeaders headers = new HttpHeaders();
 
         Image image = imageService.getImage(id);
+        return new ResponseEntity<>(image.getOriginal().getContent(), getImageHeaders(image.getOriginal()), HttpStatus.CREATED);
+    }
 
+    @RequestMapping(value="/{id}/postthumbnail", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<byte[]> getThumbnailImage(@PathVariable Long id){
+        // TODO: Check that user actually has right to see the image in question
+        // TODO: Send 304 if browser has image cached
+
+        Image image = imageService.getImage(id);
+        return new ResponseEntity<>(image.getOriginal().getContent(), getImageHeaders(image.getPostThumbnail()), HttpStatus.CREATED);
+    }
+
+
+    private HttpHeaders getImageHeaders(FileObject image) {
+        final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(image.getOriginal().getContentType()));
         headers.setContentLength(image.getOriginal().getContentLength());
         headers.setCacheControl("public");
         headers.setExpires(Long.MAX_VALUE);
         headers.add("ETag", "\"" + image.getId() + "\"");
-
-        return new ResponseEntity<>(image.getOriginal().getContent(), headers, HttpStatus.CREATED);
+        return headers;
     }
+
 }
