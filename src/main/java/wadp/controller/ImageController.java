@@ -61,7 +61,7 @@ public class ImageController {
         // TODO: Send 304 if browser has image cached
 
         Image image = imageService.getImage(id);
-        return new ResponseEntity<>(image.getOriginal().getContent(), getImageHeaders(image.getPostThumbnail()), HttpStatus.CREATED);
+        return new ResponseEntity<>(image.getPostThumbnail().getContent(), getImageHeaders(image.getPostThumbnail()), HttpStatus.CREATED);
     }
 
 

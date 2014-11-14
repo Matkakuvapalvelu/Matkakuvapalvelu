@@ -10,7 +10,7 @@
 <body>
 
 <div>Post image</div><br/>
-<a href="#" th:href="src=@{'/images/' + ${post.image.id} + '/original'}">
+<a href="#" th:href="@{'/images/' + ${post.image.id} + '/original'}">
     <img th:attr="src=@{'/images/' + ${post.image.id} + '/postthumbnail'}"/>
 </a>
 <br/><div>Comment</div>
@@ -19,7 +19,7 @@
 <br/>
 <div>
     <div>Post associated with following trips: </div>
-    <a href="#" th:each="trip : ${post.trips}" th:text="${trip.description}"></a>
+    <a href="#" th:each="trip : ${post.trips}" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.description}"></a>
 </div>
 
 

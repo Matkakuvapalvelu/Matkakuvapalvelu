@@ -10,7 +10,7 @@ import wadp.service.UserService;
 
 // Probably should be removed later on. Right now just redirects any unhandled addresses to index
 @Controller
-@RequestMapping("/index")
+@RequestMapping("*")
 public class DefaultController {
     @Autowired
     UserService userService;
