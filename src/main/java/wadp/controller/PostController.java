@@ -18,6 +18,10 @@ import wadp.service.UserService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import wadp.domain.Comment;
+import wadp.domain.Post;
+import wadp.service.CommentService;
 
 @Controller
 @RequestMapping("/posts")
@@ -34,6 +38,9 @@ public class PostController {
 
     @Autowired
     TripService tripService;
+    
+    @Autowired
+    CommentService commentService;
 
     /*
     * For now, shows list of posts made by user (this functionality should be considered as placeholder; feel free to
@@ -74,6 +81,15 @@ public class PostController {
 
         return "redirect:/posts";
     }
+    
+    @RequestMapping(value = "/{id}/comment", method = RequestMethod.POST)
+    public String addCommentToPost(
+            @ModelAttribute Comment comment,
+            @PathVariable Long id) {        
+        Post post = postService.getPost(id);
+        commentService.addCommentToPost(comment, post);
+        return "redirect:/posts";
+    }
 
     private void addTripsToList(String[] tripIds, List<Trip> trips) {
         if (tripIds != null) {
@@ -93,7 +109,9 @@ public class PostController {
 
     @RequestMapping(value="/{id}", method = RequestMethod.GET)
     public String showSinglePost(@PathVariable Long id, Model model) {
-        model.addAttribute("post", postService.getPost(id));
+        Post post = postService.getPost(id);        
+        model.addAttribute("post", post);
+        model.addAttribute("comments", post.getComments());
         return "post";
     }
 

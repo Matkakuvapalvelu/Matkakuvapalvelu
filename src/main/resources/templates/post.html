@@ -1,48 +1,65 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Posts</title>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
-    <style type="text/css">
-        html, body, #googleMap { height: 90%; width: 90%; margin: 0; padding: 0;};
-    </style>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
-    <script type="text/javascript" src="/js/googlemap.js"></script>
-    <script type="text/javascript" th:inline="javascript">
-        function initializeMap() {
-            var hasLocationData  = /*[[${post.image.location}]]*/ false;
+    <head>
+        <title>Posts</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
+        <style type="text/css">
+            html, body, #googleMap { height: 90%; width: 90%; margin: 0; padding: 0;};
+        </style>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
+        <script type="text/javascript" src="/js/googlemap.js"></script>
+        <script type="text/javascript" th:inline="javascript">
+            function initializeMap() {
+                var hasLocationData = /*[[${post.image.location}]]*/ false;
 
-            if (hasLocationData) {
-                var latitude = /*[[${post.image.latitude}]]*/ 0;
-                var longitude = /*[[${post.image.longitude}]]*/ 0;
+                if (hasLocationData) {
+                    var latitude = /*[[${post.image.latitude}]]*/ 0;
+                    var longitude = /*[[${post.image.longitude}]]*/ 0;
 
-                google.maps.event.addDomListener(window, 'load', function () {
-                    initialize(latitude, longitude);
-                });
+                    google.maps.event.addDomListener(window, 'load', function () {
+                        initialize(latitude, longitude);
+                    });
+                }
             }
-        }
 
-        initializeMap();
-    </script>
-</head>
-<body>
-<div th:replace="fragments/header :: header">header</div>
-<div>Post image</div><br/>
-<a href="#" th:href="@{'/images/' + ${post.image.id} + '/original'}">
-    <img th:attr="src=@{'/images/' + ${post.image.id} + '/postthumbnail'}"/>
-</a>
-<br/><div>Comment</div>
+            initializeMap();
+        </script>
+    </head>
+    <body>
+        <div th:replace="fragments/header :: header">header</div>
+        <div>Post image</div><br/>
+        <a href="#" th:href="@{'/images/' + ${post.image.id} + '/original'}">
+            <img th:attr="src=@{'/images/' + ${post.image.id} + '/postthumbnail'}"/>
+        </a>
+        <br/><div>Comment</div>
 
-<div th:text="${post.imageText}"></div>
-<br/>
-<div>
-    <div>Post associated with following trips: </div>
-    <a href="#" th:each="trip : ${post.trips}" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.description}"></a>
-</div>
-<div id="googleMap"></div>
+        <div th:text="${post.imageText}"></div>
+        <br/>
+        <div>
+            <div>Post associated with following trips: </div>
+            <a href="#" th:each="trip : ${post.trips}" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.description}"></a>
+        </div>
+        <div id="googleMap"></div>
 
-</body>
+        <div>
+            <h3>Comments</h3><br />
+            <div  th:each="comment : ${comments}">
+                <span th:if="${comment.user != null}" th:text="${comment.user.username}" >Anonymous</span><br />
+                <span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span>
+                <p th:text="${comment.commentText}">There are no comments on this post.</p>
+            </div>
+        </div>
+        <form method="POST" th:action="@{'/posts/' + ${post.id} + '/comment'}">
+            <label for="commentText">Post a comment</label><br />
+            <textarea name="commentText"
+                      id="commentText"
+                      placeholder="Type your comment here."></textarea>
+            <input type="submit" value="post"/>
+        </form>
+
+
+    </body>
 </html>
