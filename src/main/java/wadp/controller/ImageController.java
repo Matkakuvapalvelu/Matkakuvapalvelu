@@ -67,8 +67,8 @@ public class ImageController {
 
     private HttpHeaders getImageHeaders(FileObject image) {
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(image.getOriginal().getContentType()));
-        headers.setContentLength(image.getOriginal().getContentLength());
+        headers.setContentType(MediaType.parseMediaType(image.getContentType()));
+        headers.setContentLength(image.getContentLength());
         headers.setCacheControl("public");
         headers.setExpires(Long.MAX_VALUE);
         headers.add("ETag", "\"" + image.getId() + "\"");

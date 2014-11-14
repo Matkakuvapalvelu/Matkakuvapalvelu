@@ -10,7 +10,9 @@
 <body>
 
 <div>Post image</div><br/>
-<img th:attr="src=@{'/images/' + ${post.image.id} + '/postthumbnail'}"/>
+<a href="#" th:href="src=@{'/images/' + ${post.image.id} + '/original'}">
+    <img th:attr="src=@{'/images/' + ${post.image.id} + '/postthumbnail'}"/>
+</a>
 <br/><div>Comment</div>
 
 <div th:text="${post.imageText}"></div>
