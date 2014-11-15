@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
+
+</head>
+<body>
+<div th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></div>
+
+<form method="POST" th:action="@{'/notification/debug'}">
+    <label for="notificationText">This text will be sent as a notification to you</label><br />
+    <textarea
+            cols="80"
+            rows="5"
+            name="notificationText"
+            id="notificationText"
+            placeholder="Notification text"></textarea>
+    <input type="submit" value="post"/>
+</form>
+
+</body>
+</html>

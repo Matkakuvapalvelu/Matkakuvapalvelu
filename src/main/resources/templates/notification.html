@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
+
+    </head>
+    <body>
+        <div class="col-sm-2">
+            <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
+
+            <div class="form-group">
+            <form th:method="delete" th:action="@{'/notification/' + ${notification.id}}">
+                <input class="btn btn-default" type="submit" value="Delete this notification"/>
+            </form>
+            </div>
+
+            <div class="form-group">
+                <label for="sender_name" class="ccontrol-label">Sender</label>
+                <div id="sender_name" th:text="${notification.sender.username}">Sender name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="notification_reason" class="control-label">Reason</label>
+                <div  id="notification_reason" th:text="${notification.notificationReason}">Sender name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="notification_text" class="control-label">Content</label>
+                <div id="notification_text" th:text="${notification.notificationText}">Sender name</div>
+            </div>
+
+            <a href="/profile">Back to notifications</a>
+        </div>
+    </body>
+</html>

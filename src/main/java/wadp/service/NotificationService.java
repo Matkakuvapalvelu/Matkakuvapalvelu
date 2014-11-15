@@ -31,4 +31,11 @@ public class NotificationService {
     }
 
 
+    public Notification getNotification(Long id) {
+        return notificationRepository.findOne(id);
+    }
+
+    public void deleteNotification(Notification notification) {
+        notificationRepository.delete(notification);
+    }
 }
