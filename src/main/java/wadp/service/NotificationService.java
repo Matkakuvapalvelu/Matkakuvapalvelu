@@ -38,4 +38,8 @@ public class NotificationService {
     public void deleteNotification(Notification notification) {
         notificationRepository.delete(notification);
     }
+
+    public long getUnreadNotificationCountForUser(User user) {
+        return notificationRepository.getUnreadNotificationCountForUser(user);
+    }
 }

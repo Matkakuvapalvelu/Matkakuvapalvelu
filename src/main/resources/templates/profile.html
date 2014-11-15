@@ -10,13 +10,29 @@
 
 </head>
 <body>
+    <span th:case="${user.receivedNotifications != null}">
+        <span th:case="${true}">
+            <a href="#" th:case="${user.receivedNotifications != null }" ></a>
+        </span>
+        <span th:case="${false"}>
+            <a href="#" th:case="${user.receivedNotifications != null }">Private messages</a>
+        </span>
+    </span>
     <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
 
-    <div>List of notifications to user</div>
-    <div th:each="notification : ${user.receivedNotifications}">
-        <a href="#" th:href="@{'notification/' + ${notification.id}}" th:text="${notification.notificationReason}">text</a>
-    </div>
 
 
+<!--
+    <span th:switch="${user.receivedNotifications.size">
+                <span th:case="${true}">
+                    <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
+                    <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
+                </span>
+                <span th:case="${false}">
+                    <a href="/login">Login</a>
+                </span>
+            </span>
+
+            -->
 </body>
 </html>

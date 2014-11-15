@@ -24,6 +24,8 @@ import wadp.domain.User;
 import wadp.repository.ImageRepository;
 import wadp.repository.NotificationRepository;
 
+import javax.transaction.Transactional;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -85,6 +87,32 @@ public class NotificationServiceTest {
         assertNull(notificationRepository.findOne(id));
     }
 
+    @Test
+    public void unreadNotificationCountIsZeroWhenNoNotifications() {
+        assertEquals(0l, notificationService.getUnreadNotificationCountForUser(receiver));
+    }
 
+    @Test
+    public void unreadNotificationCountIsCorrectAfterAddingNotifications() {
+        notificationService.createNewNotification("reason", "text", sender, receiver);
+        notificationService.createNewNotification("reason", "text", sender, receiver);
+        notificationService.createNewNotification("reason", "text", sender, receiver);
+
+        assertEquals(3l, notificationService.getUnreadNotificationCountForUser(receiver));
+    }
+
+    @Test
+    @Transactional
+    public void unreadNotificationCountIsCorrectAfterReadingNotifications() {
+        Notification notification = notificationService.createNewNotification("reason", "text", sender, receiver);
+        notification.setRead(true);
+
+        notificationService.createNewNotification("reason", "text", sender, receiver);
+
+        notification = notificationService.createNewNotification("reason", "text", sender, receiver);
+        notification.setRead(true);
+
+        assertEquals(1l, notificationService.getUnreadNotificationCountForUser(receiver));
+    }
 
 }
