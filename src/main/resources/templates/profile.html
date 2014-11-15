@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>TODO supply a title</title>
+    <title>Profile</title>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
@@ -10,29 +10,14 @@
 
 </head>
 <body>
-    <span th:case="${user.receivedNotifications != null}">
+    <span th:switch="${unreadnotifications > 0}">
         <span th:case="${true}">
-            <a href="#" th:case="${user.receivedNotifications != null }" ></a>
+            <a href="/notification" th:text="@{'You have ' + ${unreadnotifications} +  ' unread notification(s)'}" ></a>
         </span>
-        <span th:case="${false"}>
-            <a href="#" th:case="${user.receivedNotifications != null }">Private messages</a>
+        <span th:case="${false}">
+            <a href="/notification">No unread private messages</a>
         </span>
     </span>
     <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
-
-
-
-<!--
-    <span th:switch="${user.receivedNotifications.size">
-                <span th:case="${true}">
-                    <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
-                    <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
-                </span>
-                <span th:case="${false}">
-                    <a href="/login">Login</a>
-                </span>
-            </span>
-
-            -->
 </body>
 </html>

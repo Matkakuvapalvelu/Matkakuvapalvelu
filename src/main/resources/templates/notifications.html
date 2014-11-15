@@ -13,8 +13,8 @@
 <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
 
 <div>List of notifications to user</div>
-<div th:each="notification : ${user.receivedNotifications}">
-    <a href="#" th:href="@{'notification/' + ${notification.id}}" th:text="${notification.notificationReason}">text</a>
+<div th:each="notification : ${notifications}">
+    <a href="#" th:href="@{'notification/' + ${notification.id}}" th:text="@{${notification.notificationReason} + ' from ' + ${notification.sender.username}}">text</a>
 </div>
 
 

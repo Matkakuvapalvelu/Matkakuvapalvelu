@@ -6,6 +6,7 @@
     <body>
         <span th:fragment="header">
             <a href="/index">Index</a>
+            <a href="/profile">Profile</a>
             <span th:switch="${#authentication} ? ${#authorization.expression('isAuthenticated()')}  : ${false}">
                 <span th:case="${true}">
                     <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
