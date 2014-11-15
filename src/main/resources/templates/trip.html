@@ -10,48 +10,20 @@
             html, body, #googleMap { height: 90%; width: 90%; margin: 0; padding: 0;};
         </style>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
-        <script type="text/javascript">   
-            /*
-             * 
-             * Added simple example of the google maps.
-             * Just need to add the markers etc.
-             * Added location and one marker for testing purposes.
-             * 
-             */
-            
-            /* 
-             * Trying to resize window. It's not working properly              * 
-             */
-            var infoWindow  = new google.maps.InfoWindow({
-                content:"This is an info box",
-                maxWidth: 300,
-                maxHeight: 300,
-                width: 150,
-                height: 150
-            });
+        <script type="text/javascript" src="/js/googlemap.js"></script>
+        <script type="text/javascript" th:inline="javascript">       
+            window.onload = function(){
+                // load map
+                var tripMap;
                 
-            function initialize() {
-                var mapOptions = {
-                    center: { lat: 60.192059, lng: 24.945831},
-                    zoom: 8
-                };
-                var map = new google.maps.Map(document.getElementById('googleMap'),mapOptions);
-                drawNewMarker(map, 60.192059, 24.945831)
-            }
-            
-            google.maps.event.addDomListener(window, 'load', initialize);
-            
-            function drawNewMarker(map, lat, lng){
-                var marker = new google.maps.Marker({
-                    position: { lat: lat, lng: lng}
-                });
-                google.maps.event.addListener(marker, 'click', onClickMarker);
-                marker.setMap(map);
-            }
-            
-            var onClickMarker = function(event) {
-                infoWindow.open(this.map, this);
-            }
+                (function() {
+                    var latLng = /*[[${startPoint}]]*/ 0;
+                    tripMap = initialize(latLng[0], latLng[1]);
+                })();
+                                
+                drawMarkers(tripMap, /*[[${coordinates}]]*/ 0);
+                drawPolyLinePath(tripMap);
+            };
         </script>
     </head>
     <body>
@@ -67,9 +39,8 @@
         <label id="creationdate" th:text="${trip.creationDate}">Trip creation date</label>
         <br/>
         <input type="hidden" id="posts" name="posts" th:value="${posts}"></input>
+        <div id="links"><a href="/newpost.html" th:href="@{/posts/new}">Add new post</a></div>
         <div id="links"><a href="/index.html" th:href="@{/index}">Front page</a></div>        
-        <div style="display: none;" th:each="post : ${posts}" >
-        </div>
         <br/>
         <div id="googleMap"></div>        
     </body>

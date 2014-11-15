@@ -1,4 +1,4 @@
-
+var tripPath = [];
 var infoWindow  = new google.maps.InfoWindow({
     content:"You were here!",
     maxWidth: 300,
@@ -8,7 +8,7 @@ var infoWindow  = new google.maps.InfoWindow({
 });
 
 function initialize(latitude, longitude) {
-    if (latitude == null || longitude == null) {
+    if (!latitude || !longitude) {
         return;
     }
 
@@ -17,9 +17,16 @@ function initialize(latitude, longitude) {
         zoom: 8
     };
     var map = new google.maps.Map(document.getElementById('googleMap'),mapOptions);
-    drawNewMarker(map, latitude, longitude)
+    
+    return map;
 }
 
+function drawMarkers(tripMap, coordinates) {
+    coordinates.forEach(function(coordinate) {
+        drawNewMarker(tripMap, coordinate[0], coordinate[1]);
+        tripPath.push(new google.maps.LatLng(coordinate[0], coordinate[1]));
+    });
+}
 
 function drawNewMarker(map, lat, lng){
     var marker = new google.maps.Marker({
@@ -31,6 +38,16 @@ function drawNewMarker(map, lat, lng){
 
 var onClickMarker = function(event) {
     infoWindow.open(this.map, this);
-}/**
+};
+
+function drawPolyLinePath(map){
+    new google.maps.Polyline({                    
+        path:tripPath,
+        strokeColor:"#0000FF",
+        strokeOpacity:0.8,
+        strokeWeight:2
+    }).setMap(map); 
+}
+/**
  * Created by Omistaja on 14.11.2014.
  */
