@@ -1,15 +1,6 @@
 package wadp.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
@@ -18,10 +9,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import wadp.Application;
-import wadp.domain.Image;
 import wadp.domain.Notification;
 import wadp.domain.User;
-import wadp.repository.ImageRepository;
 import wadp.repository.NotificationRepository;
 
 import javax.transaction.Transactional;
@@ -59,7 +48,7 @@ public class NotificationServiceTest {
     public void newNotificationHasAttributesSetCorrectly() {
         Notification notification = notificationService.createNewNotification("reason", "text", sender, receiver);
 
-        assertFalse(notification.isRead());
+        assertFalse(notification.getIsRead());
         assertEquals(sender, notification.getSender());
         assertEquals(receiver, notification.getReceiver());
         assertEquals("reason", notification.getNotificationReason());

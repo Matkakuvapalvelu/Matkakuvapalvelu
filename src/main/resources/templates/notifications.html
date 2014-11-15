@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>TODO supply a title</title>
+    <title>Notifications</title>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/general.css"/>
 
 </head>
 <body>
@@ -14,7 +15,9 @@
 
 <div>List of notifications to user</div>
 <div th:each="notification : ${notifications}">
-    <a href="#" th:href="@{'notification/' + ${notification.id}}" th:text="@{${notification.notificationReason} + ' from ' + ${notification.sender.username}}">text</a>
+    <a href="#" class=""
+       th:attrappend="class=${notification.isRead ? '' : 'bold'}"
+       th:href="@{'notification/' + ${notification.id}}" th:text="@{${notification.notificationReason} + ' from ' + ${notification.sender.username}}">text</a>
 </div>
 
 

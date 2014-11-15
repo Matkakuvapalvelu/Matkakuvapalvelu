@@ -57,7 +57,7 @@ public class Notification extends AbstractPersistable<Long> {
         this.notificationReason = notificationReason;
     }
 
-    public boolean isRead() {
+    public boolean getIsRead() {
         return isRead;
     }
 
