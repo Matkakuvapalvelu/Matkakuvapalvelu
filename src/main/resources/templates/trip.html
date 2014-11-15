@@ -17,12 +17,14 @@
                 var tripMap;
                 
                 (function() {
-                    var latLng = /*[[${startPoint}]]*/ 0;
+                    var latLng = /*[[${startPoint}]]*/ 0.0;
                     tripMap = initialize(latLng[0], latLng[1]);
                 })();
-                                
-                drawMarkers(tripMap, /*[[${coordinates}]]*/ 0);
-                drawPolyLinePath(tripMap);
+                
+                if(tripMap){
+                    drawMarkers(tripMap, /*[[${coordinates}]]*/ 0.0);
+                    drawPolyLinePath(tripMap);
+                }
             };
         </script>
     </head>
@@ -37,8 +39,7 @@
         <label id="creationdatedesc">Trip creation date</label>
         <br/>
         <label id="creationdate" th:text="${trip.creationDate}">Trip creation date</label>
-        <br/>
-        <input type="hidden" id="posts" name="posts" th:value="${posts}"></input>
+        <br/>        
         <div id="links"><a href="/newpost.html" th:href="@{/posts/new}">Add new post</a></div>
         <div id="links"><a href="/index.html" th:href="@{/index}">Front page</a></div>        
         <br/>

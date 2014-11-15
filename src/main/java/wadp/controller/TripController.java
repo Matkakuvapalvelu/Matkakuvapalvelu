@@ -2,6 +2,7 @@ package wadp.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,19 +37,25 @@ public class TripController {
     
     @RequestMapping(value="/{id}", method = RequestMethod.GET)
     public String viewSingleTrip(Model model, @PathVariable("id") Long id){
-        List<Post> posts = tripRepository.findOne(id).getPosts();
+        List<Post> posts = new ArrayList<>();        
         List<double[]> coordinates = new ArrayList<>();
-        Post firstPost = posts.stream().filter(x -> x.getImage().getLocation()).findFirst().get();
         
-        for (Post post: posts) {  
-            if(post.getImage().getLocation()){
-                coordinates.add(new double[]{post.getImage().getLatitude(), post.getImage().getLongitude()});
-            }            
+        tripRepository.findOne(id).getPosts()
+                .stream().filter(x -> x.getImage().getLocation())
+                .sorted((p1,  p2) -> p1.getPostDate()
+                .compareTo(p2.getPostDate()))
+                .forEach(p -> posts.add(p));
+        
+        posts.stream().forEach(p -> coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude()}));
+                
+        if(coordinates.size() > 0){
+            model.addAttribute("startPoint", coordinates.get(0));            
+        }else {
+            model.addAttribute("startPoint", new double[]{0.00, 0.00});
         }
-        
+            
         model.addAttribute("trip", tripRepository.findOne(id));
-        model.addAttribute("posts", posts);
-        model.addAttribute("startPoint", new double[]{firstPost.getImage().getLatitude(), firstPost.getImage().getLongitude()});
+        model.addAttribute("posts", posts);        
         model.addAttribute("coordinates", coordinates);        
         
         return "trip";
