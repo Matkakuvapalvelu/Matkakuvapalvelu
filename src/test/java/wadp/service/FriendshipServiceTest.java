@@ -77,6 +77,7 @@ public class FriendshipServiceTest {
 
     @Test
     public void canCreateFriendshipIfOneUserIsDifferent() {
+        friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
         assertNotNull(friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(2)));
     }
 
