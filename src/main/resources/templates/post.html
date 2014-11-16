@@ -22,7 +22,7 @@
                     
                     google.maps.event.addDomListener(window, 'load', function () {
                         var map = initialize(latitude, longitude);
-                        drawNewMarker(map, latitude, longitude);
+                        drawNewMarker(map, latitude, longitude, /*[[${post.id}]]*/ 0);
                     });                    
                 }
             }

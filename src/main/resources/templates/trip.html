@@ -7,7 +7,7 @@
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
         <style type="text/css">
-            html, body, #googleMap { height: 90%; width: 90%; margin: 0; padding: 0; float: left;};
+            html, body, #googleMap { height: 100%; width: 100%; margin: 0; padding: 0; float: left;};
         </style>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
         <script type="text/javascript" src="/js/googlemap.js"></script>
@@ -24,48 +24,46 @@
                 if(tripMap){
                     drawMarkers(tripMap, /*[[${coordinates}]]*/ 0.0);
                     drawPolyLinePath(tripMap);
-                }
-                                
-                               
+                }                
             };
             
-            function toggle_visibility(id) {
+            function toggleVisibility(id) {
                 var e = document.getElementById(id);
                 if(e.style.display === 'block'){   
                     e.style.display = 'none';                    
                 } else {
                    e.style.display = 'block';
                 }
-            }  
+            }            
         </script>
     </head>
     <body>
         <div th:replace="fragments/header :: header">header</div>
-        <h2>
-            <label th:if="${trip != null}" th:text="${trip.description}" >View trip</label>
-        </h2> 
-        <label id="visibilitydesc">Who can see my trip: </label>        
-        <label id="visibility" th:text="${#strings.toLowerCase(trip.visibility)}">Trip visibility</label>
-        <br/>
-        <label id="creationdatedesc">Trip creation date: </label>
-        <label id="creationdate" th:text="${#calendars.format(trip.creationDate,'dd MMMM yyyy HH:mm')}">Trip creation date</label>
-        <br/>
-        <br/>
-        <div id="links"><a href="/newpost.html" th:href="@{/posts/new}">Add new post</a></div>     
-        <br/>
         <div style="float: left; width: 25%; margin-left: 5px;">
+            <h2>
+                <label th:if="${trip != null}" th:text="${trip.description}" >View trip</label>
+            </h2> 
+            <label id="visibilitydesc">Who can see my trip: </label>        
+            <label id="visibility" th:text="${#strings.toLowerCase(trip.visibility)}">Trip visibility</label>
+            <br/>
+            <label id="creationdatedesc">Trip creation date: </label>
+            <label id="creationdate" th:text="${#calendars.format(trip.creationDate,'dd MMMM yyyy HH:mm')}">Trip creation date</label>
+            <br/>
+            <br/>
+            <div id="links"><a href="/newpost.html" th:href="@{/posts/new}">Add new post</a></div>     
+            <br/>        
             <label th:if="${trip.posts != null and !#lists.isEmpty(trip.posts)}">Posts included in this trip: </label>
             <label th:if="${trip.posts == null || #lists.isEmpty(trip.posts)}">No posts in this trip</label>
             <ul> 
                 <li th:each="post : ${trip.posts}">
-                    <a th:id="'post_'+${post.id}" href="#" th:onclick="'javascript:toggle_visibility(\'postDiv_' + ${post.id} + '\');'" th:text="${post.imageText}"></a>
-                    <div th:id="'postDiv_' + ${post.id}" style="display: none;">
+                    <a th:id="'post_'+${post.id}" href="#" th:onclick="'javascript:toggleVisibility(\'postDiv_' + ${post.id} + '\');'" th:text="${post.imageText}"></a>
+                    <div th:id="'postDiv_' + ${post.id}" class="postDiv" style="display: none;">
                         <div th:replace="fragments/trippost :: trippost"></div>
                     </div>
                 </li>
             </ul>
         </div>
-        <div id="googleMap" style="float: left; width: 50%; height: 50%;"></div>        
+        <div id="googleMap" style="float: left; width: 50%; height: 80%;"></div>        
         <div style="float: left; width: 20%; margin-left: 10px;">
             <h3>Comments</h3><br />
             <div th:each="comment : ${trip.comments}">
