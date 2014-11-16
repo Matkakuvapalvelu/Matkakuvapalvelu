@@ -20,7 +20,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("SELECT f FROM Friendship f WHERE f.targetUser = ?1")
     List<Friendship> getFriendshipRequests(User user);
 
-    @Query("Select f FROM Friendship f WHERE f.sourceUser = ?1 OR f.targetUser=?1")
+    @Query("Select f FROM Friendship f WHERE (f.sourceUser = ?1 OR f.targetUser=?1) AND f.status='ACCEPTED'")
     List<Friendship> getFriendships(User user);
 
 }

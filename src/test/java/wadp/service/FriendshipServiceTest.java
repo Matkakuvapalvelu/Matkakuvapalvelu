@@ -149,10 +149,30 @@ public class FriendshipServiceTest {
                 )
         );
 
-
         assertTrue("User 3 not present",
                 friends.stream().anyMatch(
                         f -> f.getUsername().equals("User3")
+                )
+        );
+
+    }
+
+    @Test
+    public void returnedFriendsDoesNotContainPendingRequests() {
+        Friendship friendship = friendshipService.createNewFriendshipRequest(testUsers.get(1), testUsers.get(0));
+        friendship.setStatus(Friendship.Status.ACCEPTED);
+        friendshipService.update(friendship);
+
+        friendship = friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(2));
+        friendshipService.update(friendship);
+
+        List<User> friends = friendshipService.getFriends(testUsers.get(0));
+
+        assertEquals(1, friends.size());
+
+        assertTrue("User 2 not present",
+                friends.stream().anyMatch(
+                        f -> f.getUsername().equals("User2")
                 )
         );
 
