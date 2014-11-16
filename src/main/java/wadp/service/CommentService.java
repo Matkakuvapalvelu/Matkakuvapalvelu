@@ -15,29 +15,47 @@ import wadp.repository.PostRepository;
 
 @Service
 public class CommentService {
-    
+
     @Autowired
     private CommentRepository commentRepository;
-    
-    @Autowired 
+
+    @Autowired
     private PostRepository PostRepository;
-    
+
     @Autowired
     private UserService userService;
-    
+
     /**
-     * 
-     * 
+     *
+     *
      */
     @Transactional
     public void addCommentToPost(Comment comment, Post post) {
-        ArrayList<Comment> comments;
-        User user = userService.getAuthenticatedUser();
-        comment.setUser(user);
-        comment.setCreationTime(Date.from(Instant.now()));
-        
+        User user = addPostingInfo(comment);
+
         post.getComments().add(comment);
         user.getComments().add(comment);
         commentRepository.save(comment);
     }
+
+    @Transactional
+    private User addPostingInfo(Comment comment) {
+        User user = userService.getAuthenticatedUser();
+        comment.setUser(user);
+        comment.setCreationTime(Date.from(Instant.now()));
+        return user;
+    }
+
+    public List<Comment> getComments() {
+        return commentRepository.findAll();
+    }
+
+    public List<Comment> getUserComments(User user) {
+        return commentRepository.findByPoster(user);
+    }
+
+    public Comment getComment(Long id) {
+        return commentRepository.findOne(id);
+    }
+
 }

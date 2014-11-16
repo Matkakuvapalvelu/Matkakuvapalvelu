@@ -21,7 +21,7 @@ public class Comment extends AbstractPersistable<Long> {
     private boolean visible;
 
     @ManyToOne
-    private User user;
+    private User poster;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationTime;
@@ -47,11 +47,11 @@ public class Comment extends AbstractPersistable<Long> {
     }
 
     public User getUser() {
-        return user;
+        return poster;
     }
 
     public void setUser(User user) {
-        this.user = user;
+        this.poster = user;
     }
 
     public Date getCreationTime() {
