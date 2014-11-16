@@ -66,7 +66,7 @@
             </ul>
         </div>
         <div id="googleMap" style="float: left; width: 50%; height: 50%;"></div>        
-        <div style="float: left; width: 20%; margin-left: 10px;" th:if="${trip.comments != null and !#lists.isEmpty(trip.comments)}">
+        <div style="float: left; width: 20%; margin-left: 10px;">
             <h3>Comments</h3><br />
             <div th:each="comment : ${trip.comments}">
                 ---<br/>
