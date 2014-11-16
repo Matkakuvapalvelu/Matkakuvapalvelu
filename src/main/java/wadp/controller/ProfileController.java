@@ -26,35 +26,27 @@ public class ProfileController {
     @Autowired
     private NotificationService notificationService;
 
-    @RequestMapping(method= RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public String showProfilePage(Model model) {
         addUserDetails(userService.getAuthenticatedUser(), model, true);
         return "profile";
     }
 
-    @RequestMapping(value="/{id}", method= RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String showProfilePage(@PathVariable Long id, Model model) {
         addUserDetails(userService.getUser(id), model, userService.getAuthenticatedUser().getId() == id);
         return "profile";
     }
 
-
-
     private void addUserDetails(User user, Model model, boolean isLoggedInUser) {
         model.addAttribute("user", user);
 
         if (isLoggedInUser) {
-            model.addAttribute("",
+            model.addAttribute("notifications",
                     notificationService.getUnreadNotificationCountForUser(userService.getAuthenticatedUser()));
         } else {
             model.addAttribute("canrequestfriendship",
                     !friendshipService.areFriends(user, userService.getAuthenticatedUser()));
         }
-
-
-
     }
-
-
-
 }

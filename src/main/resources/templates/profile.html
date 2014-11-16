@@ -10,14 +10,25 @@
 
 </head>
 <body>
-    <span th:switch="${unreadnotifications > 0}">
-        <span th:case="${true}">
-            <a href="/notification" th:text="@{'You have ' + ${unreadnotifications} +  ' unread notification(s)'}" ></a>
-        </span>
-        <span th:case="${false}">
-            <a href="/notification">No unread private messages</a>
+    <span th:if="${unreadnotifications} != null">
+        <span th:switch="${unreadnotifications > 0}">
+            <span th:case="${true}">
+                <a href="/notification" th:text="@{'You have ' + ${unreadnotifications} +  ' unread notification(s)'}" ></a>
+            </span>
+            <span th:case="${false}">
+                <a href="/notification">No unread private messages</a>
+            </span>
         </span>
     </span>
     <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
+
+    <h1 th:text="@{'Profile of ' + ${user.username}}"></h1>
+
+    <span th:if="${canrequestfriendship} == ${true}">
+        <a class="btn btn-default" href="#" onclick="document.getElementById('friendship-form').submit();"><span>Send friendship request!</span></a>
+        <form style="visibility: hidden" id ="friendship-form" method="post" action="#" th:action="@{'/friendship/request/' + ${user.id}}"><input type="submit" value="Friend"/></form>
+    </span>
+
+
 </body>
 </html>
