@@ -28,7 +28,7 @@ public class FriendshipService {
         return friendshipRepository.save(friendship);
     }
 
-    private boolean friendshipEntityExists(User first, User second) {
+    public boolean friendshipEntityExists(User first, User second) {
         return friendshipRepository.anyFriendshipCountBetween(first, second) != 0;
     }
 

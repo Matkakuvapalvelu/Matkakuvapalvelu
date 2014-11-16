@@ -42,11 +42,11 @@ public class ProfileController {
         model.addAttribute("user", user);
 
         if (isLoggedInUser) {
-            model.addAttribute("notifications",
+            model.addAttribute("unreadnotifications",
                     notificationService.getUnreadNotificationCountForUser(userService.getAuthenticatedUser()));
         } else {
             model.addAttribute("canrequestfriendship",
-                    !friendshipService.areFriends(user, userService.getAuthenticatedUser()));
+                    !friendshipService.friendshipEntityExists(user, userService.getAuthenticatedUser()));
         }
     }
 }

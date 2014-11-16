@@ -31,7 +31,7 @@ public class FriendshipController {
         if (userService.getAuthenticatedUser().getId() == id) {
             return "redirect:/profile/" + id;
         }
-        
+
         friendshipService.createNewFriendshipRequest(userService.getAuthenticatedUser(), userService.getUser(id));
         notificationService.createNewNotification(
                 "Friendship request",
