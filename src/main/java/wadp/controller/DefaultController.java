@@ -28,6 +28,8 @@ public class DefaultController {
                     authenticatedUser.getPassword() );
         }
 
+        model.addAttribute("users", userService.getUsers());
+
         return "index";
     }
 }

@@ -32,9 +32,7 @@ public class User extends AbstractPersistable<Long> {
     @OneToMany(mappedBy="sender")
     private List<Notification> sentNotifications; // basically sent private messages
 
-    @ManyToMany(mappedBy="friends")
-    private List<Friendship> friends;
-    
+
     public User() {
         trips = new ArrayList<>();
 
