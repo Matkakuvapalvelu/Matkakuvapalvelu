@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import wadp.domain.Comment;
 import wadp.domain.Post;
 import wadp.domain.Trip;
 import wadp.repository.TripRepository;
+import wadp.service.CommentService;
 import wadp.service.TripService;
 
 @Controller
@@ -27,6 +29,9 @@ public class TripController {
         
     @Autowired
     TripRepository tripRepository;
+    
+    @Autowired
+    CommentService commentService;
         
     @RequestMapping(method = RequestMethod.GET)
     public String view(Model model){
@@ -56,9 +61,12 @@ public class TripController {
             model.addAttribute("startPoint", new double[]{0.00, 0.00});
         }
             
-        model.addAttribute("trip", tripRepository.findOne(id));
+        Trip trip = tripRepository.findOne(id);
+        
+        model.addAttribute("trip", trip);
         model.addAttribute("posts", posts);        
-        model.addAttribute("coordinates", coordinates);        
+        model.addAttribute("coordinates", coordinates);   
+        model.addAttribute("comments", trip.getComments());
         
         return "trip";
     }
@@ -82,5 +90,14 @@ public class TripController {
         model.addAttribute("visibilities", new ArrayList<>(Arrays.asList(Trip.Visibility.values())));
         
         return "tripedit";
+    }
+    
+    @RequestMapping(value = "/{id}/comment", method = RequestMethod.POST)
+    public String addCommentToPost(
+            @ModelAttribute Comment comment,
+            @PathVariable Long id) {        
+        Trip trip = tripService.getTrip(id);
+        commentService.addCommentToTrip(comment, trip);
+        return "redirect:/trips/" + id;
     }
 }

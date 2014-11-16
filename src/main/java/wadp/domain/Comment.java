@@ -17,6 +17,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Entity
 public class Comment extends AbstractPersistable<Long> {
 
+    //temporary solution to length issues.
     @Column(length = Integer.MAX_VALUE)
     private String commentText;
 

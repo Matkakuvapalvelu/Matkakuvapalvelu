@@ -43,6 +43,24 @@
         <div id="links"><a href="/newpost.html" th:href="@{/posts/new}">Add new post</a></div>
         <div id="links"><a href="/index.html" th:href="@{/index}">Front page</a></div>        
         <br/>
-        <div id="googleMap"></div>        
+        <div id="googleMap"></div>       
+        <div>
+            <h3>Comments</h3><br />
+            <div  th:each="comment : ${comments}">
+                <span th:if="${comment.user != null}" th:text="${comment.user.username}" >Anonymous</span><br />
+                <span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span>
+                <p th:text="${comment.commentText}">There are no comments on this post.</p>
+            </div>
+        </div>
+        <form method="POST" th:action="@{'/trips/' + ${trip.id} + '/comment'}">
+            <label for="commentText">Post a comment</label><br />
+            <textarea
+                      cols="80"
+                      rows="5"
+                      name="commentText"
+                      id="commentText"
+                      placeholder="Type your comment here."></textarea>
+            <input type="submit" value="post"/>
+        </form>
     </body>
 </html>
