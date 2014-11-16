@@ -8,6 +8,10 @@ import wadp.domain.Friendship;
 import wadp.domain.User;
 import wadp.repository.FriendshipRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class FriendshipService {
 
@@ -39,4 +43,28 @@ public class FriendshipService {
     public Friendship update(Friendship friendship) {
         return friendshipRepository.save(friendship);
     }
+
+    public List<Friendship> getFriendshipRequests(User user) {
+        return friendshipRepository.getFriendshipRequests(user);
+    }
+
+    public List<User> getFriends(User user) {
+        List<Friendship> friendships = friendshipRepository.getFriendships(user);
+
+        List<User> friends = friendships
+                .stream()
+                .map(
+                    f -> {
+                        if (f.getSourceUser().getUsername().equals(user.getUsername())) {
+                            return f.getTargetUser();
+                        } else {
+                            return f.getSourceUser();
+                        }})
+                .collect(Collectors.toList());
+
+        return friends;
+    }
+
+
+
 }

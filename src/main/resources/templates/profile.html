@@ -20,6 +20,7 @@
             </span>
         </span>
     </span>
+    <a href="/friends.html" th:href="@{/friendship}">Friends</a>
     <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
 
     <h1 th:text="@{'Profile of ' + ${user.username}}"></h1>

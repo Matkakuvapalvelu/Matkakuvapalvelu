@@ -37,8 +37,10 @@ public class FriendshipServiceTest {
     public void setUp() {
         testUsers = new ArrayList<>();
         testUsers.add(userService.createUser("User1", "user1"));
-        testUsers.add(userService.createUser("User2", "user1"));
-        testUsers.add(userService.createUser("User3", "user1"));
+        testUsers.add(userService.createUser("User2", "user2"));
+        testUsers.add(userService.createUser("User3", "user3"));
+        testUsers.add(userService.createUser("User4", "user4"));
+
     }
 
     @Test
@@ -106,6 +108,54 @@ public class FriendshipServiceTest {
         friendship.setStatus(Friendship.Status.ACCEPTED);
         friendship = friendshipService.update(friendship);
         assertTrue(friendshipService.areFriends(testUsers.get(0), testUsers.get(1)));
+    }
+
+    @Test
+    public void pendingRequestsAreReturned() {
+        friendshipService.createNewFriendshipRequest(testUsers.get(1), testUsers.get(0));
+        friendshipService.createNewFriendshipRequest(testUsers.get(2), testUsers.get(0));
+        friendshipService.createNewFriendshipRequest(testUsers.get(3), testUsers.get(0));
+
+        List<Friendship> friendshipRequests = friendshipService.getFriendshipRequests(testUsers.get(0));
+        assertEquals(3, friendshipRequests.size());
+
+        assertTrue(
+                friendshipRequests.stream().anyMatch(
+                        f -> !f.equals(testUsers.get(0)) && testUsers.contains(f.getTargetUser())
+                )
+        );
+
+    }
+
+    @Test
+    public void friendsAreReturned() {
+        Friendship friendship = friendshipService.createNewFriendshipRequest(testUsers.get(1), testUsers.get(0));
+        friendship.setStatus(Friendship.Status.ACCEPTED);
+        friendshipService.update(friendship);
+
+        friendship = friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(2));
+        friendship.setStatus(Friendship.Status.ACCEPTED);
+        friendshipService.update(friendship);
+
+        List<User> friends = friendshipService.getFriends(testUsers.get(0));
+
+
+
+        assertEquals(2, friends.size());
+
+        assertTrue("User 2 not present",
+                friends.stream().anyMatch(
+                        f -> f.getUsername().equals("User2")
+                )
+        );
+
+
+        assertTrue("User 3 not present",
+                friends.stream().anyMatch(
+                        f -> f.getUsername().equals("User3")
+                )
+        );
+
     }
 }
 

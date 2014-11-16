@@ -2,6 +2,7 @@ package wadp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,14 @@ public class FriendshipController {
     @Autowired
     private NotificationService notificationService;
 
+    @RequestMapping(method=RequestMethod.GET)
+    public String showFriendsAndRequests(Model model) {
+        model.addAttribute("friends", friendshipService.getFriends(userService.getAuthenticatedUser()));
+        model.addAttribute("friendRequests", friendshipService.getFriendshipRequests(userService.getAuthenticatedUser()));
+
+        return "friends";
+    }
+
 
     @RequestMapping(value="/request/{id}", method= RequestMethod.POST)
     public String requestFriendship(@PathVariable Long id) {
@@ -42,4 +51,5 @@ public class FriendshipController {
 
         return "redirect:/profile/" + id;
     }
+
 }

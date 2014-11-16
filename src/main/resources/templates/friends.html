@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Friends</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/general.css"/>
+
+    </head>
+    <body>
+        <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
+
+        <h1 th:if="${friends} != null">Your friends</h1>
+        <div th:each="friend : ${friends}">
+            <div>
+                <a href="#" th:href="@{'profile/' + ${friend.id}}" th:text="${friend.username}">link to friend profile</a>
+                <a href="#" class="btn btn-default" onclick="document.getElementById('unfriend-form').submit();"><span>Unfriend</span></a>
+                <form style="visibility: hidden" id ="unfriend-form" method="post" action="#" th:action="@{'/friendship/unfriend/'+${friend.id}}"><input type="submit" value="unfriend"/></form>
+            </div>
+        </div>
+
+        <h1 th:if="${friendRequests} != null">Outstanding friend requests</h1>
+        <div th:each="request : ${friendRequests}">
+            <h3 th:text="@{'Request from ' + ${request.sourceUser.username}}">Friend request maker name here</h3>
+            <div>
+                <a href="#" class="btn btn-default" onclick="document.getElementById('accept-form').submit();"><span>Accept</span></a>
+                <form style="visibility: hidden" id ="accept-form" method="post" action="#" th:action="@{'/friendship/request/' + ${request.id} + '/accept'}">
+                    <input type="submit" value="unfriend"/>
+                </form>
+
+                <a href="#" class="btn btn-default" onclick="document.getElementById('reject-form').submit();"><span>Reject</span></a>
+                <form style="visibility: hidden" id ="reject-form" method="post" action="#" th:action="@{'/friendship/request/' + ${request.id} + '/reject'}">
+                    <input type="submit" value="reject"/>
+                </form>
+            </div>
+        </div>
+
+
+    </body>
+</html>
