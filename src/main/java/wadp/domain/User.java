@@ -5,11 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * User domain class. Contains any information tied to single user account
@@ -35,6 +31,9 @@ public class User extends AbstractPersistable<Long> {
 
     @OneToMany(mappedBy="sender")
     private List<Notification> sentNotifications; // basically sent private messages
+
+    @ManyToMany(mappedBy="friends")
+    private List<Friendship> friends;
     
     public User() {
         trips = new ArrayList<>();
