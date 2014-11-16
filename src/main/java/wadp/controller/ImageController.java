@@ -64,6 +64,15 @@ public class ImageController {
         return new ResponseEntity<>(image.getPostThumbnail().getContent(), getImageHeaders(image.getPostThumbnail()), HttpStatus.CREATED);
     }
 
+    @RequestMapping(value="/{id}/gallerythumbnail", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<byte[]> getGalleryThumbnailImage(@PathVariable Long id){
+        // TODO: Check that user actually has right to see the image in question
+        // TODO: Send 304 if browser has image cached
+
+        Image image = imageService.getImage(id);
+        return new ResponseEntity<>(image.getGalleryThumbnail().getContent(), getImageHeaders(image.getGalleryThumbnail()), HttpStatus.CREATED);
+    }
 
     private HttpHeaders getImageHeaders(FileObject image) {
         final HttpHeaders headers = new HttpHeaders();

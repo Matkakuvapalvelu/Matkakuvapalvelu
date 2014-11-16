@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head lang="en">
+        <title>View Post</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
+    </head>
+    <body>
+        <div th:fragment="trippost">
+            <div class="image-side-by-side">
+                <a href="#" th:href="@{'/posts/'+${post.id}}">
+                    <img id="user-image" th:attr="src=@{'/images/' + ${post.image.id} + '/gallerythumbnail'}"/>
+                </a>
+            </div>
+            <div >
+                <h4 th:if="${post.comments != null and !#lists.isEmpty(post.comments)}">Comments</h4>
+                <div th:each="comment : ${post.comments}">
+                    ---<br/>
+                    <span th:if="${comment.user != null}" th:text="${comment.user.username} + ', '" >Anonymous, </span>
+                    <span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span>
+                    <p th:text="${comment.commentText}">There are no comments on this post.</p>                    
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

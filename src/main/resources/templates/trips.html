@@ -8,10 +8,8 @@
         <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
     </head>
     <body>
-        <h2>
-            <label th:if="${trip != null}" th:text="${trip.description}" >Edit trip</label>
-            <label th:if="${trip == null}" >Add new trip</label>
-        </h2> 
+        <div th:replace="fragments/header :: header">header</div>
+        <h3>Add new trip</h3> 
         <form method="POST" th:action="@{/trips}" >
             <label for="description">Trip description</label>
             <br/>            
@@ -30,14 +28,12 @@
         
         <br/>        
         <div th:if="${trips != null}">
-            <h2>All trips</h2>
+            <h3>Existing trips</h3>
             <div th:each="trip: ${trips}">
                 <a href="/trips.html" th:href="@{'/trips/'+${trip.id}}" th:text="${trip.description}">Trip to Russia</a>
                 <a href="/trips.html" th:href="@{'/trips/'+${trip.id}+'/edit'}" th:text="Edit">Trip to Russia</a>
                 <label th:text="${trip.creationDate}">Today</label>
             </div>
-        </div>
-        
-        <div id="links"><a href="/index.html" th:href="@{/index}">Front page</a></div>
+        </div>        
     </body>
 </html>

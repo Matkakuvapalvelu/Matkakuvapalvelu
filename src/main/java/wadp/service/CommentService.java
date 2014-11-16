@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wadp.domain.Comment;
 import wadp.domain.Post;
+import wadp.domain.Trip;
 import wadp.domain.User;
 import wadp.repository.CommentRepository;
 import wadp.repository.PostRepository;
@@ -37,6 +38,18 @@ public class CommentService {
         comment.setCreationTime(Date.from(Instant.now()));
         
         post.getComments().add(comment);
+        user.getComments().add(comment);
+        commentRepository.save(comment);
+    }
+    
+    @Transactional
+    public void addCommentToTrip(Comment comment, Trip trip) {
+        ArrayList<Comment> comments;
+        User user = userService.getAuthenticatedUser();
+        comment.setUser(user);
+        comment.setCreationTime(Date.from(Instant.now()));
+        
+        trip.getComments().add(comment);
         user.getComments().add(comment);
         commentRepository.save(comment);
     }

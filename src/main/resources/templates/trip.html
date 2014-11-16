@@ -7,7 +7,7 @@
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"/>
         <style type="text/css">
-            html, body, #googleMap { height: 90%; width: 90%; margin: 0; padding: 0;};
+            html, body, #googleMap { height: 90%; width: 90%; margin: 0; padding: 0; float: left;};
         </style>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
         <script type="text/javascript" src="/js/googlemap.js"></script>
@@ -25,24 +25,66 @@
                     drawMarkers(tripMap, /*[[${coordinates}]]*/ 0.0);
                     drawPolyLinePath(tripMap);
                 }
+                                
+                               
             };
+            
+            function toggle_visibility(id) {
+                var e = document.getElementById(id);
+                if(e.style.display === 'block'){   
+                    e.style.display = 'none';                    
+                } else {
+                   e.style.display = 'block';
+                }
+            }  
         </script>
     </head>
     <body>
+        <div th:replace="fragments/header :: header">header</div>
         <h2>
             <label th:if="${trip != null}" th:text="${trip.description}" >View trip</label>
         </h2> 
-        <label id="visibilitydesc">Who can see my trip</label>
+        <label id="visibilitydesc">Who can see my trip: </label>        
+        <label id="visibility" th:text="${#strings.toLowerCase(trip.visibility)}">Trip visibility</label>
         <br/>
-        <label id="visibility" th:text="${trip.visibility}">Trip visibility</label>
+        <label id="creationdatedesc">Trip creation date: </label>
+        <label id="creationdate" th:text="${#calendars.format(trip.creationDate,'dd MMMM yyyy HH:mm')}">Trip creation date</label>
         <br/>
-        <label id="creationdatedesc">Trip creation date</label>
         <br/>
-        <label id="creationdate" th:text="${trip.creationDate}">Trip creation date</label>
-        <br/>        
-        <div id="links"><a href="/newpost.html" th:href="@{/posts/new}">Add new post</a></div>
-        <div id="links"><a href="/index.html" th:href="@{/index}">Front page</a></div>        
+        <div id="links"><a href="/newpost.html" th:href="@{/posts/new}">Add new post</a></div>     
         <br/>
-        <div id="googleMap"></div>        
+        <div style="float: left; width: 25%; margin-left: 5px;">
+            <label th:if="${trip.posts != null and !#lists.isEmpty(trip.posts)}">Posts included in this trip: </label>
+            <label th:if="${trip.posts == null || #lists.isEmpty(trip.posts)}">No posts in this trip</label>
+            <ul> 
+                <li th:each="post : ${trip.posts}">
+                    <a th:id="'post_'+${post.id}" href="#" th:onclick="'javascript:toggle_visibility(\'postDiv_' + ${post.id} + '\');'" th:text="${post.imageText}"></a>
+                    <div th:id="'postDiv_' + ${post.id}" style="display: none;">
+                        <div th:replace="fragments/trippost :: trippost"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div id="googleMap" style="float: left; width: 50%; height: 50%;"></div>        
+        <div style="float: left; width: 20%; margin-left: 10px;" th:if="${trip.comments != null and !#lists.isEmpty(trip.comments)}">
+            <h3>Comments</h3><br />
+            <div th:each="comment : ${trip.comments}">
+                ---<br/>
+                <span th:if="${comment.user != null}" th:text="${comment.user.username} + ', '" >Anonymous, </span>
+                <span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span>
+                <p th:text="${comment.commentText}">There are no comments on this post.</p>
+            </div>
+            <form method="POST" th:action="@{'/trips/' + ${trip.id} + '/comment'}">
+                <label for="commentText">Post a comment</label><br />
+                <textarea
+                          cols="40"
+                          rows="5"
+                          name="commentText"
+                          id="commentText"
+                          placeholder="Type your comment here."></textarea>
+                <input type="submit" value="post"/><br />
+            </form>
+        </div>
+        <div style="clear: both;"></div>
     </body>
 </html>
