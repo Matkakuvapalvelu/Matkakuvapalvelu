@@ -36,50 +36,20 @@ public class FriendshipController {
     @RequestMapping(value="/request/accept/{id}", method=RequestMethod.POST)
     public String acceptFriendship(@PathVariable Long id) {
 
-        User requester = userService.getUser(id);
-        User authenticatedUser = userService.getAuthenticatedUser();
-
         friendshipService.acceptRequest(id);
-
-        notificationService.createNewNotification(
-                "Friendship request accepted",
-                "User " + authenticatedUser.getUsername() +" has accepted your friendship request!",
-                authenticatedUser,
-                requester);
-
         return "redirect:/friends";
     }
 
     @RequestMapping(value="/request/reject/{id}", method=RequestMethod.POST)
     public String rejectFriendship(@PathVariable Long id) {
-
-        User requester = userService.getUser(id);
-        User authenticatedUser = userService.getAuthenticatedUser();
         friendshipService.rejectRequest(id);
-
-        notificationService.createNewNotification(
-                "Friendship request rejected",
-                "User " + authenticatedUser.getUsername() +" has rejected your friendship request!",
-                authenticatedUser,
-                requester);
-
         return "redirect:/friends";
     }
 
     @RequestMapping(value="/unfriend/{id}", method=RequestMethod.DELETE)
     public String removeFriendship(@PathVariable Long id) {
-        User requester = userService.getUser(id);
-        User authenticatedUser = userService.getAuthenticatedUser();
-        friendshipService.unfriend(id);
-
-        notificationService.createNewNotification(
-                "Friend unfriended you",
-                "User " + authenticatedUser.getUsername() +" has unfriended you!",
-                authenticatedUser,
-                requester);
-
+        friendshipService.unfriend(id, userService.getAuthenticatedUser());
         return "redirect:/friends";
-
     }
 
     @RequestMapping(value="/request/{id}", method= RequestMethod.POST)
@@ -91,12 +61,6 @@ public class FriendshipController {
         }
 
         friendshipService.createNewFriendshipRequest(userService.getAuthenticatedUser(), userService.getUser(id));
-        notificationService.createNewNotification(
-                "Friendship request",
-                "User " + userService.getAuthenticatedUser().getUsername() + " wants to be your friend!",
-                userService.getAuthenticatedUser(),
-                userService.getUser(id));
-
 
         return "redirect:/profile/" + id;
     }

@@ -17,6 +17,8 @@ public class FriendshipService {
     @Autowired
     private FriendshipRepository friendshipRepository;
 
+    @Autowired
+    private NotificationService notificationService;
 
     public Friendship createNewFriendshipRequest(User source, User target) {
         if (friendshipEntityExists(source, target)) {
@@ -27,6 +29,13 @@ public class FriendshipService {
         friendship.setSourceUser(source);
         friendship.setTargetUser(target);
         friendship.setStatus(Friendship.Status.PENDING);
+
+        notificationService.createNewNotification(
+                "Friendship request",
+                "User " + source.getUsername() + " wants to be your friend!",
+                source,
+                target);
+
 
         return friendshipRepository.save(friendship);
     }
@@ -72,18 +81,49 @@ public class FriendshipService {
         }
 
         friendship.setStatus(Friendship.Status.ACCEPTED);
+
+        notificationService.createNewNotification(
+                "Friendship request accepted",
+                "User " + friendship.getTargetUser().getUsername() +" has accepted your friendship request!",
+                friendship.getTargetUser(),
+                friendship.getSourceUser());
+
         update(friendship);
     }
 
     public void rejectRequest(Long id) {
-        unfriend(id);
-    }
-
-    public void unfriend(Long id) {
         Friendship friendship = friendshipRepository.getOne(id);
         if (friendship == null) {
             throw new NofriendshipExistsException("No friendship exists");
         }
+
+        notificationService.createNewNotification(
+                "Friendship request rejected",
+                "User " + friendship.getTargetUser().getUsername() +" has rejected your friendship request!",
+                friendship.getTargetUser(),
+                friendship.getSourceUser());
+
+        friendshipRepository.delete(friendship);
+    }
+
+    public void unfriend(Long id, User unfriender) {
+        Friendship friendship = friendshipRepository.getOne(id);
+        if (friendship == null) {
+            throw new NofriendshipExistsException("No friendship exists");
+        }
+
+        User target;
+        if (unfriender.getUsername().equals(friendship.getSourceUser())) {
+            target = friendship.getTargetUser();
+        } else {
+            target = friendship.getSourceUser();
+        }
+
+        notificationService.createNewNotification(
+                "Friend unfriended you",
+                "User " + unfriender + " has unfriended you!",
+                unfriender,
+                target);
 
         friendshipRepository.delete(friendship);
     }
