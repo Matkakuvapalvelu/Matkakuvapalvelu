@@ -30,6 +30,11 @@
         <form style="visibility: hidden" id ="friendship-form" method="post" action="#" th:action="@{'/friendship/request/' + ${user.id}}"><input type="submit" value="Friend"/></form>
     </span>
 
+    <h2>User trips</h2>
+    <div th:each="trip : ${trips}">
+        <a href="#" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.description}">trip description</a>
+    </div>
+
 
 </body>
 </html>
