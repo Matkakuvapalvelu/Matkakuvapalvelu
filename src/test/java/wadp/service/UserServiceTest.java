@@ -15,8 +15,13 @@ import wadp.Application;
 import wadp.domain.User;
 import wadp.repository.UserRepository;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -88,6 +93,25 @@ public class UserServiceTest {
     public void getAuthenticatedUserReturnsLoggedInUser() {
         User user = service.getAuthenticatedUser();
         assertEquals(loggedInUser.getUsername(), user.getUsername());
+    }
+
+    @Test
+    public void serviceReturnsListOfAllUsersCorrectly() {
+        service.createUser("Foo", "barbarbar");
+        service.createUser("Foo2", "barbarbar");
+        service.createUser("Foo3", "barbarbar");
+        service.createUser("Foo4", "barbarbar");
+
+        List<String> userNames = Arrays.asList("Foo", "Foo2", "Foo3", "Foo4", "loginuser");
+
+        List<User> users = service.getUsers();
+
+        assertEquals(5, users.size());
+        for (User u : users) {
+            assertTrue(userNames.contains(u.getUsername()));
+            userNames = userNames.stream().filter(user -> !user.equals(u.getUsername()) ).collect(Collectors.toList());
+        }
+
     }
 
 }

@@ -27,7 +27,7 @@ public class NotificationController {
 
     @RequestMapping(method=RequestMethod.GET)
     public String showNotificationList(Model model) {
-        model.addAttribute("notifications", userService.getAuthenticatedUser().getReceivedNotifications());
+        model.addAttribute("notifications", notificationService.getNotifications(userService.getAuthenticatedUser()));
         return "notifications";
     }
 

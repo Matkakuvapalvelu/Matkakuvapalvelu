@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import wadp.domain.User;
 import wadp.repository.UserRepository;
 
+import java.util.List;
+
 /**
  * Service that handles anything user related, such as creation, authentication and getting the authenticated user
  */
@@ -66,5 +68,13 @@ public class UserService {
     public User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findByUsername(authentication.getName());
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+
+    public User getUser(Long id) {
+        return userRepository.getOne(id);
     }
 }
