@@ -40,21 +40,12 @@ public class FriendshipServiceTest {
         testUsers.add(userService.createUser("User2", "user2"));
         testUsers.add(userService.createUser("User3", "user3"));
         testUsers.add(userService.createUser("User4", "user4"));
-
     }
 
     @Test
     public void canCreateFriendshipRequests() {
         Friendship friendship = friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
         assertNotNull(friendshipRepository.findOne(friendship.getId()));
-    }
-
-    @Test
-    public void friendshipIsUpdatedCorrectly() {
-        Friendship friendship = friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
-        friendship.setStatus(Friendship.Status.ACCEPTED);
-        friendship = friendshipService.update(friendship);
-        assertEquals(Friendship.Status.ACCEPTED, friendshipRepository.findOne(friendship.getId()).getStatus());
     }
 
     @Test
@@ -66,7 +57,7 @@ public class FriendshipServiceTest {
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void creationThrowsOnRepeatedCreation() {
+         public void creationThrowsOnRepeatedCreation() {
         friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
         friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
     }
@@ -75,6 +66,37 @@ public class FriendshipServiceTest {
     public void creationThrowsOnRepeatedCreationIfParametersAreSwapped() {
         friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
         friendshipService.createNewFriendshipRequest(testUsers.get(1), testUsers.get(0));
+    }
+
+    @Test
+    public void acceptingFriendshipWorks() {
+        Friendship friendship = friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
+        friendshipService.acceptRequest(testUsers.get(0), testUsers.get(1));
+        assertEquals(Friendship.Status.ACCEPTED, friendshipRepository.findOne(friendship.getId()).getStatus());
+    }
+
+    @Test
+    public void rejectingFriendshipWorks() {
+        Friendship friendship = friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
+        friendshipService.rejectRequest(testUsers.get(0), testUsers.get(1));
+        assertFalse(friendshipRepository.exists(friendship.getId()));
+    }
+
+    @Test
+    public void removingfFriendshipWorks() {
+        Friendship friendship = friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
+        friendshipService.unfriend(testUsers.get(0), testUsers.get(1));
+        assertFalse(friendshipRepository.exists(friendship.getId()));
+    }
+
+
+
+    @Test
+    public void friendshipIsUpdatedCorrectly() {
+        Friendship friendship = friendshipService.createNewFriendshipRequest(testUsers.get(0), testUsers.get(1));
+        friendship.setStatus(Friendship.Status.ACCEPTED);
+        friendship = friendshipService.update(friendship);
+        assertEquals(Friendship.Status.ACCEPTED, friendshipRepository.findOne(friendship.getId()).getStatus());
     }
 
     @Test

@@ -8,7 +8,6 @@ import wadp.domain.Friendship;
 import wadp.domain.User;
 import wadp.repository.FriendshipRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,5 +65,26 @@ public class FriendshipService {
     }
 
 
+    public void acceptRequest(Long id) {
+        Friendship friendship = friendshipRepository.getOne(id);
+        if (friendship == null) {
+            throw new NofriendshipExistsException("No friendship exists");
+        }
 
+        friendship.setStatus(Friendship.Status.ACCEPTED);
+        update(friendship);
+    }
+
+    public void rejectRequest(Long id) {
+        unfriend(id);
+    }
+
+    public void unfriend(Long id) {
+        Friendship friendship = friendshipRepository.getOne(id);
+        if (friendship == null) {
+            throw new NofriendshipExistsException("No friendship exists");
+        }
+
+        friendshipRepository.delete(friendship);
+    }
 }
