@@ -41,11 +41,11 @@ public class FriendshipService {
     }
 
     public boolean friendshipEntityExists(User first, User second) {
-        return friendshipRepository.anyFriendshipCountBetween(first, second) != 0;
+        return friendshipRepository.anyFriendshipBetween(first, second) != null;
     }
 
     public boolean areFriends(User first, User second) {
-        return friendshipRepository.acceptedFriendshipCountBetween(first, second) != 0;
+        return friendshipRepository.acceptedFriendshipBetween(first, second) != null;
     }
 
     public Friendship update(Friendship friendship) {
@@ -106,23 +106,21 @@ public class FriendshipService {
         friendshipRepository.delete(friendship);
     }
 
-    public void unfriend(Long id, User unfriender) {
-        Friendship friendship = friendshipRepository.findOne(id);
+    /**
+     * Unfriends two users
+     * @param source User who initiated unfriending
+     * @param target User who will be unfriended
+     */
+    public void unfriend(User source, User target) {
+        Friendship friendship = friendshipRepository.acceptedFriendshipBetween(source, target);
         if (friendship == null) {
             throw new NofriendshipExistsException("No friendship exists");
         }
 
-        User target;
-        if (unfriender.getUsername().equals(friendship.getSourceUser().getUsername())) {
-            target = friendship.getTargetUser();
-        } else {
-            target = friendship.getSourceUser();
-        }
-
         notificationService.createNewNotification(
                 "Friend unfriended you",
-                "User " + unfriender + " has unfriended you!",
-                unfriender,
+                "User " + source.getUsername() + " has unfriended you!",
+                source,
                 target);
 
         friendshipRepository.delete(friendship);

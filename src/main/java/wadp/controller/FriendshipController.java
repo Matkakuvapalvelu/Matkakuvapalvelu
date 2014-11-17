@@ -33,36 +33,37 @@ public class FriendshipController {
         return "friends";
     }
 
-    @RequestMapping(value="/request/accept/{id}", method=RequestMethod.POST)
-    public String acceptFriendship(@PathVariable Long id) {
+    @RequestMapping(value="/request/accept/{requestId}", method=RequestMethod.POST)
+    public String acceptFriendship(@PathVariable Long requestId) {
 
-        friendshipService.acceptRequest(id);
-        return "redirect:/friends";
+        friendshipService.acceptRequest(requestId);
+        return "redirect:/friendship";
     }
 
-    @RequestMapping(value="/request/reject/{id}", method=RequestMethod.POST)
-    public String rejectFriendship(@PathVariable Long id) {
-        friendshipService.rejectRequest(id);
-        return "redirect:/friends";
+    @RequestMapping(value="/request/reject/{requestId}", method=RequestMethod.POST)
+    public String rejectFriendship(@PathVariable Long requestId) {
+        friendshipService.rejectRequest(requestId);
+        return "redirect:/friendship";
     }
 
-    @RequestMapping(value="/unfriend/{id}", method=RequestMethod.DELETE)
-    public String removeFriendship(@PathVariable Long id) {
-        friendshipService.unfriend(id, userService.getAuthenticatedUser());
-        return "redirect:/friends";
+    @RequestMapping(value="/unfriend/{friendID}", method=RequestMethod.DELETE)
+    public String removeFriendship(@PathVariable Long friendID) {
+
+        friendshipService.unfriend(userService.getAuthenticatedUser(), userService.getUser(friendID));
+        return "redirect:/friendship";
     }
 
-    @RequestMapping(value="/request/{id}", method= RequestMethod.POST)
-    public String requestFriendship(@PathVariable Long id) {
+    @RequestMapping(value="/request/{friendId}", method= RequestMethod.POST)
+    public String requestFriendship(@PathVariable Long friendId) {
 
         // friendship with self is kinda weird, let's not do that
-        if (userService.getAuthenticatedUser().getId() == id) {
-            return "redirect:/profile/" + id;
+        if (userService.getAuthenticatedUser().getId() == friendId) {
+            return "redirect:/profile/" + friendId;
         }
 
-        friendshipService.createNewFriendshipRequest(userService.getAuthenticatedUser(), userService.getUser(id));
+        friendshipService.createNewFriendshipRequest(userService.getAuthenticatedUser(), userService.getUser(friendId));
 
-        return "redirect:/profile/" + id;
+        return "redirect:/profile/" + friendId;
     }
 
 }
