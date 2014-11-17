@@ -26,18 +26,8 @@ public class User extends AbstractPersistable<Long> {
     @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
     private List<Trip> trips;
 
-    @OneToMany(mappedBy="receiver")
-    private List<Notification> receivedNotifications; // any notifications received (private messages, friendship requests etc)
-
-    @OneToMany(mappedBy="sender")
-    private List<Notification> sentNotifications; // basically sent private messages
-
-
     public User() {
         trips = new ArrayList<>();
-
-        receivedNotifications = new ArrayList<>();
-        sentNotifications = new ArrayList<>();
 
         userRole = "USER";
     }
@@ -86,19 +76,4 @@ public class User extends AbstractPersistable<Long> {
         return BCrypt.checkpw(plaintextPassword, password);
     }
 
-    public List<Notification> getSentNotifications() {
-        return sentNotifications;
-    }
-
-    public void setSentNotifications(List<Notification> sentNotifications) {
-        this.sentNotifications = sentNotifications;
-    }
-
-    public List<Notification> getReceivedNotifications() {
-        return receivedNotifications;
-    }
-
-    public void setReceivedNotifications(List<Notification> receivedNotifications) {
-        this.receivedNotifications = receivedNotifications;
-    }
 }

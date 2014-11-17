@@ -101,7 +101,8 @@ public class FriendshipServiceTest {
         assertEquals(1, notificationService.getUnreadNotificationCountForUser(testUsers.get(1)));
 
         User user = userService.getUser(testUsers.get(1).getId());
-        assertEquals(testUsers.get(0).getUsername(), user.getReceivedNotifications().get(0).getSender().getUsername());
+        List<Notification> notifications = notificationService.getNotifications(user);
+        assertEquals(testUsers.get(0).getUsername(), notifications.get(0).getSender().getUsername());
     }
 
     @Test
@@ -111,7 +112,8 @@ public class FriendshipServiceTest {
         assertEquals(1, notificationService.getUnreadNotificationCountForUser(testUsers.get(0)));
 
         User user = userService.getUser(testUsers.get(0).getId());
-        assertEquals(testUsers.get(3).getUsername(), user.getReceivedNotifications().get(0).getSender().getUsername());
+        List<Notification> notifications = notificationService.getNotifications(user);
+        assertEquals(testUsers.get(3).getUsername(), notifications.get(0).getSender().getUsername());
     }
 
     @Test
@@ -121,7 +123,8 @@ public class FriendshipServiceTest {
         assertEquals(1, notificationService.getUnreadNotificationCountForUser(testUsers.get(0)));
 
         User user = userService.getUser(testUsers.get(0).getId());
-        assertEquals(testUsers.get(3).getUsername(), user.getReceivedNotifications().get(0).getSender().getUsername());
+        List<Notification> notifications = notificationService.getNotifications(user);
+        assertEquals(testUsers.get(3).getUsername(), notifications.get(0).getSender().getUsername());
     }
 
     @Test
@@ -130,27 +133,17 @@ public class FriendshipServiceTest {
         User sender = testUsers.get(0);
         User receiver = testUsers.get(3);
 
-        Friendship friendship = friendshipService.createNewFriendshipRequest(sender, receiver);
-        friendshipService.acceptRequest(friendship.getId());
-
-        // erase any generated notifications
-        notificationService.deleteNotification(sender.getReceivedNotifications().get(0));
-        notificationService.deleteNotification(receiver.getReceivedNotifications().get(0));
-
-        sender = userService.getUser(sender.getId());
-        receiver = userService.getUser(receiver.getId());
-
-        // sanity check
-        assertEquals(0, sender.getReceivedNotifications().size());
-        assertEquals(0, receiver.getReceivedNotifications().size());
+        Friendship friendship = unfriendingCommonTestTasks(sender, receiver);
 
         friendshipService.unfriend(friendship.getId(), sender);
 
         assertEquals(1, notificationService.getUnreadNotificationCountForUser(receiver));
 
-        receiver= userService.getUser(receiver.getId());
-        assertEquals(sender.getUsername(), receiver.getReceivedNotifications().get(0).getSender().getUsername());
+        receiver = userService.getUser(receiver.getId());
+        List<Notification> notifications = notificationService.getNotifications(receiver);
+        assertEquals(sender.getUsername(), notifications.get(0).getSender().getUsername());
     }
+
 
     @Test
     public void unfriendingGeneratesNotificationIfReceiverUnfriends() {
@@ -158,27 +151,31 @@ public class FriendshipServiceTest {
         User sender = testUsers.get(0);
         User receiver = testUsers.get(3);
 
-        Friendship friendship = friendshipService.createNewFriendshipRequest(sender, receiver);
-        friendshipService.acceptRequest(friendship.getId());
-
-        // erase any generated notifications
-        notificationService.deleteNotification(sender.getReceivedNotifications().get(0));
-        notificationService.deleteNotification(receiver.getReceivedNotifications().get(0));
-
-        sender = userService.getUser(sender.getId());
-        receiver = userService.getUser(receiver.getId());
-
-        // sanity check
-        assertEquals(0, sender.getReceivedNotifications().size());
-        assertEquals(0, receiver.getReceivedNotifications().size());
+        Friendship friendship = unfriendingCommonTestTasks(sender, receiver);
 
         friendshipService.unfriend(friendship.getId(), receiver);
 
         assertEquals(1, notificationService.getUnreadNotificationCountForUser(sender));
 
         sender = userService.getUser(sender.getId());
-        assertEquals(receiver.getUsername(), sender.getReceivedNotifications().get(0).getSender().getUsername());
+        List<Notification> notifications = notificationService.getNotifications(sender );
+        assertEquals(receiver.getUsername(), notifications.get(0).getSender().getUsername());
     }
+
+    private Friendship unfriendingCommonTestTasks(User sender, User receiver) {
+        Friendship friendship = friendshipService.createNewFriendshipRequest(sender, receiver);
+        friendshipService.acceptRequest(friendship.getId());
+
+        // erase any generated notifications
+        notificationService.deleteNotification(notificationService.getNotifications(sender).get(0));
+        notificationService.deleteNotification(notificationService.getNotifications(receiver).get(0));
+
+        // sanity check
+        assertEquals(0, notificationService.getNotifications(sender).size());
+        assertEquals(0, notificationService.getNotifications(receiver).size());
+        return friendship;
+    }
+
 
     @Test(expected=NofriendshipExistsException.class)
     public void acceptingNonExistantRequestThrows() {

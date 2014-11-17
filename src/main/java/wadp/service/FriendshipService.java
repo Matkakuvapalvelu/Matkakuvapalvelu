@@ -75,7 +75,7 @@ public class FriendshipService {
 
 
     public void acceptRequest(Long id) {
-        Friendship friendship = friendshipRepository.getOne(id);
+        Friendship friendship = friendshipRepository.findOne(id);
         if (friendship == null) {
             throw new NofriendshipExistsException("No friendship exists");
         }
@@ -92,7 +92,7 @@ public class FriendshipService {
     }
 
     public void rejectRequest(Long id) {
-        Friendship friendship = friendshipRepository.getOne(id);
+        Friendship friendship = friendshipRepository.findOne(id);
         if (friendship == null) {
             throw new NofriendshipExistsException("No friendship exists");
         }
@@ -107,13 +107,13 @@ public class FriendshipService {
     }
 
     public void unfriend(Long id, User unfriender) {
-        Friendship friendship = friendshipRepository.getOne(id);
+        Friendship friendship = friendshipRepository.findOne(id);
         if (friendship == null) {
             throw new NofriendshipExistsException("No friendship exists");
         }
 
         User target;
-        if (unfriender.getUsername().equals(friendship.getSourceUser())) {
+        if (unfriender.getUsername().equals(friendship.getSourceUser().getUsername())) {
             target = friendship.getTargetUser();
         } else {
             target = friendship.getSourceUser();

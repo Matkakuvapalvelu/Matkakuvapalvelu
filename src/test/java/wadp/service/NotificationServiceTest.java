@@ -14,6 +14,7 @@ import wadp.domain.User;
 import wadp.repository.NotificationRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -102,6 +103,16 @@ public class NotificationServiceTest {
         notification.setRead(true);
 
         assertEquals(1l, notificationService.getUnreadNotificationCountForUser(receiver));
+    }
+
+    @Test
+    public void userNotificationsAreReturnedCorrectly() {
+        notificationService.createNewNotification("reason", "text", sender, receiver);
+        notificationService.createNewNotification("reason", "text", sender, receiver);
+        notificationService.createNewNotification("reason", "text", sender, receiver);
+
+        List<Notification> notifications = notificationService.getNotifications(receiver);
+        assertEquals(3, notifications.size());
     }
 
 }
