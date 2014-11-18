@@ -18,6 +18,7 @@ import wadp.domain.Post;
 import wadp.domain.Trip;
 import wadp.service.CommentService;
 import wadp.service.TripService;
+import wadp.service.UserService;
 
 @Controller
 @RequestMapping("/trips")
@@ -25,7 +26,10 @@ public class TripController {
     
     @Autowired
     TripService tripService;
-        
+
+    @Autowired
+    UserService userService;
+
     @Autowired
     CommentService commentService;
         
@@ -36,10 +40,15 @@ public class TripController {
         
         return "trips";
     }
-    
+
     @RequestMapping(value="/{id}", method = RequestMethod.GET)
     @Transactional // postgresql REALLY does not like it if you fetch large fields (like images) outside transactions
     public String viewSingleTrip(Model model, @PathVariable("id") Long id){
+
+        if (!tripService.hasRightToSeeTrip(id, userService.getAuthenticatedUser())) {
+            return "trips";
+        }
+
         List<Post> posts = new ArrayList<>();        
         List<double[]> coordinates = new ArrayList<>();
         

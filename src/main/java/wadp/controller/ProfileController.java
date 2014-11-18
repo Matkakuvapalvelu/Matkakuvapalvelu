@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import wadp.domain.User;
 import wadp.service.FriendshipService;
 import wadp.service.NotificationService;
+import wadp.service.TripService;
 import wadp.service.UserService;
 
 
@@ -25,6 +26,9 @@ public class ProfileController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private TripService tripService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showProfilePage(Model model) {
@@ -48,5 +52,7 @@ public class ProfileController {
             model.addAttribute("canrequestfriendship",
                     !friendshipService.friendshipEntityExists(user, userService.getAuthenticatedUser()));
         }
+
+        model.addAttribute("trips", tripService.getTrips(user, userService.getAuthenticatedUser()));
     }
 }
