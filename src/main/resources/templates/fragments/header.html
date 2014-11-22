@@ -7,15 +7,15 @@
         <span th:fragment="header">
             <a href="/index">Index</a>
             <a href="/profile">Profile</a>
-            <span th:switch="${#authentication} ? ${#authorization.expression('isAuthenticated()')}  : ${false}">
-                <span th:case="${true}">
-                    <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
-                    <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
-                </span>
-                <span th:case="${false}">
-                    <a href="/login">Login</a>
-                </span>
+
+            <span sec:authorize="isAuthenticated()">
+                <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
+                <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
             </span>
+            <span sec:authorize="isAnonymous()">
+                <a href="/login">Login</a>
+            </span>
+
         </span>
     </body>
 </html>

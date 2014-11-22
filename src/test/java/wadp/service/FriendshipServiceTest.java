@@ -342,5 +342,16 @@ public class FriendshipServiceTest {
         );
 
     }
+
+    @Test
+    public void returnedFriendListIsEmptyIfUserIsNull() {
+        assertEquals(0, friendshipService.getFriends(null).size());
+    }
+
+    @Test
+    public void returnedFriendRequestListIsEmptyIfUserIsNull() {
+        assertEquals(0, friendshipService.getFriendshipRequests(null).size());
+    }
+
 }
 
