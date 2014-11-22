@@ -33,6 +33,19 @@ public class FriendshipController {
         return "friends";
     }
 
+    @RequestMapping(value="/request/{friendId}", method= RequestMethod.POST)
+    public String requestFriendship(@PathVariable Long friendId) {
+
+        // friendship with self is kinda weird, let's not do that
+        if (userService.getAuthenticatedUser().getId() == friendId) {
+            return "redirect:/profile/" + friendId;
+        }
+
+        friendshipService.createNewFriendshipRequest(userService.getAuthenticatedUser(), userService.getUser(friendId));
+
+        return "redirect:/profile/" + friendId;
+    }
+
     @RequestMapping(value="/request/accept/{requestId}", method=RequestMethod.POST)
     public String acceptFriendship(@PathVariable Long requestId) {
 
@@ -53,17 +66,6 @@ public class FriendshipController {
         return "redirect:/friendship";
     }
 
-    @RequestMapping(value="/request/{friendId}", method= RequestMethod.POST)
-    public String requestFriendship(@PathVariable Long friendId) {
 
-        // friendship with self is kinda weird, let's not do that
-        if (userService.getAuthenticatedUser().getId() == friendId) {
-            return "redirect:/profile/" + friendId;
-        }
-
-        friendshipService.createNewFriendshipRequest(userService.getAuthenticatedUser(), userService.getUser(friendId));
-
-        return "redirect:/profile/" + friendId;
-    }
 
 }
