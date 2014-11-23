@@ -50,16 +50,8 @@ public class TripController {
         }
 
         List<Post> posts = new ArrayList<>();        
-        List<double[]> coordinates = new ArrayList<>();
+        List<double[]> coordinates = tripService.getTripImageCoordinates(id);
 
-        tripService.getTrip(id).getPosts()
-                .stream()
-                .filter(x -> x.getImage().getLocation())
-                .sorted((p1,  p2) -> p1.getImage().getCaptureDate().compareTo( p2.getImage().getCaptureDate()))
-                .forEach(p -> posts.add(p));
-        
-        posts.stream().forEach(p -> coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude(), p.getId()}));
-                
         if(coordinates.size() > 0){
             model.addAttribute("startPoint", coordinates.get(0));            
         }else {

@@ -1,10 +1,12 @@
 package wadp.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import wadp.domain.Post;
 import wadp.domain.Trip;
 import wadp.domain.User;
 import wadp.repository.TripRepository;
@@ -91,5 +93,25 @@ public class TripService {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Returns list of image coordinates and image ids (latitude/longitude/id) sorted by capture date
+     *
+     * @param tripId trip id
+     * @return List of double arrays with latitude/longitude/id as values
+     */
+    public List<double[]> getTripImageCoordinates(Long tripId) {
+
+        List<Post> tripPosts= getTrip(tripId).getPosts();
+        final List<double[]> coordinates = new ArrayList<>();
+
+        tripPosts
+            .stream()
+            .filter(x -> x.getImage().getLocation())
+            .sorted((p1, p2) -> p1.getImage().getCaptureDate().compareTo(p2.getImage().getCaptureDate()))
+            .forEach(p -> coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude(), p.getId()}));
+
+        return coordinates;
     }
 }
