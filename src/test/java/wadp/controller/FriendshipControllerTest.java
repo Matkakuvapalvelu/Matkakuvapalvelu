@@ -26,6 +26,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static wadp.controller.utility.ControllerTestHelpers.buildSession;
+import static wadp.controller.utility.ControllerTestHelpers.makeDelete;
+import static wadp.controller.utility.ControllerTestHelpers.makePost;
 
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -69,44 +72,6 @@ public class FriendshipControllerTest {
     @Autowired
     private FriendshipService friendshipService;
 
-    private class MockPrincipal implements Principal {
-
-        public MockPrincipal(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public boolean equals(Object another) {
-            if (another == null || !(another instanceof MockPrincipal)) {
-                return false;
-            }
-
-            if (this == another) {
-                return true;
-            }
-
-            return name.equals(((MockPrincipal)another).getName());
-
-        }
-
-        @Override
-        public String toString() {
-            return name.toString();
-        }
-
-        @Override
-        public int hashCode() {
-            return name.hashCode();
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        private String name;
-    };
-
     // spring security and mockmvc won't play nicely together. This means we have to build our own mock http session
     // and add necessary authentication fields to it as we mock requests
     @Before
@@ -123,26 +88,8 @@ public class FriendshipControllerTest {
     }
 
 
-    // create mock request so that user is authenticated correctly
-    private MockHttpSession buildSession() {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute(
-                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                SecurityContextHolder.getContext());
 
-        List<GrantedAuthority> grantedAuths = new ArrayList<>();
-        grantedAuths.add(new SimpleGrantedAuthority("USER"));
 
-        // have to create principal or Authentication in userservice.getAuthentiatedUser() is null
-        // that is, can't juste give username\password
-        Principal principal = new MockPrincipal("loginuser");
-
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal, "loginuser", grantedAuths);
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        return session;
-    }
     User loggedInUser;
     private void addTestData() {
         loggedInUser = userService.createUser("loginuser", "loginuser");
@@ -243,7 +190,7 @@ public class FriendshipControllerTest {
         final String redirectUrl = "/profile/" + newUser.getId();
         final String postUrl = URI + "/request/" + newUser.getId();
 
-        makePost(postUrl, redirectUrl);
+        makePost(mockMvc, postUrl, redirectUrl);
     }
 
     @Test
@@ -254,7 +201,7 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/request/" + newUser.getId();
         final String redirectUrl = "/profile/" + newUser.getId();
 
-        makePost(postUrl, redirectUrl);
+        makePost(mockMvc, postUrl, redirectUrl);
 
         List<Friendship> requests = friendshipService.getFriendshipRequests(newUser);
 
@@ -270,7 +217,7 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/request/" + loggedInUser.getId();
         final String redirectUrl = "/profile/" + loggedInUser.getId();
 
-        makePost(postUrl, redirectUrl);
+        makePost(mockMvc, postUrl, redirectUrl);
 
         List<Friendship> requests = friendshipService.getFriendshipRequests(newUser);
         assertEquals(0, requests.size());
@@ -284,7 +231,7 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/request/accept/" + f.getId();
         final String redirectUrl = URI;
 
-        makePost(postUrl, redirectUrl);
+        makePost(mockMvc, postUrl, redirectUrl);
 
         List<User> friends = friendshipService.getFriends(f.getSourceUser());
         assertEquals(1, friends.size());
@@ -299,7 +246,7 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/request/reject/" + f.getId();
         final String redirectUrl = URI;
 
-        makePost(postUrl, redirectUrl);
+        makePost(mockMvc, postUrl, redirectUrl);
 
         List<User> friends = friendshipService.getFriends(f.getSourceUser());
         assertEquals(0, friends.size());
@@ -319,61 +266,10 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/unfriend/" + u.getId();
         final String redirectUrl = URI;
 
-        makeDelete(postUrl, redirectUrl);
+        makeDelete(mockMvc, postUrl, redirectUrl);
 
         friends = friendshipService.getFriends(loggedInUser);
         assertEquals(1, friends.size());
         assertNotEquals(u.getUsername(), friends.get(0).getUsername());
-    }
-
-    public class Delete implements Callable<MockHttpServletRequestBuilder> {
-        private final String url;
-
-        public Delete(String url) {
-            this.url = url;
-        }
-
-        public MockHttpServletRequestBuilder call() throws Exception {
-            return delete(url);
-        }
-    }
-
-    public class Post implements Callable<MockHttpServletRequestBuilder> {
-        private final String url;
-
-        public Post(String url) {
-            this.url = url;
-        }
-
-        public MockHttpServletRequestBuilder call() throws Exception {
-            return post(url);
-        }
-    }
-
-    private void makePost(String postUrl, String redirectUrl) throws Exception {
-        makeRequest(new Post(postUrl), redirectUrl);
-    }
-
-    private void makeDelete(String postUrl, String redirectUrl) throws Exception {
-        makeRequest(new Delete(postUrl), redirectUrl);
-    }
-
-    private void makeRequest(Callable<MockHttpServletRequestBuilder> func, String redirectUrl) throws Exception {
-        MockHttpSession session = buildSession();
-
-        // post requires the csrf token
-        HttpSessionCsrfTokenRepository httpSessionCsrfTokenRepository = new HttpSessionCsrfTokenRepository();
-        CsrfToken csrfToken =  httpSessionCsrfTokenRepository.generateToken(new MockHttpServletRequest());
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN",
-                csrfToken);
-
-        mockMvc.perform(func.call()
-                    .session(session)
-                    .param("_csrf", csrfToken.getToken())
-                    .sessionAttrs(map))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(redirectUrl));
     }
 }
