@@ -49,12 +49,11 @@ public class TripController {
             return "trips";
         }
 
-        List<Post> posts = new ArrayList<>();        
         List<double[]> coordinates = tripService.getTripImageCoordinates(id);
 
         if(coordinates.size() > 0){
             model.addAttribute("startPoint", coordinates.get(0));            
-        }else {
+        } else {
             model.addAttribute("startPoint", new double[]{0.00, 0.00});
         }
             
@@ -75,7 +74,7 @@ public class TripController {
             @RequestParam(required = false, value="visibility") String visibility, @PathVariable("id") Long id, Model model){  
         
         if(description != null && !description.isEmpty()){
-            tripService.updateTripChanges(id, description, Trip.Visibility.valueOf(visibility));
+            tripService.updateTripChanges(id, description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
             return "redirect:/trips/";
         }
         

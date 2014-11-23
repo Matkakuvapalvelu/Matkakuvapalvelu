@@ -54,7 +54,7 @@ public class PostService {
 
         for (Trip trip : trips) {
             trip.getPosts().add(post);
-            tripService.updateTrip(trip);
+            tripService.updateTrip(trip, poster);
         }
 
         return post;

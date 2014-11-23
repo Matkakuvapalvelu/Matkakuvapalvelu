@@ -143,7 +143,7 @@ public class PostServiceTest {
 
         Trip trip = tripService.createTrip("description", Trip.Visibility.PRIVATE, userService.getAuthenticatedUser());
         List<Trip> trips = Arrays.asList(trip);
-        Post post = postService.createPost(new Image(), "Hello", trips, user);
+        Post post = postService.createPost(new Image(), "Hello", trips, userService.getAuthenticatedUser());
         assertTrue(trip.getPosts().contains(post));
     }
 }

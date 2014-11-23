@@ -40,10 +40,16 @@ public class TripService {
         return trips.stream()
                 .filter(t -> hasRightToSeeTrip(user, requester, t.getVisibility()))
                 .collect(Collectors.toList());
-
-
     }
 
+    /**
+     * Creates a new trip with given description and visibility. Sets given user as the owner.
+     *
+     * @param description Trip description
+     * @param visibility Trip visibility
+     * @param creator Trip creator
+     * @return Instance of trip after it has been saved to database
+     */
     public Trip createTrip(String description, Trip.Visibility visibility, User creator) {
         Trip trip = new Trip();
 
@@ -59,17 +65,26 @@ public class TripService {
         return tripRepository.findOne(id);
     }
 
-    public void updateTrip(Trip trip) {
+    public void updateTrip(Trip trip, User updater) {
+        if (trip.getCreator().getId() != updater.getId()) {
+            throw new IllegalArgumentException("Only trip creator has right to change trip details");
+        }
         tripRepository.save(trip);
     }
 
-    public void updateTripChanges(Long id, String description, Trip.Visibility visibility) {
+    public void updateTripChanges(Long id, String description, Trip.Visibility visibility, User updater) {
         Trip oldTrip = getTrip(id);
         oldTrip.setDescription(description);
         oldTrip.setVisibility(visibility);
-        updateTrip(oldTrip);
+        updateTrip(oldTrip, updater);
     }
 
+    /**
+     * A method that determines if a user has right to see a given trip
+     * @param tripId id of the trip
+     * @param requester user who wants to see the trip
+     * @return true if user has right to see the trip, false otherwise
+     */
     public boolean hasRightToSeeTrip(Long tripId, User requester) {
        Trip trip = tripRepository.findOne(tripId);
         if (trip == null) {
