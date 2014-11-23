@@ -35,7 +35,7 @@ public class TripController {
         
     @RequestMapping(method = RequestMethod.GET)
     public String view(Model model){
-        model.addAttribute("trips", tripService.getAuthenticatedUserTrips());
+        model.addAttribute("trips", tripService.getUserTrips(userService.getAuthenticatedUser()));
         model.addAttribute("visibilities", new ArrayList<>(Arrays.asList(Trip.Visibility.values())));
         
         return "trips";
@@ -81,7 +81,7 @@ public class TripController {
     
     @RequestMapping(method = RequestMethod.POST)
     public String createTrip(@RequestParam("description") String description, @RequestParam("visibility") String visibility){
-        tripService.createTrip(description, Trip.Visibility.valueOf(visibility));
+        tripService.createTrip(description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
         return "redirect:/trips/";
     }
     

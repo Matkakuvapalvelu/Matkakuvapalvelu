@@ -58,9 +58,9 @@ public class TripServiceTest {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(loggedInUser.getUsername(), loggedInUser.getPassword()));
 
-        publicTrip = tripService.createTrip("PublicTrip", Trip.Visibility.PUBLIC);
-        friendTrip = tripService.createTrip("FriendTrip", Trip.Visibility.FRIENDS);
-        privateTrip = tripService.createTrip("PrivateTrip", Trip.Visibility.PRIVATE);
+        publicTrip = tripService.createTrip("PublicTrip", Trip.Visibility.PUBLIC, loggedInUser);
+        friendTrip = tripService.createTrip("FriendTrip", Trip.Visibility.FRIENDS, loggedInUser);
+        privateTrip = tripService.createTrip("PrivateTrip", Trip.Visibility.PRIVATE, loggedInUser);
 
     }
 

@@ -60,6 +60,7 @@ public class PostServiceTest {
         File imageFile = new File("src/test/testimg.jpg");
         InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
         byte[] data = IOUtils.toByteArray(is);
+        is.close();
 
         user = userService.createUser("adasdsdaads", "pisadjsods");
 
@@ -140,7 +141,7 @@ public class PostServiceTest {
     @Transactional
     public void postIsAddedToTripWhenCreatingNewPost() {
 
-        Trip trip = tripService.createTrip("description", Trip.Visibility.PRIVATE);
+        Trip trip = tripService.createTrip("description", Trip.Visibility.PRIVATE, userService.getAuthenticatedUser());
         List<Trip> trips = Arrays.asList(trip);
         Post post = postService.createPost(new Image(), "Hello", trips, user);
         assertTrue(trip.getPosts().contains(post));

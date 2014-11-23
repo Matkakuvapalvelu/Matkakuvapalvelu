@@ -54,7 +54,7 @@ public class PostController {
 
     @RequestMapping(value="/new", method = RequestMethod.GET)
     public String showNewPostCreation(Model model) {
-        model.addAttribute("trips", tripService.getAuthenticatedUserTrips());
+        model.addAttribute("trips", tripService.getUserTrips(userService.getAuthenticatedUser()));
 
         return "newpost";
     }

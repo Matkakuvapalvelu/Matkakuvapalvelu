@@ -1,8 +1,6 @@
 package wadp.domain;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
-import sun.security.util.PendingException;
-
 import javax.persistence.*;
 
 @Entity

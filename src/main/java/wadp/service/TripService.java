@@ -18,11 +18,8 @@ public class TripService {
     @Autowired
     private FriendshipService friendshipService;
 
-    @Autowired
-    private UserService userService;
-    
-    public List<Trip> getAuthenticatedUserTrips() {
-        return tripRepository.findByCreator(userService.getAuthenticatedUser());
+    public List<Trip> getUserTrips(User user) {
+        return tripRepository.findByCreator(user);
     }
 
 
@@ -45,14 +42,14 @@ public class TripService {
 
     }
 
-    public Trip createTrip(String description, Trip.Visibility visibility) {
+    public Trip createTrip(String description, Trip.Visibility visibility, User creator) {
         Trip trip = new Trip();
-        User user = userService.getAuthenticatedUser();        
+
         trip.setDescription(description);
         trip.setVisibility(visibility);
-        trip.setCreator(user);        
+        trip.setCreator(creator);
         trip = tripRepository.save(trip);
-        user.getTrips().add(trip);
+        creator.getTrips().add(trip);
         return trip;
     }
 
