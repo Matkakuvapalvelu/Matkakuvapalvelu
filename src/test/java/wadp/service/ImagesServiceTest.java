@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -109,5 +111,22 @@ public class ImagesServiceTest {
         imageService.addImage(img, "image/", "foo", this.data);
 
         assertTrue(imageService.getImage(img.getId()).getLocation());
+    }
+
+    @Test
+    public void imageDateIsSetCorrectly() throws IOException {
+        Image img = new Image();
+        imageService.addImage(img, "image/", "foo", this.data);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(img.getCaptureDate());
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        assertEquals(2014, year);
+        assertEquals(7, month);
+        assertEquals(27, day);
+
     }
 }

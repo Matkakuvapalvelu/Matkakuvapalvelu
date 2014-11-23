@@ -2,6 +2,7 @@ package wadp.service;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 import java.io.IOException;
 import java.util.List;
@@ -66,8 +67,8 @@ public class ImageService {
             return image;
         }
         for (Directory directory : metadata.getDirectories()) {
-            if (directory.containsTag(306)) {                   //306 is tagtype for Date/time
-                image.setCaptureDate(directory.getDate(306));
+            if (directory.containsTag(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL)) {
+                image.setCaptureDate(directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
                 break;
             }
         }
