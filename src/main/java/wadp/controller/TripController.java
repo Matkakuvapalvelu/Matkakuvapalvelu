@@ -51,18 +51,11 @@ public class TripController {
 
         List<Post> posts = new ArrayList<>();        
         List<double[]> coordinates = new ArrayList<>();
-        // Dirty hack for now, so that trips don't crash if capturedate is not found
+
         tripService.getTrip(id).getPosts()
                 .stream()
                 .filter(x -> x.getImage().getLocation())
-                .sorted((p1,  p2) -> { Date p1Date = p1.getImage().getCaptureDate(); Date p2Date = p2.getImage().getCaptureDate(); 
-                if( p1Date == null){
-                    p1Date = p1.getPostDate();
-                }
-                if( p2Date == null){
-                    p2Date = p2.getPostDate();
-                }
-                return p1Date.compareTo(p2Date); } )
+                .sorted((p1,  p2) -> p1.getImage().getCaptureDate().compareTo( p2.getImage().getCaptureDate()))
                 .forEach(p -> posts.add(p));
         
         posts.stream().forEach(p -> coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude(), p.getId()}));

@@ -211,6 +211,37 @@ public class TripControllerTest {
         assertEquals((double)secondImage.getId(), latitudeLongitudeId[2], 0.0001);
     }
 
+    @Test
+    @Transactional
+    public void coordinatesHaveCorrectValueWhenViewingSingleTripWithPosts() throws Exception {
+
+        Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
+
+        Image firstImage = loadTestImage("src/test/testimg.jpg", t);
+        Image secondImage = loadTestImage("src/test/testimg3.jpg", t);
+
+        MockHttpSession session = buildSession();
+
+        MvcResult result = mockMvc
+                .perform(get(URI + "/" + t.getId())
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(view().name("trip"))
+                .andReturn();
+
+        List<double[]> latitudeLongitudeIds = (List<double[]>)result.getModelAndView().getModel().get("coordinates");
+
+        assertEquals(2, latitudeLongitudeIds.size());
+
+        assertEquals(secondImage.getLatitude(), latitudeLongitudeIds.get(0)[0], 0.0001);
+        assertEquals(secondImage.getLongitude(), latitudeLongitudeIds.get(0)[1], 0.0001);
+        assertEquals((double)secondImage.getId(), latitudeLongitudeIds.get(0)[2], 0.0001);
+
+        assertEquals(firstImage.getLatitude(), latitudeLongitudeIds.get(1)[0], 0.0001);
+        assertEquals(firstImage.getLongitude(), latitudeLongitudeIds.get(1)[1], 0.0001);
+        assertEquals((double)firstImage.getId(), latitudeLongitudeIds.get(1)[2], 0.0001);
+    }
+
     private Image loadTestImage(String name, Trip trip) throws IOException {
         File imageFile = new File(name);
         InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
