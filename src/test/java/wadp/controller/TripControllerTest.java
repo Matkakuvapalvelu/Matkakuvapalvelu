@@ -25,16 +25,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static wadp.controller.utility.ControllerTestHelpers.buildSession;
+import static wadp.controller.utility.ControllerTestHelpers.makePost;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -86,6 +86,56 @@ public class TripControllerTest {
                 WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, webAppContext);
     }
 
+    @Test
+    public void tripListHasModelAttributesSetWithCorrectValues() throws Exception {
+        Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, loggedInUser);
+        tripService.createTrip("description", Trip.Visibility.PRIVATE, otherUser);
+
+        MockHttpSession session = buildSession();
+
+        MvcResult result = mockMvc
+                .perform(get(URI)
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("trips", "visibilities"))
+                .andExpect(view().name("trips"))
+                .andReturn();
+
+        List<Trip> trips = (List<Trip>)result.getModelAndView().getModel().get("trips");
+        assertEquals(1, trips.size());
+        assertEquals(t.getId(), trips.get(0).getId());
+
+        checkVisibilities(t, result);
+    }
+
+    @Test
+    public void editModelAttributesAreSetProperlyWhenRequestingAView() throws Exception {
+        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        MockHttpSession session = buildSession();
+        MvcResult result = mockMvc
+                .perform(get(URI + "/" + t.getId() + "/edit")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(view().name("tripedit"))
+                .andExpect(model().attributeExists("trip", "visibilities"))
+                .andReturn();
+
+        Trip modelTrip = (Trip)result.getModelAndView().getModel().get("trip");
+        assertEquals(t.getId(), modelTrip.getId());
+
+        checkVisibilities(t, result);
+    }
+
+
+    private void checkVisibilities(Trip t, MvcResult result) {
+
+
+        List<Trip.Visibility> visibilities = (List<Trip.Visibility>)result.getModelAndView().getModel().get("visibilities");
+        assertEquals(3, visibilities.size());
+        assertTrue(visibilities.contains(Trip.Visibility.PUBLIC));
+        assertTrue(visibilities.contains(Trip.Visibility.FRIENDS));
+        assertTrue(visibilities.contains(Trip.Visibility.PRIVATE));
+    }
 
     @Test
     public void nothingIsAddedToModelIfUserHasNoRightToSeeTrip() throws Exception {
@@ -254,5 +304,52 @@ public class TripControllerTest {
         return image;
     }
 
+    @Test
+    public void canPostNewTrips() throws Exception {
 
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("description", "my trip description");
+        parameters.put("visibility", "FRIENDS");
+
+        makePost(mockMvc, URI, "/trips/", parameters);
+
+        List<Trip> trips = tripService.getTrips(loggedInUser, loggedInUser);
+        assertEquals(1, trips.size());
+
+        assertEquals("my trip description", trips.get(0).getDescription());
+        assertEquals(Trip.Visibility.FRIENDS, trips.get(0).getVisibility());
+    }
+
+
+    @Test
+    public void canEditTrip() throws Exception {
+        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+
+        Map<String, String> parameters = new HashMap<>();
+        String description = "new description";
+        parameters.put("description", description);
+        parameters.put("visibility", Trip.Visibility.PRIVATE.toString());
+
+        makePost(mockMvc, URI + "/" + t.getId() + "/edit", "/trips/", parameters);
+
+        assertEquals(description, tripService.getTrip(t.getId()).getDescription());
+        assertEquals(Trip.Visibility.PRIVATE, tripService.getTrip(t.getId()).getVisibility());
+
+    }
+
+    @Test
+    @Transactional
+    public void canCommentTrips() throws Exception {
+        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, otherUser);
+
+        Map<String, String> parameters = new HashMap<>();
+        String commentText = "This is my comment. There are many like it, but this one is mine";
+        parameters.put("commentText", commentText);
+
+        makePost(mockMvc, URI + "/" +  t.getId() + "/comment", "/trips/" + t.getId(), parameters);
+
+        List<Comment> comments = tripService.getTrip(t.getId()).getComments();
+        assertEquals(1, comments.size());
+        assertEquals(commentText, comments.get(0).getCommentText());
+    }
 }

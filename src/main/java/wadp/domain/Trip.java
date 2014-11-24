@@ -30,7 +30,8 @@ public class Trip extends AbstractPersistable<Long> {
 
     public Trip(){
         this.creationDate = new Date();
-        posts = new ArrayList<Post>();
+        comments = new ArrayList<>();
+        posts = new ArrayList<>();
     }
     
     public String getDescription() {

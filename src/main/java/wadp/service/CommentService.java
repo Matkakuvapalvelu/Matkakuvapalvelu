@@ -51,6 +51,7 @@ public class CommentService {
         User user = userService.getAuthenticatedUser();
         comment.setUser(user);
         comment.setCreationTime(Date.from(Instant.now()));
+
         user.getComments().add(comment);
     }
 

@@ -28,7 +28,7 @@ public class User extends AbstractPersistable<Long> {
 
     public User() {
         trips = new ArrayList<>();
-
+        comments = new ArrayList<>();
         userRole = "USER";
     }
 

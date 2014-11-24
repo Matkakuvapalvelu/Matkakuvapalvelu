@@ -46,15 +46,21 @@ public class ControllerTestHelpers {
         return session;
     }
 
+
     public static void makePost(MockMvc mockMvc, String postUrl, String redirectUrl) throws Exception {
-        makeRequest(mockMvc, new Post(postUrl), redirectUrl);
+        makePost(mockMvc, postUrl, redirectUrl, new HashMap<>());
     }
+
+    public static void makePost(MockMvc mockMvc, String postUrl, String redirectUrl, Map<String, String> parameters) throws Exception {
+        makeRequest(mockMvc, new Post(postUrl), redirectUrl, parameters);
+    }
+
 
     public static void makeDelete(MockMvc mockMvc, String postUrl, String redirectUrl) throws Exception {
-        makeRequest(mockMvc,  new Delete(postUrl), redirectUrl);
+        makeRequest(mockMvc,  new Delete(postUrl), redirectUrl, new HashMap<>());
     }
 
-    private static void makeRequest(MockMvc mockMvc, Callable<MockHttpServletRequestBuilder> func, String redirectUrl) throws Exception {
+    private static void makeRequest(MockMvc mockMvc, Callable<MockHttpServletRequestBuilder> func, String redirectUrl, Map<String, String> parameters) throws Exception {
         MockHttpSession session = buildSession();
 
         // post requires the csrf token
@@ -65,9 +71,17 @@ public class ControllerTestHelpers {
         map.put("org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN",
                 csrfToken);
 
-        mockMvc.perform(func.call()
-                .session(session)
-                .param("_csrf", csrfToken.getToken())
+
+        MockHttpServletRequestBuilder builder = func.call()
+                .session(session);
+
+        builder.param("_csrf", csrfToken.getToken());
+
+        for (String key : parameters.keySet()) {
+            builder.param(key, parameters.get(key));
+        }
+
+        mockMvc.perform(builder
                 .sessionAttrs(map))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(redirectUrl));
