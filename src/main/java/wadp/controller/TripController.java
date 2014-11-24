@@ -68,20 +68,23 @@ public class TripController {
         tripService.createTrip(description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
         return "redirect:/trips/";
     }
+
+    @RequestMapping(value="/{id}/edit", method = RequestMethod.GET)
+    public String showEditTripView(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("trip", tripService.getTrip(id));
+        model.addAttribute("visibilities", new ArrayList<>(Arrays.asList(Trip.Visibility.values())));
+        return "tripedit";
+    }
     
-    @RequestMapping(value="/{id}/edit", method = { RequestMethod.GET, RequestMethod.POST })
+    @RequestMapping(value="/{id}/edit", method = RequestMethod.POST)
     public String editTrip(@RequestParam(required = false, value="description") String description, 
-            @RequestParam(required = false, value="visibility") String visibility, @PathVariable("id") Long id, Model model){  
+            @RequestParam(required = false, value="visibility") String visibility, @PathVariable("id") Long id){
         
         if(description != null && !description.isEmpty()){
             tripService.updateTripChanges(id, description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
-            return "redirect:/trips/";
         }
-        
-        model.addAttribute("trip", tripService.getTrip(id));
-        model.addAttribute("visibilities", new ArrayList<>(Arrays.asList(Trip.Visibility.values())));
-        
-        return "tripedit";
+
+        return "redirect:/trips/";
     }
     
     @RequestMapping(value = "/{id}/comment", method = RequestMethod.POST)
