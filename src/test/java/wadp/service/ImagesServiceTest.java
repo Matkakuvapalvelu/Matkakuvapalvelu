@@ -54,11 +54,14 @@ public class ImagesServiceTest {
     public void setUp() throws FileNotFoundException, IOException {
         File imageFile = new File("src/test/testimg.jpg");
         InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
-        this.data = IOUtils.toByteArray(is);
 
+        this.data = IOUtils.toByteArray(is);
+        is.close();
         File imageFile2 = new File("src/test/testimg2.jpg");
         InputStream is2 = new FileInputStream(imageFile2.getAbsoluteFile());
+
         this.data2 = IOUtils.toByteArray(is2);
+        is2.close();
 
     }
 
