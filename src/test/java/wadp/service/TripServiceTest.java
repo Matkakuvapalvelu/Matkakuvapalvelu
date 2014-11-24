@@ -233,6 +233,34 @@ public class TripServiceTest {
     }
 
     @Test
+    public void hasRightToSeeTripReturnsFalseIfTripDoesNotExist() {
+        assertFalse(tripService.hasRightToSeeTrip(32435l, loggedInUser));
+    }
+
+    @Test
+    public void getUserTripsReturnsZeroTripsIfThereAreNoTrips() {
+        assertEquals(0, tripService.getUserTrips(stranger).size());
+    }
+
+    @Test
+    public void getUserTripsReturnsCorrectTrips() {
+        tripService.createTrip("sdasd", Trip.Visibility.PUBLIC, stranger);
+        List<Trip> trips = tripService.getUserTrips(loggedInUser);
+        assertEquals(3, trips.size());
+        assertEquals(1, trips.stream()
+                        .filter(t -> t.getDescription().equals(publicTrip.getDescription()))
+                        .collect(Collectors.toList()).size());
+
+        assertEquals(1, trips.stream()
+                .filter(t -> t.getDescription().equals(friendTrip.getDescription()))
+                .collect(Collectors.toList()).size());
+
+        assertEquals(1, trips.stream()
+                .filter(t -> t.getDescription().equals(privateTrip.getDescription()))
+                .collect(Collectors.toList()).size());
+    }
+
+    @Test
     @Transactional
     public void getTripImageCoordinatesReturnCorrectCoordinates() throws IOException {
         Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
