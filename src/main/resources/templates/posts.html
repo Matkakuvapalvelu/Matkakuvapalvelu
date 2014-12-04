@@ -18,15 +18,47 @@
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
 </head>
 <body>
-<div th:replace="fragments/header :: header">header</div>
-    <br/>
-    <a href="/posts/new">Create new post</a>
-    <br/><br/>
-    <div>Existing posts: </div><br/>
-    <ul>
-        <li th:each="post : ${posts}">
-            <a href="#" th:href="@{'/posts/'+${post.id}}" th:text="${post.imageText}"></a>
-        </li>
-    </ul>
+    <div th:replace="fragments/header :: header">header</div>
+
+    <div id="main-wrapper">
+        <div id="main" class="container">
+            <div class="row">
+                <div class="3u">
+                    <div class="sidebar">
+                        <section>
+                            <a href="/posts/new" class="button big">Create new post</a>
+                        </section>
+                    </div>
+                </div>
+                <div class="9u important(collapse)">
+                    <div class="content content-right">
+                        <article class="box page-content">
+                            <header>
+                                <h2>Existing posts</h2>
+                                <p>something here?</p>
+                            </header>
+                        </article>
+                    </div>
+                </div>                
+            </div>
+            
+            <div class="row 200%">
+                <div class="12u">
+                    <section class="box features">
+                        <h2 class="major"><span>Existing posts</span></h2>
+                        <div class="row" th:if="${posts != null}">
+                            <div class="3u" th:each="post : ${posts}">
+                                <section class="box feature">
+                                    <a href="#" th:href="@{'/posts/'+${post.id}}" th:text="${post.imageText}"></a>
+                                </section>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
 </body>
 </html>
