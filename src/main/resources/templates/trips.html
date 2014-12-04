@@ -19,31 +19,62 @@
     </head>
     <body>
         <div th:replace="fragments/header :: header">header</div>
-        <h3>Add new trip</h3> 
-        <form method="POST" th:action="@{/trips}" >
-            <label for="description">Trip description</label>
-            <br/>            
-            <input type="text" id="description" name="description" />
-            <br/>
-            <label for="description">Who can see my trip</label>
-            <br/>
-            <select id="visibility" name="visibility">          
-                <option th:each="visibility : ${visibilities}" th:value="${visibility}" 
-                        th:text="${#strings.capitalizeWords(#strings.toLowerCase(visibility))}">Option 1</option>
-            </select>
-            <br/>
-            <br/>
-            <input type="submit" value="Create new trip"/>
-        </form>
         
-        <br/>        
-        <div th:if="${trips != null}">
-            <h3>Existing trips</h3>
-            <div th:each="trip: ${trips}">
-                <a href="/trips.html" th:href="@{'/trips/'+${trip.id}}" th:text="${trip.description}">Trip to Russia</a>
-                <a href="/trips.html" th:href="@{'/trips/'+${trip.id}+'/edit'}" th:text="Edit">Trip to Russia</a>
-                <label th:text="${trip.creationDate}">Today</label>
-            </div>
-        </div>        
+        <div id="main-wrapper">
+            <div id="main" class="container">
+                <div class="row">
+                    <div class="12u">
+                        <div class="content">
+                            <article class="box page-content">
+                                <header>
+                                    <h2>Existing trips</h2>
+                                    <p>Semper amet scelerisque metus faucibus morbi congue mattis</p>
+                                </header>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+                <div class="row 200%">
+                    <div class="12u">        
+                        <!-- Features -->
+                        <section class="box features">  
+                            <div class="row" th:if="${trips != null}">
+                                <div class="3u" th:each="trip: ${trips}">
+                                    <section class="box feature">
+                                            <h3><a href="/trips.html" th:href="@{'/trips/'+${trip.id}}" th:text="${trip.description}">Trip to Russia</a></h3>                                            
+                                                <a th:if="${!#lists.isEmpty(trip.posts)}" href="#" th:href="@{'/posts/'+${trip.posts[0].id}}">
+                                                    <img id="user-image" th:attr="src=@{'/images/' + ${trip.posts[0].image.id} + '/gallerythumbnail'}"/>
+                                                </a>
+                                            <p>
+                                                Small description from the trip
+                                            </p>
+                                            <p><label th:text="${trip.creationDate}">Today</label></p>
+                                            <a href="/trips.html" th:href="@{'/trips/'+${trip.id}+'/edit'}" th:text="Edit">Trip to Russia</a>
+                                    </section>
+                                </div>
+                            </div>
+                        </section>                            
+                        <h2 class="major"><span>Add new trip</span></h2>
+                        <div>
+                            <form method="POST" th:action="@{/trips}" >
+                                <label for="description">Trip description</label>
+                                <br/>            
+                                <input type="text" id="description" name="description" />
+                                <br/>
+                                <label for="description">Who can see my trip</label>
+                                <br/>
+                                <select id="visibility" name="visibility">          
+                                    <option th:each="visibility : ${visibilities}" th:value="${visibility}" 
+                                            th:text="${#strings.capitalizeWords(#strings.toLowerCase(visibility))}">Option 1</option>
+                                </select>
+                                <br/>
+                                <br/>
+                                <input type="submit" value="Create new trip"/>
+                            </form> 
+                        </div>
+                    </div>
+                </div>
+            </div>       
+        </div>    
     </body>
 </html>
