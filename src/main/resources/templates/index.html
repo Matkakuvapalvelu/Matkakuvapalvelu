@@ -4,33 +4,41 @@
     <title>Index</title>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!--[if lte IE 8]><script src="/css/ie/html5shiv.js"></script><![endif]-->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.dropotron.min.js"></script>
+    <script src="/js/skel.min.js"></script>
+    <script src="/js/skel-layers.min.js"></script>
+    <script src="/js/init.js"></script>
+    <link rel="stylesheet" href="/css/skel.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/style-desktop.css" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="/css/ie/v8.css" /><![endif]-->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
 </head>
-<body>
-<div th:replace="fragments/header :: header">header</div>
-<div>Message from server:</div>
-<div th:text="${message}">Message</div>
-<br/>
-<div id="links"><a href="/trips.html" th:href="@{/trips}">Trips</a></div>
-<div id="links"><a href="/image.html" th:href="@{/images}">Image testing</a></div>
-<div id="links"><a href="/debugNotification.html" th:href="@{/notification/debug}">Notification testing</a></div>
-<div id="links"><a href="/posts">Posts</a></div>
-<div id="links"><a href="/profile.html" th:href="@{/profile}">Profile</a></div>
+<body class="homepage">
+    <div th:replace="fragments/header :: header">header</div>
+    <div>Message from server:</div>
+    <div th:text="${message}">Message</div>
+    <br/>
+    <div id="links"><a href="/trips.html" th:href="@{/trips}">Trips</a></div>
+    <div id="links1"><a href="/image.html" th:href="@{/images}">Image testing</a></div>
+    <div id="links2"><a href="/debugNotification.html" th:href="@{/notification/debug}">Notification testing</a></div>
+    <div id="links3"><a href="/posts">Posts</a></div>
+    <div id="links4"><a href="/profile.html" th:href="@{/profile}">Profile</a></div>
 
-<div id="links"><a href="/signup.html" th:href="@{/signup}">Signup</a></div>
-
-
-<br/>
-<br/>
-<br/>
-<br/>
-
-<div th:each="user : ${users}">
-    <a href="#" th:href="@{'profile/' + ${user.id}}" th:text="${user.username}">user name</a>
-</div>
+    <div id="links5"><a href="/signup.html" th:href="@{/signup}">Signup</a></div>
 
 
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+
+    <div th:each="user : ${users}">
+        <a href="#" th:href="@{'profile/' + ${user.id}}" th:text="${user.username}">user name</a>
+    </div>
 
 </body>
 </html>

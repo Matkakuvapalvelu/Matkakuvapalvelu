@@ -4,9 +4,10 @@ var activeWindow = null;
 var activeWindowId = null;
 
 function initialize(latitude, longitude) {
+    console.log("sa");
     if (!latitude || !longitude) {
         return;
-    }
+    }    
 
     var mapOptions = {
         center: { lat: latitude, lng: longitude},

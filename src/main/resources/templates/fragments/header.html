@@ -2,12 +2,36 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Header</title>
+
 </head>
     <body>
-        <span th:fragment="header">
-            <a href="/index">Index</a>
-            <a href="/profile">Profile</a>
-
+        <div th:fragment="header">
+            <nav id="nav" class="skel-layers-fixed">
+                <ul>
+                    <li class="current"><a href="/index">Index</a></li>
+                    <li>
+                        <a href="">Dropdown</a>
+                        <ul>
+                                <li><a href="#">Lorem ipsum dolor</a></li>
+                                <li><a href="#">Magna phasellus</a></li>
+                                <li>
+                                        <a href="">Phasellus consequat</a>
+                                        <ul>
+                                                <li><a href="#">Lorem ipsum dolor</a></li>
+                                                <li><a href="#">Phasellus consequat</a></li>
+                                                <li><a href="#">Magna phasellus</a></li>
+                                                <li><a href="#">Etiam dolore nisl</a></li>
+                                        </ul>
+                                </li>
+                                <li><a href="#">Veroeros feugiat</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/profile">Profile</a></li>
+                    <li><a href="/trips.html" th:href="@{/trips}">Trips</a></li>
+                    <li><a href="/posts">Posts</a></li>
+                </ul>
+            </nav>
+            
             <span sec:authorize="isAuthenticated()">
                 <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
                 <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
@@ -16,6 +40,6 @@
                 <a href="/login">Login</a>
             </span>
 
-        </span>
+        </div>
     </body>
 </html>

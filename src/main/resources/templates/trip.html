@@ -4,15 +4,26 @@
         <title>View Trip</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <!--[if lte IE 8]><script src="/css/ie/html5shiv.js"></script><![endif]-->
+        
+        <link rel="stylesheet" href="/css/skel.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/style-desktop.css" />
+        <!--[if lte IE 8]><link rel="stylesheet" href="/css/ie/v8.css" /><![endif]-->
         <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
         <style type="text/css">
             html, body, #googleMap { height: 100%; width: 100%; margin: 0; padding: 0; float: left;};
         </style>
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/jquery.dropotron.min.js"></script>
+        <script src="/js/skel.min.js"></script>
+        <script src="/js/skel-layers.min.js"></script>
+        <script src="/js/init.js"></script>        
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
         <script type="text/javascript" src="/js/googlemap.js"></script>
-        <script type="text/javascript" th:inline="javascript">       
-            window.onload = function(){
+        <script type="text/javascript" th:inline="javascript">
+            $(function(){
                 // load map
                 var tripMap;
                 
@@ -24,8 +35,9 @@
                 if(tripMap){
                     drawMarkers(tripMap, /*[[${coordinates}]]*/ 0.0);
                     drawPolyLinePath(tripMap);
-                }                
-            };
+                }       
+                console.log("ghnghhgnghn");
+            });
             
             function toggleVisibility(id) {
                 var e = document.getElementById(id);
@@ -63,7 +75,7 @@
                 </li>
             </ul>
         </div>
-        <div id="googleMap" style="float: left; width: 50%; height: 80%;"></div>        
+        <div id="googleMap" style="float: left; width: 600px; height: 600px;"></div>        
         <div style="float: left; width: 20%; margin-left: 10px;">
             <h3>Comments</h3><br />
             <div th:each="comment : ${trip.comments}">
