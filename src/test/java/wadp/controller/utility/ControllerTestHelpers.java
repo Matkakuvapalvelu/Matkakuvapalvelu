@@ -13,6 +13,7 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -79,7 +80,12 @@ public class ControllerTestHelpers {
     }
 
 
-    public static void makePostWithFile(MockMvc mockMvc, String url, String redirectUrlPattern, byte [] data, String type, Map<String, String> parameters) throws Exception {
+    public static MvcResult makePostWithFile(MockMvc mockMvc,
+                                        String url,
+                                        String redirectUrlPattern,
+                                        ResultMatcher matcher,
+                                        byte [] data, String type,
+                                        Map<String, String> parameters) throws Exception {
         MockHttpSession session = buildSession();
 
         MockMultipartFile file = new MockMultipartFile("file", "imagefile", type, data);
@@ -94,15 +100,18 @@ public class ControllerTestHelpers {
 
         MvcResult result = mockMvc.perform(builder
                 .sessionAttrs(map))
-                .andExpect(status().is3xxRedirection())
+                .andExpect(matcher)
                 .andReturn();
 
-        String location = result.getResponse().getHeader("Location");
+        if (!redirectUrlPattern.isEmpty()) {
+            String location = result.getResponse().getHeader("Location");
 
-        Pattern pattern = Pattern.compile(redirectUrlPattern);
-        assertTrue(pattern.matcher(location).find());
-
+            Pattern pattern = Pattern.compile(redirectUrlPattern);
+            assertTrue(pattern.matcher(location).find());
+        }
+        return result;
     }
+
 
     private static void makeRequest(MockMvc mockMvc, Callable<MockHttpServletRequestBuilder> func, String redirectUrl, Map<String, String> parameters) throws Exception {
         MockHttpSession session = buildSession();

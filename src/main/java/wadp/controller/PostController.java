@@ -3,6 +3,9 @@ package wadp.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import wadp.domain.Image;
 import wadp.domain.Trip;
-import wadp.service.ImageService;
-import wadp.service.PostService;
-import wadp.service.TripService;
-import wadp.service.UserService;
+import wadp.service.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import java.util.List;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import wadp.domain.Comment;
 import wadp.domain.Post;
-import wadp.service.CommentService;
 
 @Controller
 @RequestMapping("/posts")
@@ -63,13 +62,25 @@ public class PostController {
     public String createNewPost(
             @RequestParam("file") MultipartFile file,
             @RequestParam("image_text") String text,
-            @RequestParam(value ="trips", required = false) String [] tripIds) throws IOException {
-        // TODO: Validate that image is not empty!
+            @RequestParam(value ="trips", required = false) String [] tripIds,
+            Model model){
 
-        // TODO: Catch ImageValidationException and give appropriate error message to user
-        Image image = imageService.addImage( file.getContentType(), file.getOriginalFilename(),
-                file.getBytes());
+        if (file.isEmpty()) {
+            model.addAttribute("error", "Image cannot be empty");
+            return "/posts";
+        }
 
+        Image image;
+        try {
+            image  = imageService.addImage(file.getContentType(), file.getOriginalFilename(),
+                    file.getBytes());
+        } catch (ImageValidationException ex) {
+            model.addAttribute("error", "Unknown image type");
+            return "/posts";
+        } catch (IOException ioExceptiom) {
+            model.addAttribute("error", "An internal error has occured while processing the image");
+            return "/posts";
+        }
 
         List<Trip> trips = new ArrayList<>();
 

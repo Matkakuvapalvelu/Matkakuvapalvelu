@@ -4,6 +4,7 @@ package wadp.domain;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class Post extends AbstractPersistable<Long> {
 
     public Post() {
         postDate = new Date();
+        comments = new ArrayList<>();
     }
 
     public Date getPostDate() {

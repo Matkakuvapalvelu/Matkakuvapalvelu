@@ -87,11 +87,6 @@ public class CommentServiceTest {
     @After
     public void tearDown() {
     }
-    
-    @Test
-    public void lol(){
-        //lol
-    }
 
     @Test
     public void addingCommentToAPostSavesTheCommentToARepository() {
