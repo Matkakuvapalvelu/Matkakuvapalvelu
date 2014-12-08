@@ -40,8 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class MockMvcTesting {
 
-
-
     private MockMvc mockMvc;
 
     public MockMvcTesting(WebApplicationContext webAppContext, FilterChainProxy springSecurityFilter) {
@@ -80,9 +78,19 @@ public class MockMvcTesting {
         return mockMvc
                 .perform(get(getUrl)
                         .session(session))
-                .andExpect(status().isOk())
+                .andExpect(status().is2xxSuccessful())
                 .andExpect(model().attributeExists(expectedModelValueNames))
                 .andExpect(view().name(viewName))
+                .andReturn();
+    }
+
+
+    public MvcResult makeGetResponseBody(String getUrl, String viewName, String... expectedModelValueNames) throws Exception {
+        MockHttpSession session = buildSession();
+        return mockMvc
+                .perform(get(getUrl)
+                        .session(session))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
     }
 
