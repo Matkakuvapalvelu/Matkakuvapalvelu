@@ -20,32 +20,14 @@ import wadp.service.ImageService;
 public class ImageController {
 
     @Autowired
-    ImageService imageService;
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String getImages(Model model) {
-        model.addAttribute("images", imageService.findAllImages());
-        return "image";
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    public String addImage(@RequestParam("file") MultipartFile file) throws IOException {
-        if (!file.isEmpty()) {
-            
-
-        imageService.addImage(file.getContentType(), file.getOriginalFilename(),
-                file.getBytes());
-        }
-
-        return "redirect:/images";
-    }
-
+    private ImageService imageService;
 
     @RequestMapping(value="/{id}/original", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> getOriginalImage(@PathVariable Long id){
         // TODO: Check that user actually has right to see the image in question
         // TODO: Send 304 if browser has image cached
+
 
 
         Image image = imageService.getImage(id);

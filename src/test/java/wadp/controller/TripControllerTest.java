@@ -7,17 +7,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import wadp.Application;
+import wadp.controller.utility.MockMvcTesting;
 import wadp.domain.*;
 import wadp.service.*;
 
@@ -25,16 +23,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static wadp.controller.utility.ControllerTestHelpers.buildSession;
-import static wadp.controller.utility.ControllerTestHelpers.makePost;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -53,6 +47,8 @@ public class TripControllerTest {
     @Autowired
     private FilterChainProxy springSecurityFilter;
 
+    private MockMvcTesting mockMvcTesting;
+
     @Autowired
     private UserService userService;
 
@@ -68,22 +64,13 @@ public class TripControllerTest {
     private User loggedInUser;
     private User otherUser;
 
-
-
-    private MockMvc mockMvc;
-
     @Before
     public void setUp() {
+        mockMvcTesting = new MockMvcTesting(webAppContext, springSecurityFilter);
+
         loggedInUser = userService.createUser("loginuser", "loginuser");
         otherUser = userService.createUser("otheruser", "otheruser");
 
-        this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(webAppContext)
-                .addFilter(springSecurityFilter, "/*")
-                .build();
-
-        webAppContext.getServletContext().setAttribute(
-                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, webAppContext);
     }
 
     @Test
@@ -91,15 +78,7 @@ public class TripControllerTest {
         Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, loggedInUser);
         tripService.createTrip("description", Trip.Visibility.PRIVATE, otherUser);
 
-        MockHttpSession session = buildSession();
-
-        MvcResult result = mockMvc
-                .perform(get(URI)
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("trips", "visibilities"))
-                .andExpect(view().name("trips"))
-                .andReturn();
+        MvcResult result = mockMvcTesting.makeGet(URI, "trips", "trips", "visibilities");
 
         List<Trip> trips = (List<Trip>)result.getModelAndView().getModel().get("trips");
         assertEquals(1, trips.size());
@@ -111,14 +90,8 @@ public class TripControllerTest {
     @Test
     public void editModelAttributesAreSetProperlyWhenRequestingAView() throws Exception {
         Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
-        MockHttpSession session = buildSession();
-        MvcResult result = mockMvc
-                .perform(get(URI + "/" + t.getId() + "/edit")
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("tripedit"))
-                .andExpect(model().attributeExists("trip", "visibilities"))
-                .andReturn();
+
+        MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId() + "/edit", "tripedit", "trip", "visibilities");
 
         Trip modelTrip = (Trip)result.getModelAndView().getModel().get("trip");
         assertEquals(t.getId(), modelTrip.getId());
@@ -128,8 +101,6 @@ public class TripControllerTest {
 
 
     private void checkVisibilities(Trip t, MvcResult result) {
-
-
         List<Trip.Visibility> visibilities = (List<Trip.Visibility>)result.getModelAndView().getModel().get("visibilities");
         assertEquals(3, visibilities.size());
         assertTrue(visibilities.contains(Trip.Visibility.PUBLIC));
@@ -141,14 +112,10 @@ public class TripControllerTest {
     public void nothingIsAddedToModelIfUserHasNoRightToSeeTrip() throws Exception {
         Trip t = tripService.createTrip("description", Trip.Visibility.PRIVATE, otherUser);
 
-        MockHttpSession session = buildSession();
-
-        mockMvc.perform(get(URI + "/" + t.getId())
-                .session(session))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeDoesNotExist("startPoint", "trip", "coordinates"))
-                .andExpect(view().name("trips"));
-
+        MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trips");
+        assertNull(result.getModelAndView().getModel().get("startPoint"));
+        assertNull(result.getModelAndView().getModel().get("trip"));
+        assertNull(result.getModelAndView().getModel().get("coordinates"));
     }
 
     @Test
@@ -157,42 +124,21 @@ public class TripControllerTest {
 
         Friendship f = friendshipService.createNewFriendshipRequest(otherUser, loggedInUser);
         friendshipService.acceptRequest(f.getId());
-        MockHttpSession session = buildSession();
-
-
-        mockMvc.perform(get(URI + "/" + t.getId())
-                .session(session))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("startPoint", "trip", "coordinates"))
-                .andExpect(view().name("trip"));
+        mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip", "startPoint", "trip", "coordinates");
     }
 
     @Test
     public void attributesAreAddedToModelWhenViewingSingleTripWhenTripIsPublic() throws Exception {
         Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
 
-        MockHttpSession session = buildSession();
-
-        mockMvc.perform(get(URI + "/" + t.getId())
-                .session(session))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("startPoint", "trip", "coordinates"))
-                .andExpect(view().name("trip"));
+        mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip", "startPoint", "trip", "coordinates");
     }
 
     @Test
     public void tripAttributeHasCorrectValueWhenViewingSingleTrip() throws Exception {
         Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
 
-        MockHttpSession session = buildSession();
-
-        MvcResult result = mockMvc
-                .perform(get(URI + "/" + t.getId())
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("trip"))
-                .andReturn();
-
+        MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip");
         Trip modelTrip = (Trip)result.getModelAndView().getModel().get("trip");
         assertEquals(t.getId(), modelTrip.getId());
     }
@@ -201,15 +147,7 @@ public class TripControllerTest {
     public void startPointHasDefaultValueWhenTripHasNoPosts() throws Exception {
 
         Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
-
-        MockHttpSession session = buildSession();
-
-        MvcResult result = mockMvc
-                .perform(get(URI + "/" + t.getId())
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("trip"))
-                .andReturn();
+        MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip");
 
         double[] latitudeLongitudeId = (double[])result.getModelAndView().getModel().get("startPoint");
 
@@ -223,14 +161,7 @@ public class TripControllerTest {
 
         Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
 
-        MockHttpSession session = buildSession();
-
-        MvcResult result = mockMvc
-                .perform(get(URI + "/" + t.getId())
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("trip"))
-                .andReturn();
+        MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip");
 
         List<double[]> latitudeLongitudeIds = (List<double[]>)result.getModelAndView().getModel().get("coordinates");
         assertEquals(0, latitudeLongitudeIds.size());
@@ -244,14 +175,7 @@ public class TripControllerTest {
         Image firstImage = loadTestImage("src/test/testimg.jpg", t);
         Image secondImage = loadTestImage("src/test/testimg3.jpg", t);
 
-        MockHttpSession session = buildSession();
-
-        MvcResult result = mockMvc
-                .perform(get(URI + "/" + t.getId())
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("trip"))
-                .andReturn();
+        MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip");
 
         double[] latitudeLongitudeId = (double[])result.getModelAndView().getModel().get("startPoint");
 
@@ -270,14 +194,7 @@ public class TripControllerTest {
         Image firstImage = loadTestImage("src/test/testimg.jpg", t);
         Image secondImage = loadTestImage("src/test/testimg3.jpg", t);
 
-        MockHttpSession session = buildSession();
-
-        MvcResult result = mockMvc
-                .perform(get(URI + "/" + t.getId())
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("trip"))
-                .andReturn();
+        MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip");
 
         List<double[]> latitudeLongitudeIds = (List<double[]>)result.getModelAndView().getModel().get("coordinates");
 
@@ -311,7 +228,7 @@ public class TripControllerTest {
         parameters.put("description", "my trip description");
         parameters.put("visibility", "FRIENDS");
 
-        makePost(mockMvc, URI, "/trips/", parameters);
+        mockMvcTesting.makePost(URI, "/trips/", parameters);
 
         List<Trip> trips = tripService.getTrips(loggedInUser, loggedInUser);
         assertEquals(1, trips.size());
@@ -330,7 +247,7 @@ public class TripControllerTest {
         parameters.put("description", description);
         parameters.put("visibility", Trip.Visibility.PRIVATE.toString());
 
-        makePost(mockMvc, URI + "/" + t.getId() + "/edit", "/trips/", parameters);
+        mockMvcTesting.makePost(URI + "/" + t.getId() + "/edit", "/trips/", parameters);
 
         assertEquals(description, tripService.getTrip(t.getId()).getDescription());
         assertEquals(Trip.Visibility.PRIVATE, tripService.getTrip(t.getId()).getVisibility());
@@ -346,7 +263,7 @@ public class TripControllerTest {
         String commentText = "This is my comment. There are many like it, but this one is mine";
         parameters.put("commentText", commentText);
 
-        makePost(mockMvc, URI + "/" +  t.getId() + "/comment", "/trips/" + t.getId(), parameters);
+        mockMvcTesting.makePost(URI + "/" + t.getId() + "/comment", "/trips/" + t.getId(), parameters);
 
         List<Comment> comments = tripService.getTrip(t.getId()).getComments();
         assertEquals(1, comments.size());

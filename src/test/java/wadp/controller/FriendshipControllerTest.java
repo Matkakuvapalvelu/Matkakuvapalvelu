@@ -6,47 +6,29 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterChainProxy;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static wadp.controller.utility.ControllerTestHelpers.buildSession;
-import static wadp.controller.utility.ControllerTestHelpers.makeDelete;
-import static wadp.controller.utility.ControllerTestHelpers.makePost;
-
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import wadp.Application;
+import wadp.controller.utility.MockMvcTesting;
 import wadp.domain.Friendship;
 import wadp.domain.User;
 import wadp.service.FriendshipService;
 import wadp.service.UserService;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static wadp.controller.utility.MockMvcTesting.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -56,18 +38,15 @@ public class FriendshipControllerTest {
     private final String URI = "/friendship";
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private WebApplicationContext webAppContext;
 
     @Autowired
     private FilterChainProxy springSecurityFilter;
 
-    private MockMvc mockMvc;
-
-    @Autowired
-    private UserService userService;
-
-
-
+    MockMvcTesting mockMvcTesting;
 
     @Autowired
     private FriendshipService friendshipService;
@@ -76,14 +55,7 @@ public class FriendshipControllerTest {
     // and add necessary authentication fields to it as we mock requests
     @Before
     public void setUp() {
-        this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(webAppContext)
-                .addFilter(springSecurityFilter, "/*")
-                .build();
-
-        webAppContext.getServletContext().setAttribute(
-                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, webAppContext);
-
+        mockMvcTesting = new MockMvcTesting(webAppContext, springSecurityFilter);
         addTestData();
     }
 
@@ -119,24 +91,13 @@ public class FriendshipControllerTest {
 
     @Test
     public void statusIsOkWhenFetchingFriendsPage() throws Exception {
-        MockHttpSession session = buildSession();
-        mockMvc.perform(get(URI)
-                    .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("friends"));
+        mockMvcTesting.makeGet(URI, "friends");
     }
 
     @Test
     public void friendPageModelContainsFriendAttributeAndCorrectFriends() throws Exception {
-        MockHttpSession session = buildSession();
 
-        MvcResult result = mockMvc
-                .perform(get(URI)
-                   .session(session))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("friends"))
-                .andReturn();
-
+        MvcResult result =mockMvcTesting.makeGet(URI, "friends");
 
         List<User> friends = (List)result.getModelAndView().getModel().get("friends");
 
@@ -158,12 +119,8 @@ public class FriendshipControllerTest {
 
     @Test
     public void friendPageModelContainsFriendRequestAttributeAndCorrectFriendRequests() throws Exception {
-        MockHttpSession session = buildSession();
-        MvcResult result = mockMvc.perform(get(URI)
-                    .session(session))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("friendRequests"))
-                .andReturn();
+
+        MvcResult result = mockMvcTesting.makeGet(URI, "friends", "friendRequests");
 
         List<Friendship> friendshipRequests = (List)result.getModelAndView().getModel().get("friendRequests");
 
@@ -190,7 +147,7 @@ public class FriendshipControllerTest {
         final String redirectUrl = "/profile/" + newUser.getId();
         final String postUrl = URI + "/request/" + newUser.getId();
 
-        makePost(mockMvc, postUrl, redirectUrl);
+        mockMvcTesting.makePost(postUrl, redirectUrl);
     }
 
     @Test
@@ -201,7 +158,7 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/request/" + newUser.getId();
         final String redirectUrl = "/profile/" + newUser.getId();
 
-        makePost(mockMvc, postUrl, redirectUrl);
+        mockMvcTesting.makePost(postUrl, redirectUrl);
 
         List<Friendship> requests = friendshipService.getFriendshipRequests(newUser);
 
@@ -217,7 +174,7 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/request/" + loggedInUser.getId();
         final String redirectUrl = "/profile/" + loggedInUser.getId();
 
-        makePost(mockMvc, postUrl, redirectUrl);
+        mockMvcTesting.makePost(postUrl, redirectUrl);
 
         List<Friendship> requests = friendshipService.getFriendshipRequests(newUser);
         assertEquals(0, requests.size());
@@ -231,7 +188,7 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/request/accept/" + f.getId();
         final String redirectUrl = URI;
 
-        makePost(mockMvc, postUrl, redirectUrl);
+        mockMvcTesting.makePost(postUrl, redirectUrl);
 
         List<User> friends = friendshipService.getFriends(f.getSourceUser());
         assertEquals(1, friends.size());
@@ -246,7 +203,7 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/request/reject/" + f.getId();
         final String redirectUrl = URI;
 
-        makePost(mockMvc, postUrl, redirectUrl);
+        mockMvcTesting.makePost(postUrl, redirectUrl);
 
         List<User> friends = friendshipService.getFriends(f.getSourceUser());
         assertEquals(0, friends.size());
@@ -266,7 +223,7 @@ public class FriendshipControllerTest {
         final String postUrl = URI + "/unfriend/" + u.getId();
         final String redirectUrl = URI;
 
-        makeDelete(mockMvc, postUrl, redirectUrl);
+        mockMvcTesting.makeDelete(postUrl, redirectUrl);
 
         friends = friendshipService.getFriends(loggedInUser);
         assertEquals(1, friends.size());

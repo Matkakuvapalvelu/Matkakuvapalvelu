@@ -12,12 +12,11 @@ import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import wadp.Application;
+import wadp.controller.utility.MockMvcTesting;
 import wadp.domain.*;
 import wadp.service.*;
 
@@ -27,11 +26,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static wadp.controller.utility.ControllerTestHelpers.makeGet;
-import static wadp.controller.utility.ControllerTestHelpers.makePost;
-import static wadp.controller.utility.ControllerTestHelpers.makePostWithFile;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -46,6 +41,8 @@ public class PostControllerTest {
 
     @Autowired
     private FilterChainProxy springSecurityFilter;
+
+    private MockMvcTesting mockMvcTesting;
 
     @Autowired
     private UserService userService;
@@ -69,20 +66,9 @@ public class PostControllerTest {
     private byte [] data;
 
 
-    private MockMvc mockMvc;
-
     @Before
     public void setUp() throws IOException {
-
-
-        this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(webAppContext)
-                .addFilter(springSecurityFilter, "/*")
-                .build();
-
-        webAppContext.getServletContext().setAttribute(
-                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, webAppContext);
-
+        mockMvcTesting = new MockMvcTesting(webAppContext, springSecurityFilter);
         createTestPostsAndSetUpAuthenticatedUser();
     }
 
@@ -110,7 +96,7 @@ public class PostControllerTest {
 
     @Test
     public void postsAreAddedToModelWhenRequestingPostsView() throws Exception {
-        MvcResult result = makeGet(mockMvc, URI, "posts", "posts");
+        MvcResult result = mockMvcTesting.makeGet(URI, "posts", "posts");
 
         List<Post> posts = (List<Post>)result.getModelAndView().getModel().get("posts");
         assertEquals(1, posts.size());
@@ -119,7 +105,7 @@ public class PostControllerTest {
 
     @Test
     public void newPostCreationAddsTripsToModel() throws Exception {
-        MvcResult result = makeGet(mockMvc, URI + "/new", "newpost", "trips");
+        MvcResult result = mockMvcTesting.makeGet(URI + "/new", "newpost", "trips");
         List<Trip> trips = (List<Trip>)result.getModelAndView().getModel().get("trips");
         assertEquals(1, trips.size());
         assertEquals(trip.getId(), trips.get(0).getId());
@@ -133,7 +119,7 @@ public class PostControllerTest {
 
         parameters.put("image_text", imageText);
         parameters.put("trips", trip.getId().toString());
-        makePostWithFile(mockMvc, URI, "/posts/[0-9]+", status().is3xxRedirection(), data, "image/jpg", parameters);
+        mockMvcTesting.makePostWithFile(URI, "/posts/[0-9]+", status().is3xxRedirection(), data, "image/jpg", parameters);
 
         List<Post> posts = postService.getUserPosts(loggedInUser);
 
@@ -157,7 +143,7 @@ public class PostControllerTest {
 
         parameters.put("image_text", imageText);
         parameters.put("trips", trip.getId().toString());
-        MvcResult res = makePostWithFile(mockMvc, URI, "", status().is2xxSuccessful(), null, "image/jpg", parameters);
+        MvcResult res = mockMvcTesting.makePostWithFile(URI, "", status().is2xxSuccessful(), null, "image/jpg", parameters);
         String error = (String)res.getModelAndView().getModel().get("error");
         assertNotNull(error);
 
@@ -172,7 +158,7 @@ public class PostControllerTest {
 
         parameters.put("image_text", imageText);
         parameters.put("trips", trip.getId().toString());
-        MvcResult res = makePostWithFile(mockMvc, URI, "", status().is2xxSuccessful(), data, "video/avi", parameters);
+        MvcResult res = mockMvcTesting.makePostWithFile(URI, "", status().is2xxSuccessful(), data, "video/avi", parameters);
         String error = (String)res.getModelAndView().getModel().get("error");
         assertNotNull(error);
         assertEquals(1, postService.getUserPosts(loggedInUser).size());
@@ -187,7 +173,7 @@ public class PostControllerTest {
         parameters.put("commentText", commentText);
 
         Long id = postService.getUserPosts(loggedInUser).get(0).getId();
-        makePost(mockMvc, URI + "/" + id + "/comment", "/posts/" + id, parameters);
+        mockMvcTesting.makePost(URI + "/" + id + "/comment", "/posts/" + id, parameters);
 
         List<Comment> comments = postService.getPost(id).getComments();
         assertEquals(1, comments.size());
@@ -205,8 +191,7 @@ public class PostControllerTest {
         comment.setCommentText(commentText);
         commentService.addCommentToPost(comment, post);
 
-        MvcResult result = makeGet(mockMvc, URI + "/" + post.getId(), "post", "post", "comments");
-
+        MvcResult result = mockMvcTesting.makeGet(URI + "/" + post.getId(), "post", "post", "comments");
 
         Post addedPost = (Post)result.getModelAndView().getModel().get("post");
         List<Comment> comments = (List<Comment>)result.getModelAndView().getModel().get("comments");
