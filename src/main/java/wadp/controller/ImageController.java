@@ -28,8 +28,6 @@ public class ImageController {
         // TODO: Check that user actually has right to see the image in question
         // TODO: Send 304 if browser has image cached
 
-
-
         Image image = imageService.getImage(id);
         return new ResponseEntity<>(image.getOriginal().getContent(), getImageHeaders(image.getOriginal()), HttpStatus.CREATED);
     }
