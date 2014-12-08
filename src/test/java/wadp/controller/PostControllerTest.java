@@ -200,7 +200,6 @@ public class PostControllerTest {
         assertEquals(post.getComments().size(), comments.size());
         assertEquals(post.getComments().get(0).getId(), comments.get(0).getId());
         assertEquals(post.getComments().get(0).getCommentText(), comments.get(0).getCommentText());
-
     }
 
 }

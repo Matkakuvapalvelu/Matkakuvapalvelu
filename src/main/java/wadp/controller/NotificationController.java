@@ -35,6 +35,27 @@ public class NotificationController {
     @Transactional
     public String showNotification(@PathVariable Long id, Model model) {
         Notification notification = notificationService.getNotification(id);
+
+        if (notification == null
+                || userService.getAuthenticatedUser() == null
+                || !notification.getReceiver().getUsername().equals(userService.getAuthenticatedUser().getUsername())) {
+
+            model.addAttribute("error", "No such notification exists");
+
+            // view right now is not checking for null correctly, so add some empty data for it
+            User dummyUser = new User();
+             dummyUser.setUsername("");
+
+            notification  = new Notification();
+            notification.setSender(dummyUser);
+            notification.setReceiver(dummyUser);
+            notification.setNotificationText("");
+            notification.setNotificationReason("");
+
+            model.addAttribute("notification", notification);
+            return "notification";
+        }
+
         notification.setRead(true);
 
         model.addAttribute("notification", notification);
@@ -50,21 +71,5 @@ public class NotificationController {
             notificationService.deleteNotification(notification);
         }
         return "redirect:/notification";
-    }
-
-
-    // TEST CODE BELOW ---- CAN BE REMOVED (should be removed before final deadline!)
-
-    @RequestMapping(value="/debug", method= RequestMethod.GET)
-    public String showDebugNotifcationPage() {
-        return "debugNotification";
-    }
-
-    @RequestMapping(value="/debug", method=RequestMethod.POST)
-    public String addNewDebugNotificationToUser(@RequestParam("notificationText") String text) {
-
-        User user = userService.getAuthenticatedUser();
-        notificationService.createNewNotification("Test notification", text, user, user);
-        return "redirect:/notification/debug";
     }
 }
