@@ -32,10 +32,8 @@ public class ImageController {
     public String addImage(@RequestParam("file") MultipartFile file) throws IOException {
         if (!file.isEmpty()) {
             
-        
-        Image image = new Image();
 
-        imageService.addImage(image, file.getContentType(), file.getOriginalFilename(),
+        imageService.addImage(file.getContentType(), file.getOriginalFilename(),
                 file.getBytes());
         }
 

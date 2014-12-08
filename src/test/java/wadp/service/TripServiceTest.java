@@ -288,7 +288,7 @@ public class TripServiceTest {
         byte[] data = IOUtils.toByteArray(is);
         is.close();
 
-        Image image = imageService.addImage(new Image(), "image/", "foo", data);
+        Image image = imageService.addImage("image/", "foo", data);
         Post post = postService.createPost(image, "Hello!", Arrays.asList(trip), loggedInUser);
         return image;
     }

@@ -65,10 +65,9 @@ public class PostController {
             @RequestParam("image_text") String text,
             @RequestParam(value ="trips", required = false) String [] tripIds) throws IOException {
         // TODO: Validate that image is not empty!
-        Image image = new Image();
 
         // TODO: Catch ImageValidationException and give appropriate error message to user
-        image = imageService.addImage(image, file.getContentType(), file.getOriginalFilename(),
+        Image image = imageService.addImage( file.getContentType(), file.getOriginalFilename(),
                 file.getBytes());
 
 

@@ -71,28 +71,24 @@ public class ImagesServiceTest {
 
     @Test
     public void addImage() throws IOException {
-        Image img = new Image();
-        imageService.addImage(img, "image/", "foo", this.data);
+        Image img = imageService.addImage("image/", "foo", this.data);
 
         assertEquals(imageService.getImage(img.getId()), img);
     }
 
     @Test(expected = ImageValidationException.class)
     public void wrongFormatThrowsException() throws IOException {
-        Image img = new Image();
-        imageService.addImage(img, "file/exe", "joku", new byte[1]);
+        imageService.addImage("file/exe", "joku", new byte[1]);
     }
 
     @Test
     public void multipleImages() throws IOException {
-        Image img = new Image();
-        imageService.addImage(img, "image/", "img1", this.data);
 
-        Image img2 = new Image();
-        imageService.addImage(img2, "image/", "img2", this.data);
+        Image img = imageService.addImage("image/", "img1", this.data);
 
-        Image img3 = new Image();
-        imageService.addImage(img3, "image/", "img3", this.data);
+        Image img2 = imageService.addImage("image/", "img2", this.data);
+
+        Image img3 = imageService.addImage("image/", "img3", this.data);
 
         assertEquals(imageService.findAllImages().get(0), img);
         assertEquals(imageService.findAllImages().get(1), img2);
@@ -101,8 +97,8 @@ public class ImagesServiceTest {
 
     @Test
     public void imageWithoutLocation() throws IOException {
-        Image img = new Image();
-        imageService.addImage(img, "image/", "img1", this.data2);
+
+        Image img = imageService.addImage("image/", "img1", this.data2);
 
         assertNotNull(imageService.getImage(img.getId()));
         assertFalse(imageService.getImage(img.getId()).getLocation());
@@ -110,16 +106,15 @@ public class ImagesServiceTest {
 
     @Test
     public void imageWithLocationIsExtracted() throws IOException {
-        Image img = new Image();
-        imageService.addImage(img, "image/", "foo", this.data);
+
+        Image img = imageService.addImage("image/", "foo", this.data);
 
         assertTrue(imageService.getImage(img.getId()).getLocation());
     }
 
     @Test
     public void imageDateIsSetCorrectly() throws IOException {
-        Image img = new Image();
-        imageService.addImage(img, "image/", "foo", this.data);
+        Image img = imageService.addImage("image/", "foo", this.data);
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(img.getCaptureDate());

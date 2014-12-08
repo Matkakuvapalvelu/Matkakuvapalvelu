@@ -98,8 +98,7 @@ public class PostControllerTest {
        data = IOUtils.toByteArray(is);
 
 
-        Image img = new Image();
-        imageService.addImage(img, "image/", "img1", data);
+        Image img = imageService.addImage("image/", "img1", data);
 
         trip = tripService.createTrip("trip", Trip.Visibility.PUBLIC, loggedInUser);
         post = postService.createPost(img, "desc1", Arrays.asList(trip), loggedInUser);

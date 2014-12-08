@@ -64,7 +64,7 @@ public class PostServiceTest {
 
         user = userService.createUser("adasdsdaads", "pisadjsods");
 
-        image = imageService.addImage(new Image(), "image/", "foo", data);
+        image = imageService.addImage("image/", "foo", data);
         post = postService.createPost(image, "Hello!", new ArrayList<Trip>(), user);
 
         // tripService requires authenticated user for it to work

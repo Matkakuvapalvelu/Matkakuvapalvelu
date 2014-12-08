@@ -34,10 +34,21 @@ public class ImageService {
     @Autowired
     private ThumbnailService thumbnailService;
 
-    public Image addImage(Image image, String mediatype, String name, byte[] content) throws IOException {
+    /**
+     * Adds image to database and returns the saved reference
+     *
+     * @param mediatype Type of the image.
+     * @param name Name of image
+     * @param content Actual image contet
+     * @return Instance of image after it has been saved to dadabase
+     * @throws IOException If image editing operation fails
+     */
+    public Image addImage(String mediatype, String name, byte[] content) throws IOException {
+
         if (!validateFormat(mediatype)) {
             throw new ImageValidationException("Invalid image format!");
         }
+        Image image = new Image();
 
         FileObject original = new FileObject();
         original.setName(name);
@@ -57,15 +68,25 @@ public class ImageService {
         return imageRepository.save(image);
     }
 
-    public Image setMetadataFields(Image image) {
+    /**
+     * Reads metadata from image data and sets the image class fields to appropriate values
+     *
+     * @param image Image to be updated
+     * @return Image after the metadat has been set
+     */
+
+    private void setMetadataFields(Image image) {
         if (!validateFormat(image.getOriginal().getContentType())) {
             image.setLocation(false);
-            return image;
+            return;
         }
+
         Metadata metadata = metadataService.extractMetadata(image.getOriginal().getContent());
+
         if (metadata.hasErrors()) {
-            return image;
+            return;
         }
+
         for (Directory directory : metadata.getDirectories()) {
             if (directory.containsTag(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL)) {
                 image.setCaptureDate(directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL));
@@ -74,16 +95,20 @@ public class ImageService {
         }
         if (metadata.getDirectory(GpsDirectory.class) == null) {
             image.setLocation(false);
-            return image;
+            return;
         }
         image.setLatitude(metadata.getDirectory(GpsDirectory.class).getGeoLocation().getLatitude());
         image.setLongitude(metadata.getDirectory(GpsDirectory.class).getGeoLocation().getLongitude());
         image.setLocation(true);
 
-        return image;
     }
 
-    public List findAllImages() {
+    /**
+     * Returns list of all images
+     *
+     * @return List of images
+     */
+    public List<Image> findAllImages() {
         return imageRepository.findAll();
     }
 

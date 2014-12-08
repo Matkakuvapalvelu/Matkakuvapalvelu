@@ -30,7 +30,6 @@ import wadp.domain.Image;
 public class ThumbnailServiceTest {
 
     private byte[] data;
-    private Image img;
     @Autowired
     private ThumbnailService thumbnailService;
     @Autowired
@@ -52,8 +51,6 @@ public class ThumbnailServiceTest {
         File imageFile = new File("src/test/testimg.jpg");
         InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
         this.data = IOUtils.toByteArray(is);
-
-        this.img = new Image();
     }
 
     @After
@@ -62,7 +59,7 @@ public class ThumbnailServiceTest {
 
     @Test
     public void addedImageCreatesThumbnails() throws IOException {
-        imageService.addImage(img, "image/", "foo", data);
+        Image img = imageService.addImage("image/", "foo", data);
         assertNotNull(img.getGalleryThumbnail());
         assertNotNull(img.getPostThumbnail());
     }
