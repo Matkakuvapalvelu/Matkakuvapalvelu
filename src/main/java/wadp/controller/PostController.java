@@ -11,16 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import wadp.domain.Image;
-import wadp.domain.Trip;
+import wadp.domain.*;
 import wadp.service.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import wadp.domain.Comment;
-import wadp.domain.Post;
 
 @Controller
 @RequestMapping("/posts")
@@ -78,15 +75,20 @@ public class PostController {
             model.addAttribute("error", "Unknown image type");
             return "/posts";
         } catch (IOException ioExceptiom) {
-            model.addAttribute("error", "An internal error has occured while processing the image");
+            model.addAttribute("error", "An internal error has occurred while processing the image");
             return "/posts";
         }
 
         List<Trip> trips = new ArrayList<>();
 
-        addTripsToList(tripIds, trips);
-
-        Post post = postService.createPost(image, text, trips, userService.getAuthenticatedUser());
+        User user = userService.getAuthenticatedUser();
+        try {
+            addTripsToList(tripIds, trips, user);
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "/posts";
+        }
+        Post post = postService.createPost(image, text, trips, user);
 
         return "redirect:/posts/" + post.getId();
     }
@@ -100,12 +102,15 @@ public class PostController {
         return "redirect:/posts/" + id;
     }
 
-    private void addTripsToList(String[] tripIds, List<Trip> trips) {
+    private void addTripsToList(String[] tripIds, List<Trip> trips, User postCreator) {
         if (tripIds != null) {
             for (String id : tripIds) {
                 try {
                     Trip trip = tripService.getTrip(Long.parseLong(id));
                     if (trip != null) {
+                        if (!trip.getCreator().getUsername().equals(postCreator.getUsername())) {
+                            throw new IllegalArgumentException("Post must be added by the trip creator");
+                        }
                         trips.add(trip);
                     }
                 } catch (NumberFormatException ex) {

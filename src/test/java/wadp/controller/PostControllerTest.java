@@ -62,7 +62,8 @@ public class PostControllerTest {
     private User loggedInUser;
     private User otherUser;
     private Post post;
-    private Trip trip;
+    private Trip loggedInUserTrip;
+
     private byte [] data;
 
 
@@ -83,9 +84,9 @@ public class PostControllerTest {
 
         Image img = imageService.addImage("image/", "img1", data);
 
-        trip = tripService.createTrip("trip", Trip.Visibility.PUBLIC, loggedInUser);
+        loggedInUserTrip = tripService.createTrip("loggedInUserTrip", Trip.Visibility.PUBLIC, loggedInUser);
 
-        post = postService.createPost(img, "desc1", Arrays.asList(trip), loggedInUser);
+        post = postService.createPost(img, "desc1", Arrays.asList(loggedInUserTrip), loggedInUser);
 
         postService.createPost(img, "desc3", new ArrayList<>(), otherUser);
         postService.createPost(img, "desc4", new ArrayList<>(), otherUser);
@@ -108,7 +109,7 @@ public class PostControllerTest {
         MvcResult result = mockMvcTesting.makeGet(URI + "/new", "newpost", "trips");
         List<Trip> trips = (List<Trip>)result.getModelAndView().getModel().get("trips");
         assertEquals(1, trips.size());
-        assertEquals(trip.getId(), trips.get(0).getId());
+        assertEquals(loggedInUserTrip.getId(), trips.get(0).getId());
     }
 
     @Test
@@ -118,7 +119,7 @@ public class PostControllerTest {
         String imageText = "This is image text";
 
         parameters.put("image_text", imageText);
-        parameters.put("trips", trip.getId().toString());
+        parameters.put("trips", loggedInUserTrip.getId().toString());
         mockMvcTesting.makePostWithFile(URI, "/posts/[0-9]+", status().is3xxRedirection(), data, "image/jpg", parameters);
 
         List<Post> posts = postService.getUserPosts(loggedInUser);
@@ -131,7 +132,7 @@ public class PostControllerTest {
         assertEquals(1, posts.size());
 
         assertEquals(imageText, posts.get(0).getImageText());
-        assertEquals(trip.getId(), posts.get(0).getTrips().get(0).getId());
+        assertEquals(loggedInUserTrip.getId(), posts.get(0).getTrips().get(0).getId());
         assertNotNull(posts.get(0).getImage());
     }
 
@@ -142,7 +143,7 @@ public class PostControllerTest {
         String imageText = "This is image text";
 
         parameters.put("image_text", imageText);
-        parameters.put("trips", trip.getId().toString());
+        parameters.put("trips", loggedInUserTrip.getId().toString());
         MvcResult res = mockMvcTesting.makePostWithFile(URI, "", status().is2xxSuccessful(), null, "image/jpg", parameters);
         String error = (String)res.getModelAndView().getModel().get("error");
         assertNotNull(error);
@@ -152,12 +153,29 @@ public class PostControllerTest {
 
     @Test
     @Transactional
+    public void cannotAddPostToAnotherUsersTripAndNoPostIsCreated() throws Exception {
+        Map<String, String> parameters = new HashMap<>();
+        String imageText = "This is image text";
+
+        Trip otherTrip = tripService.createTrip("Other trip", Trip.Visibility.PUBLIC, otherUser);
+        parameters.put("image_text", imageText);
+        parameters.put("trips", otherTrip.getId().toString());
+        MvcResult res = mockMvcTesting.makePostWithFile(URI, "", status().is2xxSuccessful(), data, "image/jpg", parameters);
+        String error = (String)res.getModelAndView().getModel().get("error");
+
+        assertNotNull(error);
+        assertEquals(1, postService.getUserPosts(loggedInUser).size());
+        assertEquals(0, tripService.getTrip(otherTrip.getId()).getPosts().size());
+    }
+
+    @Test
+    @Transactional
     public void invalidTypeAddsErrorToModelAndNoPostIsCreated() throws Exception {
         Map<String, String> parameters = new HashMap<>();
         String imageText = "This is image text";
 
         parameters.put("image_text", imageText);
-        parameters.put("trips", trip.getId().toString());
+        parameters.put("trips", loggedInUserTrip.getId().toString());
         MvcResult res = mockMvcTesting.makePostWithFile(URI, "", status().is2xxSuccessful(), data, "video/avi", parameters);
         String error = (String)res.getModelAndView().getModel().get("error");
         assertNotNull(error);
@@ -201,5 +219,4 @@ public class PostControllerTest {
         assertEquals(post.getComments().get(0).getId(), comments.get(0).getId());
         assertEquals(post.getComments().get(0).getCommentText(), comments.get(0).getCommentText());
     }
-
 }
