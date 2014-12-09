@@ -16,9 +16,7 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.*;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -26,6 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import wadp.Application;
 
+import javax.xml.transform.Result;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,6 +74,7 @@ public class MockMvcTesting {
 
     public MvcResult makeGet(String getUrl, String viewName, String... expectedModelValueNames) throws Exception {
         MockHttpSession session = buildSession();
+
         return mockMvc
                 .perform(get(getUrl)
                         .session(session))
@@ -95,17 +95,35 @@ public class MockMvcTesting {
     }
 
 
-    public void makePost(String postUrl, String redirectUrl) throws Exception {
-        makePost(postUrl, redirectUrl, new HashMap<>());
+    public MvcResult makePost(String postUrl, String redirectUrl) throws Exception {
+        return makePost(postUrl, redirectUrl, new HashMap<>());
     }
 
-    public void makePost(String postUrl, String redirectUrl, Map<String, String> parameters) throws Exception {
-        makeRequest(new Post(postUrl), redirectUrl, parameters);
+    public MvcResult makePost(String postUrl, String redirectUrl, Map<String, String> parameters) throws Exception {
+        List<ResultMatcher> matchers = new ArrayList<>();
+        matchers.add(status().is3xxRedirection());
+        matchers.add(redirectedUrl(redirectUrl));
+
+        return makeRequest(new Post(postUrl), parameters, matchers);
     }
 
+    public MvcResult makePostExpectErrors(String postUrl,
+                                          String view,
+                                          Map<String, String> parameters,
+                                          String... errors) throws Exception {
+        List<ResultMatcher> matchers = new ArrayList<>();
+        matchers.add(status().is2xxSuccessful());
+        matchers.add(model().attributeHasErrors(errors));
+        matchers.add(view().name(view));
+        return makeRequest(new Post(postUrl), parameters, matchers);
 
-    public void makeDelete(String postUrl, String redirectUrl) throws Exception {
-        makeRequest(new Delete(postUrl), redirectUrl, new HashMap<>());
+    }
+
+    public MvcResult makeDelete(String postUrl, String redirectUrl) throws Exception {
+        List<ResultMatcher> matchers = new ArrayList<>();
+        matchers.add(status().is3xxRedirection());
+        matchers.add(redirectedUrl(redirectUrl));
+        return makeRequest(new Delete(postUrl), new HashMap<>(), matchers);
     }
 
 
@@ -141,7 +159,10 @@ public class MockMvcTesting {
     }
 
 
-    private void makeRequest(Callable<MockHttpServletRequestBuilder> func, String redirectUrl, Map<String, String> parameters) throws Exception {
+
+    private MvcResult makeRequest(Callable<MockHttpServletRequestBuilder> func,
+                                  Map<String, String> parameters,
+                                  List<ResultMatcher> matchers) throws Exception {
         MockHttpSession session = buildSession();
 
         MockHttpServletRequestBuilder builder = func.call()
@@ -150,14 +171,20 @@ public class MockMvcTesting {
         Map<String, Object> map = initializeCsrfToken(builder);
         setPostParameters(parameters, builder);
 
-        doRequest(redirectUrl, builder, map);
+        return doRequest(builder, map, matchers);
     }
 
-    private void doRequest(String redirectUrl, MockHttpServletRequestBuilder builder, Map<String, Object> map) throws Exception {
-        mockMvc.perform(builder
-                .sessionAttrs(map))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(redirectUrl));
+    private MvcResult doRequest(MockHttpServletRequestBuilder builder,
+                                Map<String, Object> map,
+                                List<ResultMatcher> matchers) throws Exception {
+        ResultActions actions = mockMvc.perform(builder
+                .sessionAttrs(map));
+
+        for (ResultMatcher matcher : matchers) {
+            actions = actions.andExpect(matcher);
+        }
+
+        return actions.andReturn();
     }
 
     private Map<String, Object> initializeCsrfToken(MockHttpServletRequestBuilder builder) {
@@ -178,5 +205,6 @@ public class MockMvcTesting {
             builder.param(key, parameters.get(key));
         }
     }
+
 
 }
