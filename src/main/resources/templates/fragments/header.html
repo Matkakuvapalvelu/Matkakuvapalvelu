@@ -29,17 +29,15 @@
                     <li><a href="/profile">Profile</a></li>
                     <li><a href="/trips.html" th:href="@{/trips}">Trips</a></li>
                     <li><a href="/posts">Posts</a></li>
+                    <li sec:authorize="isAuthenticated()">                        
+                        <a href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>                        
+                    </li>
+                    <li sec:authorize="isAnonymous()">
+                        <a href="/login">Login</a>
+                    </li>
                 </ul>
             </nav>
-            
-            <span sec:authorize="isAuthenticated()">
-                <a href="#" onclick="document.getElementById('logout-form').submit();"><span>Logout </span></a>
-                <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
-            </span>
-            <span sec:authorize="isAnonymous()">
-                <a href="/login">Login</a>
-            </span>
-
+            <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>                        
         </div>
     </body>
 </html>
