@@ -40,9 +40,9 @@ public class ImageControllerTest {
     private FilterChainProxy springSecurityFilter;
 
     @Autowired
-    ImageService imageService;
+    private ImageService imageService;
 
-    MockMvcTesting mockMvcTesting;
+    private MockMvcTesting mockMvcTesting;
 
     private Image img;
 

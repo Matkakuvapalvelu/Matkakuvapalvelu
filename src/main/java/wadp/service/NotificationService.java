@@ -76,4 +76,8 @@ public class NotificationService {
     public List<Notification> getNotifications(User receiver) {
         return notificationRepository.findNotificationsByReceiver(receiver);
     }
+
+    public void updateNotification(Notification n) {
+        notificationRepository.save(n);
+    }
 }
