@@ -116,7 +116,7 @@ public class PostControllerTest {
     @Transactional
     public void canCreateNewPost() throws Exception {
         Map<String, String> parameters = new HashMap<>();
-        String imageText = "This is image text";
+        String imageText = "This is image text with scändics änd öther stüff";
 
         parameters.put("image_text", imageText);
         parameters.put("trips", loggedInUserTrip.getId().toString());
