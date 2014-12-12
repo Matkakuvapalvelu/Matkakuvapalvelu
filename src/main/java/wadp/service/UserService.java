@@ -30,6 +30,11 @@ public class UserService {
      */
     public User createUser(String username, String password) {
 
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("Username must not be null or empty");
+        }
+
+        username = username.trim();
         if (userRepository.findByUsername(username) != null) {
             throw new UsernameAlreadyTakenException();
         }

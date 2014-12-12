@@ -108,4 +108,28 @@ public class SignupControllerTest {
         assertTrue(userService.getUsers().get(0).passwordEquals("averygoodpassword"));
     }
 
+    @Test
+    public void doesNotCreateUserAndGivesErrorMessageIfUsernameIsTooShort() throws Exception {
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("username", "ab");
+        parameters.put("password", "happyfluffybunnies");
+        parameters.put("confirmpassword", "happyfluffybunnies");
+        mockMvcTesting.makePostExpectErrors(URI, "signup", parameters, "user");
+
+        assertEquals(0, userService.getUsers().size());
+    }
+
+    @Test
+    public void doesNotCreateUserAndGivesErrorMessageIfUsernameIsNull() throws Exception {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("username", null);
+        parameters.put("password", "happyfluffybunnies");
+        parameters.put("confirmpassword", "happyfluffybunnies");
+        mockMvcTesting.makePostExpectErrors(URI, "signup", parameters, "user");
+
+        assertEquals(0, userService.getUsers().size());
+    }
+
+
 }

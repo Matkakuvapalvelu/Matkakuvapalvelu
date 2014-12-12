@@ -65,9 +65,25 @@ public class UserServiceTest {
     }
 
     @Test(expected=UsernameAlreadyTakenException.class)
-    public void creatingUserWithSameUsernamethrowsException() {
+    public void creatingUserWithSameUsernameThrowsException() {
         service.createUser("Foo", "barbarbar");
         service.createUser("Foo", "asfsdfdasf");
+    }
+
+    @Test(expected=UsernameAlreadyTakenException.class)
+    public void creatingUserWithSameUsernameAndBeginningAndTrailingWhitespaceThrowsException() {
+        service.createUser("Foo", "barbarbar");
+        service.createUser(" Foo     ", "asfsdfdasf");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void cannotCreateUserWithEmptyUsername() {
+        service.createUser("", "barbarbar");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void cannotCreateUserWithNullUsername() {
+        service.createUser(null, "barbarbar");
     }
 
     @Test(expected=AuthenticationException.class)

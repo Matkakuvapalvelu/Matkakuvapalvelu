@@ -15,6 +15,7 @@ public class UserForm {
 
     @NotNull(message="Username cannot be null")
     @NotBlank(message="Username cannot be empty")
+    @Length(min=3, message="Username must contain at least 3 characters")
     private String username;
 
     @NotNull(message="Password cannot be null")
