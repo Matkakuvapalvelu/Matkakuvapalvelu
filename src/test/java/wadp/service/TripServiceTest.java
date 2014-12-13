@@ -15,6 +15,7 @@ import wadp.Application;
 import wadp.domain.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -265,8 +266,8 @@ public class TripServiceTest {
     public void getTripImageCoordinatesReturnCorrectCoordinates() throws IOException {
         Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
 
-        Image firstImage = createPost("src/test/testimg.jpg", t);
-        Image secondImage = createPost("src/test/testimg3.jpg", t);
+        Image firstImage = createPost("src/test/testimg.jpg", "Hello!",t);
+        Image secondImage = createPost("src/test/testimg3.jpg", "Hello!", t);
 
         List<double[]> coordinates = tripService.getTripImageCoordinates(t.getId());
 
@@ -281,16 +282,145 @@ public class TripServiceTest {
         assertEquals((double)firstImage.getId(), coordinates.get(1)[2], 0.0001);
     }
 
+    @Test
+    @Transactional
+    public void searchWithEmptyKeywordListReturnsEmptyList() {
 
-    private Image createPost(String name, Trip trip) throws IOException {
-        File imageFile = new File(name);
+
+
+        List<Trip> trips = tripService.searchTripsWithKeywords(new ArrayList<>(), loggedInUser);
+        assertEquals(0, trips.size());
+    }
+
+    @Test
+    @Transactional
+    public void searchReturnsTripsWithKeywords() throws IOException {
+
+        final Trip myPrivateTrip = tripService.createTrip("My awesome trip to Spain", Trip.Visibility.PRIVATE, loggedInUser);
+
+        final Trip friendFriendTrip = tripService.createTrip("Traveling in Spain", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", Trip.Visibility.PRIVATE, friend);
+
+
+        final Trip strangerPublicTrip = tripService.createTrip("My travels", Trip.Visibility.PUBLIC, stranger);
+        createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
+        tripService.createTrip("Images for friends", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", Trip.Visibility.FRIENDS, stranger);
+
+        List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("Spain"), loggedInUser);
+
+        assertEquals(3, trips.size());
+
+        assertEquals(1,
+                trips
+                .stream()
+                .filter(t -> t.getId() == myPrivateTrip.getId())
+                .collect(Collectors.toList())
+                .size());
+
+        assertEquals(1,
+                trips
+                        .stream()
+                        .filter(t -> t.getId() == friendFriendTrip.getId())
+                        .collect(Collectors.toList())
+                        .size());
+        assertEquals(1,
+                trips
+                        .stream()
+                        .filter(t -> t.getId() == strangerPublicTrip.getId())
+                        .collect(Collectors.toList())
+                        .size());
+    }
+
+    @Test
+    @Transactional
+    public void searchForKeywordsInNonVisibleTripsReturnsEmptyList() throws IOException {
+
+        tripService.createTrip("My awesome trip to Spain", Trip.Visibility.PRIVATE, loggedInUser);
+
+        tripService.createTrip("Traveling in Spain", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", Trip.Visibility.PRIVATE, friend);
+
+
+        final Trip strangerPublicTrip = tripService.createTrip("My travels", Trip.Visibility.PUBLIC, stranger);
+        createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
+        tripService.createTrip("Images for friends", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", Trip.Visibility.FRIENDS, stranger);
+
+        List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("Portugal", "stuff", "friends"), loggedInUser);
+
+        assertEquals(0, trips.size());
+    }
+
+
+    @Test
+    @Transactional
+    public void searchWithMultipleKeywordsAndDifferentCasingReturnsCorrectTrips() throws IOException {
+
+        tripService.createTrip("My awesome trip to Spain", Trip.Visibility.PRIVATE, loggedInUser);
+
+        final Trip friendFriendTrip = tripService.createTrip("Traveling in Spain", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", Trip.Visibility.PRIVATE, friend);
+
+
+        final Trip strangerPublicTrip = tripService.createTrip("My travels", Trip.Visibility.PUBLIC, stranger);
+        createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
+        tripService.createTrip("Images for friends", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", Trip.Visibility.FRIENDS, stranger);
+
+        List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("TRAvels", "TrAvElInG" ), loggedInUser);
+
+        assertEquals(2, trips.size());
+
+        assertEquals(1,
+                trips
+                        .stream()
+                        .filter(t -> t.getId() == friendFriendTrip.getId())
+                        .collect(Collectors.toList())
+                        .size());
+        assertEquals(1,
+                trips
+                        .stream()
+                        .filter(t -> t.getId() == strangerPublicTrip.getId())
+                        .collect(Collectors.toList())
+                        .size());
+    }
+
+
+    @Test
+    @Transactional
+    public void searchWithNullUserDefaultToPublicVisibility() throws IOException {
+
+        tripService.createTrip("My awesome trip to Spain", Trip.Visibility.PRIVATE, loggedInUser);
+
+        tripService.createTrip("Traveling in Spain", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", Trip.Visibility.PRIVATE, friend);
+
+
+        final Trip strangerPublicTrip = tripService.createTrip("My travels", Trip.Visibility.PUBLIC, stranger);
+        createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
+        tripService.createTrip("Images for friends", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", Trip.Visibility.FRIENDS, stranger);
+
+        List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("spain"), null);
+
+        assertEquals(1, trips.size());
+        assertEquals(strangerPublicTrip.getId(), trips.get(0).getId());
+
+    }
+
+
+    private Image createPost(String imageName, String postDescription, Trip trip) throws IOException {
+        File imageFile = new File(imageName);
         InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
         byte[] data = IOUtils.toByteArray(is);
         is.close();
 
         Image image = imageService.addImage("image/", "foo", data);
-        Post post = postService.createPost(image, "Hello!", Arrays.asList(trip), loggedInUser);
+        Post post = postService.createPost(image, postDescription, Arrays.asList(trip), trip.getCreator());
         return image;
     }
+
+
 
 }

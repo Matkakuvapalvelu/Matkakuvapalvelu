@@ -129,4 +129,45 @@ public class TripService {
 
         return coordinates;
     }
+
+
+    /**
+     * Returns list of trips where either trip description or associated post description contains one or more keywords
+     * Note: It would be nice if database would handle the whole operation, but the query complexity exceeds what I am
+     * capable of writing right now, so we do sorting here instead
+     *
+     * @param keyWords List of keywords of which at least one must match trip or trip oost
+     * @param searcher Who is searching for information
+     * @return List of trips that match the keywords and have correct visibility setting
+     */
+    public List<Trip> searchTripsWithKeywords(List<String> keyWords, User searcher) {
+
+        List<Trip> trips = tripRepository.findAll();
+        return trips.stream()
+                .filter(trip -> {
+                    boolean containsKeyWord = keyWords
+                            .stream()
+                            .anyMatch(string -> trip.getDescription().toLowerCase()
+                                    .contains(string.toLowerCase()));
+
+                    // if trip description did not contain keyword, check if any post description contains keyword
+                    if (!containsKeyWord) {
+                        // I regret nothiiiiiiiing
+                        containsKeyWord = trip
+                                .getPosts()
+                                .stream()
+                                .anyMatch(post -> keyWords
+                                        .stream()
+                                        .anyMatch(string -> post
+                                                .getImageText().toLowerCase()
+                                                .contains(string.toLowerCase())));
+                    }
+
+                    return containsKeyWord && hasRightToSeeTrip(trip.getId(), searcher);
+
+                })
+                .collect(Collectors.toList());
+
+
+    }
 }

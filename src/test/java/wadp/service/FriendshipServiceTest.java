@@ -258,6 +258,12 @@ public class FriendshipServiceTest {
     }
 
     @Test
+    public void friendsShipDoesNotExistIfOneParameterIsNull() {
+        assertFalse(friendshipService.areFriends(testUsers.get(0), null));
+        assertFalse(friendshipService.areFriends(null, testUsers.get(0)));
+    }
+
+    @Test
     public void pendingRequestsAreReturned() {
         friendshipService.createNewFriendshipRequest(testUsers.get(1), testUsers.get(0));
         friendshipService.createNewFriendshipRequest(testUsers.get(2), testUsers.get(0));
