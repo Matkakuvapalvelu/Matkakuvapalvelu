@@ -2,9 +2,63 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head lang="en">
         <meta charset="UTF-8"/>
-        <title>Search view</title>
+        <title>Search</title>
+        <!--[if lte IE 8]><script src="/css/ie/html5shiv.js"></script><![endif]-->
+        <link rel="stylesheet" href="/css/skel.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/style-desktop.css" />
+        <!--[if lte IE 8]><link rel="stylesheet" href="/css/ie/v8.css" /><![endif]-->
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
+        <style type="text/css">
+            html, body, #googleMap { height: 100%; width: 100%; margin: 0; padding: 0; float: left;};
+        </style>
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/jquery.dropotron.min.js"></script>
+        <script src="/js/skel.min.js"></script>
+        <script src="/js/skel-layers.min.js"></script>
+        <script src="/js/init.js"></script>
     </head>
     <body>
-        PLACEHOLDER VIEW PLEASE REPLACE
+        <div th:replace="fragments/header :: header">header</div>
+        <div class="container">
+            <form method="POST" class="form-horizontal" role="search" th:action="@{/search}">
+                <div class="form-group">
+                    <label for="keywords" class="col-sm-2 control-label">Search</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" id="keywords" name="keywords" placeholder="Search..."/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="search" class="col-sm-2 control-label"></label>
+
+                    <div class="col-md-offset-2 col-md-10">
+                        <input style="visibility: hidden" type="submit" id="search" class="btn btn-default" value="Search"/>
+                    </div>
+                </div>
+            </form>
+            <div class="row 200%">
+                <div th:replace="fragments/triplist :: triplist">trip list</div>
+            </div>
+        </div>
+
     </body>
 </html>
+
+
+        <!--
+
+        <form method="POST" class="form-horizontal" action="/search" role="search">
+            <label for="keywords">Search</label><br />
+            <div class="col-md-10">
+                <input type="text"
+                        name="keywords"
+                        id="keywords"
+                        placeholder="Type your search terms here"></input>
+                <input type="submit" value="Search"/><br />
+            </div>
+        </form>
+
+    </div>
+
+                    -->
