@@ -27,7 +27,7 @@
                 var longitude = /*[[${post.image.longitude}]]*/ 0;
 
                 google.maps.event.addDomListener(window, 'load', function () {
-                    var map = initialize(latitude, longitude);
+                    var map = initialize(latitude, longitude, 'googleMap', false);
                     drawNewMarker(map, latitude, longitude, /*[[${post.id}]]*/ 0);
                 });
             }
@@ -172,8 +172,7 @@
                             <!-- Something -->
                             <section>
                                 <h2 class="major"><span>Location on the map</span></h2>
-                                <div id="googleMap" style="width: 300px; height: 300px;"></div>
-                                <!--<a href="#" class="image featured"><img src="images/pic03.jpg" alt="" /></a>-->
+                                <div th:replace="fragments/map :: map">Map</div>
                                 <p>
                                     Donec sagittis massa et leo semper scele risque metus faucibus. Morbi congue mattis mi. 
                                     Phasellus sed nisl vitae risus tristique volutpat. Cras rutrum sed commodo luctus blandit.

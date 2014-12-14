@@ -126,6 +126,15 @@ public class PostController {
         Post post = postService.getPost(id);        
         model.addAttribute("post", post);
         model.addAttribute("comments", post.getComments());
+        
+        if(post.getImage().getLocation()){
+            List<double[]> coordinates = new ArrayList<>();
+            coordinates.add(new double[]{post.getImage().getLatitude(), post.getImage().getLongitude(), post.getId()});
+            model.addAttribute("startPoint", coordinates.get(0));            
+            model.addAttribute("coordinates", coordinates);
+            model.addAttribute("isTripMap", false);
+        }
+        
         return "post";
     }
 
