@@ -32,18 +32,132 @@
     <a href="/friends.html" th:href="@{/friendship}">Friends</a>
     <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
 
-    <h1 th:text="@{'Profile of ' + ${user.username}}"></h1>
-
     <span th:if="${canrequestfriendship} == ${true}">
         <a class="btn btn-default" href="#" onclick="document.getElementById('friendship-form').submit();"><span>Send friendship request!</span></a>
         <form style="visibility: hidden" id ="friendship-form" method="post" action="#" th:action="@{'/friendship/request/' + ${user.id}}"><input type="submit" value="Friend"/></form>
     </span>
 
-    <h2>User trips</h2>
-    <div th:each="trip : ${trips}">
-        <a href="#" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.description}">trip description</a>
-    </div>
+    <div id="main-wrapper">
+        <div id="main" class="container">
+            <div class="row">
+                <div class="9u important(collapse)">
+                    <div class="content content-left">
+                        <!-- Content -->
+                        <article class="box page-content">
+                            <header>
+                                <h2 th:text="@{'Profile of ' + ${user.username}}"></h2>
+                                <p>Semper amet scelerisque metus faucibus morbi congue mattis</p>
+                                <ul class="meta">
+                                    <li class="icon fa-clock-o">5 days ago</li>
+                                    <li class="icon fa-comments"><a href="#">1,024</a></li>
+                                </ul>
+                            </header>
 
+                            <section>
+                                <span class="image featured" th:replace="fragments/map :: map"></span>
+                                <p>
+                                    Phasellus quam turpis, feugiat sit amet ornare in, hendrerit in lectus. 
+                                    Praesent semper mod quis eget mi. Etiam eu ante risus. Aliquam erat volutpat. 
+                                    Aliquam luctus et mattis lectus sit amet pulvinar. Nam turpis nisi 
+                                    consequat etiam lorem ipsum dolor sit amet nullam.
+                                </p>
+                            </section>
+                        </article>
+                    </div>
+                </div>
+                <div class="3u">
+                    <div class="sidebar">
+                        <!-- Sidebar profile -->
+                        <section>
+                            <h2 class="major"><span th:text="@{${user.username}}"></span></h2>
+                            <a href="#" class="image featured"><img src="images/pic03.jpg" alt="profile image" /></a>
+                            <p>
+                                Hi! I like to travel.
+                            </p>
+                            <a href="#" class="button alt">Edit my profile</a>
+                        </section>
+                    </div>
+                </div>
+            </div>
+            <div class="row 200%">
+            <div class="12u">
+                <!-- Trips -->
+                <section class="box features">
+                    <h2 class="major"><span>Recent trips</span></h2>
+                    <div>
+                        <div class="row">
+                            <div class="3u" th:each="trip : ${trips}">
+                                <!-- Feature -->
+                                <section class="box feature">
+                                    <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
+                                    <h3><a href="#" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.description}">trip description</a></h3>
+                                    <p th:text="${trip.description}">
+                                        
+                                    </p>
+                                </section>
+                            </div>
+                            <div class="3u">
+                                <!-- Feature -->
+                                <section class="box feature">
+                                        <a href="#" class="image featured"><img src="images/pic02.jpg" alt="" /></a>
+                                        <h3><a href="#">Another Subheading</a></h3>
+                                        <p>
+                                            Phasellus quam turpis, feugiat sit amet ornare in, a hendrerit in 
+                                            lectus dolore. Praesent semper mod quis eget sed etiam eu ante risus.
+                                        </p>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="12u">
+                                <ul class="actions">
+                                    <li><a href="#" class="button big">Show all</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- comments/posts -->
+                <section class="box features">
+                    <h2 class="major"><span>Recent comments/posts/ something else?</span></h2>
+                    <div>
+                        <div class="row">
+                            <div class="3u">
+                                <!-- Feature -->
+                                <section class="box feature">
+                                    <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
+                                    <h3><a href="#">A Subheading</a></h3>
+                                    <p>
+                                        Phasellus quam turpis, feugiat sit amet ornare in, a hendrerit in 
+                                        lectus dolore. Praesent semper mod quis eget sed etiam eu ante risus.
+                                    </p>
+                                </section>
+                            </div>
+                            <div class="3u">
+                                <!-- Feature -->
+                                <section class="box feature">
+                                        <a href="#" class="image featured"><img src="images/pic02.jpg" alt="" /></a>
+                                        <h3><a href="#">Another Subheading</a></h3>
+                                        <p>
+                                            Phasellus quam turpis, feugiat sit amet ornare in, a hendrerit in 
+                                            lectus dolore. Praesent semper mod quis eget sed etiam eu ante risus.
+                                        </p>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="12u">
+                                <ul class="actions">
+                                    <li><a href="#" class="button big">Show all</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+</div>
+</div>
 
 </body>
 </html>

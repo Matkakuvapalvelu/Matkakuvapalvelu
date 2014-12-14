@@ -1,15 +1,18 @@
 package wadp.controller;
 
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMethod;
+import wadp.domain.Trip;
 import wadp.domain.User;
 import wadp.service.FriendshipService;
 import wadp.service.NotificationService;
+import wadp.service.PostService;
 import wadp.service.TripService;
 import wadp.service.UserService;
 
@@ -29,6 +32,9 @@ public class ProfileController {
 
     @Autowired
     private TripService tripService;
+    
+    @Autowired
+    private PostService postService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showProfilePage(Model model) {
@@ -53,6 +59,18 @@ public class ProfileController {
                     !friendshipService.friendshipEntityExists(user, userService.getAuthenticatedUser()));
         }
 
-        model.addAttribute("trips", tripService.getTrips(user, userService.getAuthenticatedUser()));
+        List<Trip> trips = tripService.getTrips(user, userService.getAuthenticatedUser());
+        model.addAttribute("trips", trips);
+                
+        List<double[]> coordinates = tripService.getStartpointCoordinatesOfTrips(user, userService.getAuthenticatedUser());
+
+        if(coordinates.size() > 0){
+            model.addAttribute("startPoint", coordinates.get(0));            
+        } else {
+            model.addAttribute("startPoint", new double[]{0.00, 0.00});
+        }
+        model.addAttribute("coordinates", coordinates);
+        model.addAttribute("isTripMap", false);
+        
     }
 }

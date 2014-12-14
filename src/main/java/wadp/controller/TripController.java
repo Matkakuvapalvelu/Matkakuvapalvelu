@@ -59,6 +59,7 @@ public class TripController {
             
         model.addAttribute("trip", tripService.getTrip(id));
         model.addAttribute("coordinates", coordinates);
+        model.addAttribute("isTripMap", true);
         
         return "trip";
     }

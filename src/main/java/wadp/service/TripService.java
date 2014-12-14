@@ -129,8 +129,32 @@ public class TripService {
 
         return coordinates;
     }
+    
+    /**
+     * Returns list of trip start point coordinates and tripId (latitude/longitude/id) sorted by capture date
+     * Get trips by user where requester has right to see them
+     * @param user User whose trips will be returned
+     * @param requester User who is requesting list of trips
+     * @return List of double arrays with latitude/longitude/id as values
+     */
+    public List<double[]> getStartpointCoordinatesOfTrips(User user, User requester) {
 
+        List<Trip> trips = getTrips(user, requester);
+        final List<double[]> coordinates = new ArrayList<>();
 
+        trips.stream()
+                .forEach(trip -> { 
+                    Post p = trip.getPosts()
+                            .stream()
+                            .filter(i -> i.getImage().getLocation())
+                            .sorted((p1, p2) -> p1.getImage().getCaptureDate().compareTo(p2.getImage().getCaptureDate())).findFirst().get();
+                    
+                    coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude(), trip.getId()});
+                });
+        
+        return coordinates;
+    }
+    
     /**
      * Returns list of trips where either trip description or associated post description contains one or more keywords
      * Note: It would be nice if database would handle the whole operation, but the query complexity exceeds what I am
