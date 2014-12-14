@@ -61,10 +61,10 @@ public class ImageService {
         FileObject galleryThumb = fileObjectRepository.save(thumbnailService.createGalleryThumb(content, name));
         FileObject postThumb = fileObjectRepository.save(thumbnailService.createPostThumb(content, name));
 
-        image.setGalleryThumbnail(galleryThumb);
-        image.setPostThumbnail(postThumb);
-        image.setOriginal(original);
-        setMetadataFields(image);
+        image.setGalleryThumbnailId(galleryThumb.getId());
+        image.setPostThumbnailId(postThumb.getId());
+        image.setOriginalId(original.getId());
+        setMetadataFields(image, original);
         return imageRepository.save(image);
     }
 
@@ -75,13 +75,13 @@ public class ImageService {
      * @return Image after the metadat has been set
      */
 
-    private void setMetadataFields(Image image) {
-        if (!validateFormat(image.getOriginal().getContentType())) {
+    private void setMetadataFields(Image image, FileObject original) {
+        if (!validateFormat(original.getContentType())) {
             image.setLocation(false);
             return;
         }
 
-        Metadata metadata = metadataService.extractMetadata(image.getOriginal().getContent());
+        Metadata metadata = metadataService.extractMetadata(original.getContent());
 
         if (metadata.hasErrors()) {
             return;
@@ -93,12 +93,14 @@ public class ImageService {
                 break;
             }
         }
-        if (metadata.getDirectory(GpsDirectory.class) == null) {
+
+        GpsDirectory gpsDirectory = metadata.getDirectory(GpsDirectory.class);
+        if (gpsDirectory == null || gpsDirectory.getGeoLocation() == null) {
             image.setLocation(false);
             return;
         }
-        image.setLatitude(metadata.getDirectory(GpsDirectory.class).getGeoLocation().getLatitude());
-        image.setLongitude(metadata.getDirectory(GpsDirectory.class).getGeoLocation().getLongitude());
+        image.setLatitude(gpsDirectory.getGeoLocation().getLatitude());
+        image.setLongitude(gpsDirectory.getGeoLocation().getLongitude());
         image.setLocation(true);
 
     }
@@ -118,5 +120,14 @@ public class ImageService {
 
     public Image getImage(Long id) {
         return imageRepository.findOne(id);
+    }
+
+    /**
+     * Returns raw image data by id
+     * @param id Image id
+     * @return Image data
+     */
+    public FileObject getImageData(Long id) {
+        return fileObjectRepository.findOne(id);
     }
 }

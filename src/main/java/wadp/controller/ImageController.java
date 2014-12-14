@@ -1,5 +1,6 @@
 package wadp.controller;
 
+import java.io.File;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,40 +17,29 @@ import wadp.service.ImageService;
 
 
 @Controller
-@RequestMapping("/images")
+@RequestMapping("/user_images")
 public class ImageController {
 
     @Autowired
     private ImageService imageService;
 
-    @RequestMapping(value="/{id}/original", method = RequestMethod.GET)
+    @RequestMapping(value="/{id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> getOriginalImage(@PathVariable Long id){
         // TODO: Check that user actually has right to see the image in question
         // TODO: Send 304 if browser has image cached
 
-        Image image = imageService.getImage(id);
-        return new ResponseEntity<>(image.getOriginal().getContent(), getImageHeaders(image.getOriginal()), HttpStatus.CREATED);
-    }
 
-    @RequestMapping(value="/{id}/postthumbnail", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<byte[]> getThumbnailImage(@PathVariable Long id){
-        // TODO: Check that user actually has right to see the image in question
-        // TODO: Send 304 if browser has image cached
+        FileObject fileObject = imageService.getImageData(id);
+        if (fileObject == null) {
+            fileObject = new FileObject();
+            fileObject.setContent(new byte[0]);
+            fileObject.setContentLength(0l);
+            fileObject.setContentType("image/png");
+            fileObject.setName("No image");
+        }
 
-        Image image = imageService.getImage(id);
-        return new ResponseEntity<>(image.getPostThumbnail().getContent(), getImageHeaders(image.getPostThumbnail()), HttpStatus.CREATED);
-    }
-
-    @RequestMapping(value="/{id}/gallerythumbnail", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<byte[]> getGalleryThumbnailImage(@PathVariable Long id){
-        // TODO: Check that user actually has right to see the image in question
-        // TODO: Send 304 if browser has image cached
-
-        Image image = imageService.getImage(id);
-        return new ResponseEntity<>(image.getGalleryThumbnail().getContent(), getImageHeaders(image.getGalleryThumbnail()), HttpStatus.CREATED);
+        return new ResponseEntity<>(fileObject.getContent(), getImageHeaders(fileObject), HttpStatus.CREATED);
     }
 
     private HttpHeaders getImageHeaders(FileObject image) {

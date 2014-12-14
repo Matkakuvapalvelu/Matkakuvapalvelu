@@ -112,6 +112,20 @@ public class ImagesServiceTest {
         assertTrue(imageService.getImage(img.getId()).getLocation());
     }
 
+    // test for issue #35
+    @Test
+    public void imageWithoutGpsDataWorksRegressionTest() throws IOException {
+        File imageFile = new File("src/test/no_gps.jpg");
+        InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
+
+        byte [] imageData = IOUtils.toByteArray(is);
+        is.close();
+
+        Image img = imageService.addImage("image/jpg", "foo", imageData);
+        assertFalse(img.getLocation());
+
+    }
+
     @Test
     public void imageDateIsSetCorrectly() throws IOException {
         Image img = imageService.addImage("image/", "foo", this.data);
@@ -125,6 +139,14 @@ public class ImagesServiceTest {
         assertEquals(2014, year);
         assertEquals(7, month);
         assertEquals(27, day);
-
     }
+
+    @Test
+    public void imageDataIsSavedCorrectly() throws IOException {
+        Image img = imageService.addImage("image/", "foo", this.data);
+        assertNotNull(imageService.getImageData(img.getOriginalId()));
+        assertNotNull(imageService.getImageData(img.getGalleryThumbnailId()));
+        assertNotNull(imageService.getImageData(img.getPostThumbnailId()));
+    }
+
 }

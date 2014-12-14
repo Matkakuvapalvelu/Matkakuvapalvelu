@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 import wadp.Application;
 import wadp.controller.utility.MockMvcTesting;
+import wadp.domain.FileObject;
 import wadp.domain.Image;
 import wadp.service.ImageService;
 
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ImageControllerTest {
 
-    private final String URI = "/images";
+    private final String URI = "/user_images";
 
     @Autowired
     private WebApplicationContext webAppContext;
@@ -62,21 +63,25 @@ public class ImageControllerTest {
 
     @Test
     public void requestForFullSizeImageContainsImageData() throws Exception {
-        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getId() + "/original", "");
-        assertTrue(Arrays.equals(img.getOriginal().getContent(), res.getResponse().getContentAsByteArray()));
+        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getOriginalId(), "");
+
+        FileObject imageData = imageService.getImageData(img.getOriginalId());
+        assertTrue(Arrays.equals(imageData.getContent(), res.getResponse().getContentAsByteArray()));
 
     }
 
     @Test
     public void requestForGalleryThumbnailImageContainsImageData() throws Exception {
-        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getId() + "/gallerythumbnail", "");
-        assertTrue(Arrays.equals(img.getGalleryThumbnail().getContent(), res.getResponse().getContentAsByteArray()));
+        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getGalleryThumbnailId(), "");
+        FileObject imageData = imageService.getImageData(img.getGalleryThumbnailId());
+        assertTrue(Arrays.equals(imageData.getContent(), res.getResponse().getContentAsByteArray()));
     }
 
     @Test
     public void requestForPostThumbnailImageContainsImageData() throws Exception {
-        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getId() + "/postthumbnail", "");
-        assertTrue(Arrays.equals(img.getPostThumbnail().getContent(), res.getResponse().getContentAsByteArray()));
+        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getPostThumbnailId(), "");
+        FileObject imageData = imageService.getImageData(img.getPostThumbnailId());
+        assertTrue(Arrays.equals(imageData.getContent(), res.getResponse().getContentAsByteArray()));
     }
 
 
