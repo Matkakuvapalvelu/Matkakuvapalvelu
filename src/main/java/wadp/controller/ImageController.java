@@ -25,10 +25,9 @@ public class ImageController {
 
     @RequestMapping(value="/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<byte[]> getOriginalImage(@PathVariable Long id){
-        // TODO: Check that user actually has right to see the image in question
-        // TODO: Send 304 if browser has image cached
-
+    public ResponseEntity<byte[]> getImage(
+            @PathVariable Long id,
+            @RequestHeader(value="If-None-Match", defaultValue="") String userAgent){
 
         FileObject fileObject = imageService.getImageData(id);
         if (fileObject == null) {
@@ -39,17 +38,30 @@ public class ImageController {
             fileObject.setName("No image");
         }
 
-        return new ResponseEntity<>(fileObject.getContent(), getImageHeaders(fileObject), HttpStatus.CREATED);
+
+        if (userAgent.isEmpty()) {
+            return imageResponseEntity(fileObject);
+        } else {
+            return notModifiedResponseEntity(id);
+        }
+
     }
 
-    private HttpHeaders getImageHeaders(FileObject image) {
+    private ResponseEntity<byte[]> imageResponseEntity(FileObject image) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(image.getContentType()));
         headers.setContentLength(image.getContentLength());
         headers.setCacheControl("public");
         headers.setExpires(Long.MAX_VALUE);
         headers.add("ETag", "\"" + image.getId() + "\"");
-        return headers;
+
+        return new ResponseEntity<>(image.getContent(), headers, HttpStatus.CREATED);
+    }
+
+    private ResponseEntity<byte[]> notModifiedResponseEntity(Long id) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add("ETag", "\"" + id + "\"");
+        return new ResponseEntity<>(null, headers, HttpStatus.NOT_MODIFIED);
     }
 
 }

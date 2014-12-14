@@ -19,6 +19,8 @@
 
 </head>
 <body>
+
+    <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
     <span th:if="${unreadnotifications} != null">
         <span th:switch="${unreadnotifications > 0}">
             <span th:case="${true}">
@@ -30,8 +32,6 @@
         </span>
     </span>
     <a href="/friends.html" th:href="@{/friendship}">Friends</a>
-    <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
-
     <span th:if="${canrequestfriendship} == ${true}">
         <a class="btn btn-default" href="#" onclick="document.getElementById('friendship-form').submit();"><span>Send friendship request!</span></a>
         <form style="visibility: hidden" id ="friendship-form" method="post" action="#" th:action="@{'/friendship/request/' + ${user.id}}"><input type="submit" value="Friend"/></form>
