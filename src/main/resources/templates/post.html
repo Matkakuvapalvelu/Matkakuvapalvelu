@@ -16,30 +16,10 @@
         <!--[if lte IE 8]><link rel="stylesheet" href="/css/ie/v8.css" /><![endif]-->
         <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
-        <style type="text/css">
-            html, body, #googleMap {  margin: 0; padding: 0;};
-        </style>
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
-        <script type="text/javascript" src="/js/googlemap.js"></script>
-        <script th:if="${post.image.location} != false" type="text/javascript" th:inline="javascript">
-            function initializeMap() {
-                var latitude = /*[[${post.image.latitude}]]*/ 0;
-                var longitude = /*[[${post.image.longitude}]]*/ 0;
-
-                google.maps.event.addDomListener(window, 'load', function () {
-                    var map = initialize(latitude, longitude, 'googleMap', false);
-                    drawNewMarker(map, latitude, longitude, /*[[${post.id}]]*/ 0);
-                });
-            }
-
-            initializeMap();
-        </script>
     </head>
     <body>
         <div th:replace="fragments/header :: header">header</div>
-
         
-
         <!-- Main -->
         <div id="main-wrapper">
             <div id="main" class="container">
@@ -170,9 +150,9 @@
                                 <a href="#" class="button alt">See more comments!?</a>
                             </section>
                             <!-- Something -->
-                            <section>
+                            <section th:if="${post.image.location} != false">
                                 <h2 class="major"><span>Location on the map</span></h2>
-                                <div th:replace="fragments/map :: map">Map</div>
+                                <div th:replace="fragments/map :: map">Map</div>                                
                                 <p>
                                     Donec sagittis massa et leo semper scele risque metus faucibus. Morbi congue mattis mi. 
                                     Phasellus sed nisl vitae risus tristique volutpat. Cras rutrum sed commodo luctus blandit.
