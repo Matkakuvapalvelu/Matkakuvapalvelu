@@ -1,20 +1,20 @@
 package wadp.controller;
 
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import wadp.domain.Trip;
 import wadp.domain.User;
-import wadp.service.FriendshipService;
-import wadp.service.NotificationService;
-import wadp.service.PostService;
-import wadp.service.TripService;
-import wadp.service.UserService;
+import wadp.service.*;
+
+import java.io.IOException;
+import java.util.List;
 
 
 @Controller
@@ -32,9 +32,12 @@ public class ProfileController {
 
     @Autowired
     private TripService tripService;
-    
+
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private ProfilePicService profilePicService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showProfilePage(Model model) {
@@ -47,6 +50,25 @@ public class ProfileController {
         addUserDetails(userService.getUser(id), model, userService.getAuthenticatedUser().getId() == id);
         return "profile";
     }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public String createProfilePicture(@RequestParam("file") MultipartFile file, Model model) {
+        try {
+            profilePicService.createProfilePic(file.getContentType(), file.getName(), file.getBytes(), userService.getAuthenticatedUser());
+
+        } catch (ImageValidationException ex) {
+            model.addAttribute("error", "Unknown image type");
+            return "/profile";
+        } catch (IOException ioExceptiom) {
+            model.addAttribute("error", "An internal error has occurred while processing the image");
+            return "/profile";
+        }
+
+        return "/profile";
+    }
+
+
+
 
     private void addUserDetails(User user, Model model, boolean isLoggedInUser) {
         model.addAttribute("user", user);
@@ -61,16 +83,16 @@ public class ProfileController {
 
         List<Trip> trips = tripService.getTrips(user, userService.getAuthenticatedUser());
         model.addAttribute("trips", trips);
-                
+
         List<double[]> coordinates = tripService.getStartpointCoordinatesOfTrips(user, userService.getAuthenticatedUser());
 
-        if(coordinates.size() > 0){
-            model.addAttribute("startPoint", coordinates.get(0));            
+        if (coordinates.size() > 0) {
+            model.addAttribute("startPoint", coordinates.get(0));
         } else {
             model.addAttribute("startPoint", new double[]{0.00, 0.00});
         }
         model.addAttribute("coordinates", coordinates);
         model.addAttribute("isTripMap", false);
-        
+
     }
 }
