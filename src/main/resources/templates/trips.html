@@ -43,7 +43,7 @@
                                     <section class="box feature">
                                             <h3><a href="/trips.html" th:href="@{'/trips/'+${trip.id}}" th:text="${trip.description}">Trip to Russia</a></h3>                                            
                                                 <a th:if="${!#lists.isEmpty(trip.posts)}" href="#" th:href="@{'/posts/'+${trip.posts[0].id}}">
-                                                    <img id="user-image" th:attr="src=@{'/images/' + ${trip.posts[0].image.id} + '/gallerythumbnail'}"/>
+                                                    <img id="user-image" th:attr="src=@{'/user_images/' + ${trip.posts[0].image.galleryThumbnailId}}"/>
                                                 </a>
                                             <p>
                                                 Small description from the trip

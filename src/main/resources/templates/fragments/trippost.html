@@ -21,7 +21,7 @@
         <div th:fragment="trippost">
             <div class="image-side-by-side">
                 <a href="#" th:href="@{'/posts/'+${post.id}}">
-                    <img id="user-image" th:attr="src=@{'/images/' + ${post.image.id} + '/gallerythumbnail'}"/>
+                    <img id="user-image" th:attr="src=@{'/user_images/' + ${post.image.galleryThumbnailId}}"/>
                 </a>
             </div>
             <div >

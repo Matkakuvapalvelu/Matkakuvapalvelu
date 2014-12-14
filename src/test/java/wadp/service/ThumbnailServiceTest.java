@@ -60,8 +60,9 @@ public class ThumbnailServiceTest {
     @Test
     public void addedImageCreatesThumbnails() throws IOException {
         Image img = imageService.addImage("image/", "foo", data);
-        assertNotNull(img.getGalleryThumbnail());
-        assertNotNull(img.getPostThumbnail());
+
+        assertNotNull(imageService.getImageData(img.getGalleryThumbnailId()));
+        assertNotNull(imageService.getImageData(img.getPostThumbnailId()));
     }
 
 }

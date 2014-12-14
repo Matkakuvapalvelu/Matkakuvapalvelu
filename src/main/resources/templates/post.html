@@ -39,8 +39,8 @@
 
                                 <section>
                                     <span class="image featured">
-                                        <a href="#" th:href="@{'/images/' + ${post.image.id} + '/original'}">
-                                            <img id="user-image" th:attr="src=@{'/images/' + ${post.image.id} + '/postthumbnail'}"/>
+                                        <a href="#" th:href="@{'/user_images/' + ${post.image.originalId}}">
+                                            <img id="user-image" th:attr="src=@{'/user_images/' + ${post.image.postThumbnailId}}"/>
                                         </a>
                                     </span>
                                     <p>

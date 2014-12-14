@@ -1,10 +1,7 @@
 package wadp.domain;
 
 import java.util.Date;
-import javax.persistence.Basic;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -17,17 +14,14 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Entity
 public class Image extends AbstractPersistable<Long> {
 
-    @Basic(fetch = FetchType.LAZY)
-    @OneToOne
-    private FileObject original;
+    // postgresql really does not like it when you load large objects like images outside transaction,
+    // and lazy fetchtype is merely a recommendation -> random stack traces when framework decides to ignore the
+    // fetch type and load image outside @Transactional block
+    // hence, we now only store the ids here, and load images separately when we need to show them
 
-    @Basic(fetch = FetchType.LAZY)
-    @OneToOne
-    private FileObject galleryThumbnail;
-
-    @Basic(fetch = FetchType.LAZY)
-    @OneToOne
-    private FileObject postThumbnail;
+    private Long originalId;
+    private Long postThumbnailId;
+    private Long galleryThumbnailId;
 
     private double latitude;
     private double longitude;
@@ -38,14 +32,6 @@ public class Image extends AbstractPersistable<Long> {
     public Image() {
         this.location = false;
         this.captureDate = null;
-    }
-
-    public FileObject getOriginal() {
-        return original;
-    }
-
-    public void setOriginal(FileObject original) {
-        this.original = original;
     }
 
     public double getLatitude() {
@@ -80,20 +66,27 @@ public class Image extends AbstractPersistable<Long> {
         this.location = location;
     }
 
-    public FileObject getGalleryThumbnail() {
-        return galleryThumbnail;
+    public Long getOriginalId() {
+        return originalId;
     }
 
-    public void setGalleryThumbnail(FileObject galleryThumbnail) {
-        this.galleryThumbnail = galleryThumbnail;
+    public void setOriginalId(Long originalId) {
+        this.originalId = originalId;
     }
 
-    public FileObject getPostThumbnail() {
-        return postThumbnail;
+    public Long getPostThumbnailId() {
+        return postThumbnailId;
     }
 
-    public void setPostThumbnail(FileObject postThumbnail) {
-        this.postThumbnail = postThumbnail;
+    public void setPostThumbnailId(Long postThumbnailId) {
+        this.postThumbnailId = postThumbnailId;
     }
 
+    public Long getGalleryThumbnailId() {
+        return galleryThumbnailId;
+    }
+
+    public void setGalleryThumbnailId(Long galleryThumbnailId) {
+        this.galleryThumbnailId = galleryThumbnailId;
+    }
 }
