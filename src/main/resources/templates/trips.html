@@ -37,23 +37,8 @@
                 <div class="row 200%">
                     <div class="12u">        
                         <!-- Features -->
-                        <section class="box features">  
-                            <div class="row" th:if="${trips != null}">
-                                <div class="3u" th:each="trip: ${trips}">
-                                    <section class="box feature">
-                                            <h3><a href="/trips.html" th:href="@{'/trips/'+${trip.id}}" th:text="${trip.description}">Trip to Russia</a></h3>                                            
-                                                <a th:if="${!#lists.isEmpty(trip.posts)}" href="#" th:href="@{'/posts/'+${trip.posts[0].id}}">
-                                                    <img id="user-image" th:attr="src=@{'/user_images/' + ${trip.posts[0].image.galleryThumbnailId}}"/>
-                                                </a>
-                                            <p>
-                                                Small description from the trip
-                                            </p>
-                                            <p><label th:text="${trip.creationDate}">Today</label></p>
-                                            <a href="/trips.html" th:href="@{'/trips/'+${trip.id}+'/edit'}" th:text="Edit">Trip to Russia</a>
-                                    </section>
-                                </div>
-                            </div>
-                        </section>                            
+
+                        <div th:replace="fragments/triplist :: triplist">trip list</div>
                         <h2 class="major"><span>Add new trip</span></h2>
                         <div>
                             <form method="POST" th:action="@{/trips}" >

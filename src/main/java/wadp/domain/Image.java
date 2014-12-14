@@ -25,6 +25,7 @@ public class Image extends AbstractPersistable<Long> {
 
     private double latitude;
     private double longitude;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date captureDate;
     private boolean location;

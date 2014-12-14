@@ -1,5 +1,6 @@
 package wadp.controller;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,14 @@ public class SearchController {
 
         List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList(keywords.split(" ")), userService.getAuthenticatedUser());
 
+        // HACK HACK HACK HACK HACK
+
+        // post is loaded lazily, but due to redirection, session is closed and we can no longer load the lazy objects
+        // after redirection. Instead, we force the loading of the objects here
+
+        for (Trip t : trips) {
+            Hibernate.initialize(t.getPosts());
+        }
         redirectAttributes.addFlashAttribute("trips", trips);
         return "redirect:search";
     }

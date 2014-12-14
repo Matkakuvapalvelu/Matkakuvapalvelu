@@ -36,6 +36,7 @@ public class TripController {
     @RequestMapping(method = RequestMethod.GET)
     public String view(Model model){
         model.addAttribute("trips", tripService.getUserTrips(userService.getAuthenticatedUser()));
+        model.addAttribute("show_edit", true);
         model.addAttribute("visibilities", new ArrayList<>(Arrays.asList(Trip.Visibility.values())));
         
         return "trips";

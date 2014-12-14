@@ -15,7 +15,7 @@ import java.util.List;
 @Entity
 public class Post extends AbstractPersistable<Long> {
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     private Image image;
 
     @OneToMany

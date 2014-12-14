@@ -35,9 +35,15 @@
                     <li sec:authorize="isAnonymous()">
                         <a href="/login">Login</a>
                     </li>
+                    <li><a href="/search">Search</a></li>
                 </ul>
+
             </nav>
-            <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>                        
+            <form style="visibility: hidden" id ="logout-form" method="post" action="#" th:action="@{/logout}"><input type="submit" value="Logout"/></form>
+            <form style="visibility: hidden" id="search-form" method="POST" th:action="@{/search}">
+                <input type="submit" value="Search"/>
+            </form>
+
         </div>
     </body>
 </html>
