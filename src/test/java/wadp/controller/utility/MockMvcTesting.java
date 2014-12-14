@@ -85,12 +85,20 @@ public class MockMvcTesting {
     }
 
 
-    public MvcResult makeGetResponseBody(String getUrl, String viewName, String... expectedModelValueNames) throws Exception {
+    public MvcResult makeGetResponseBody(String getUrl, Map<String, String> headerValues) throws Exception {
+        return makeGetResponseBody(getUrl, headerValues, status().is2xxSuccessful());
+    }
+    public MvcResult makeGetResponseBody(String getUrl, Map<String, String> headerValues, ResultMatcher statusCode) throws Exception {
         MockHttpSession session = buildSession();
+
+        MockHttpServletRequestBuilder builder = get(getUrl).session(session);
+
+        for (String key : headerValues.keySet()) {
+            builder.header(key, headerValues.get(key));
+        }
         return mockMvc
-                .perform(get(getUrl)
-                        .session(session))
-                .andExpect(status().is2xxSuccessful())
+                .perform(builder)
+                .andExpect(statusCode)
                 .andReturn();
     }
 

@@ -23,8 +23,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -63,7 +67,7 @@ public class ImageControllerTest {
 
     @Test
     public void requestForFullSizeImageContainsImageData() throws Exception {
-        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getOriginalId(), "");
+        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getOriginalId(), new HashMap<>());
 
         FileObject imageData = imageService.getImageData(img.getOriginalId());
         assertTrue(Arrays.equals(imageData.getContent(), res.getResponse().getContentAsByteArray()));
@@ -72,16 +76,34 @@ public class ImageControllerTest {
 
     @Test
     public void requestForGalleryThumbnailImageContainsImageData() throws Exception {
-        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getGalleryThumbnailId(), "");
+        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getGalleryThumbnailId(), new HashMap<>());
         FileObject imageData = imageService.getImageData(img.getGalleryThumbnailId());
         assertTrue(Arrays.equals(imageData.getContent(), res.getResponse().getContentAsByteArray()));
     }
 
     @Test
     public void requestForPostThumbnailImageContainsImageData() throws Exception {
-        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getPostThumbnailId(), "");
+        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + img.getPostThumbnailId(), new HashMap<>());
         FileObject imageData = imageService.getImageData(img.getPostThumbnailId());
         assertTrue(Arrays.equals(imageData.getContent(), res.getResponse().getContentAsByteArray()));
+    }
+
+    @Test
+    public void requestForNonExistentImageReturnsEmptyImage() throws Exception {
+        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/" + 12345, new HashMap<>());
+        assertEquals(0, res.getResponse().getContentAsByteArray().length);
+    }
+
+
+    @Test
+    public void repeatedRequestReturnsNotModified() throws Exception {
+        MvcResult res = mockMvcTesting.makeGetResponseBody(URI + "/"  + img.getOriginalId(), new HashMap<>());
+
+        Map<String, String> values = new HashMap<>();
+        values.put("If-None-Match", res.getResponse().getHeader("ETag"));
+
+        res = mockMvcTesting.makeGetResponseBody(URI + "/"  + img.getOriginalId(), values, status().is3xxRedirection());
+        assertEquals(0, res.getResponse().getContentAsByteArray().length);
     }
 
 

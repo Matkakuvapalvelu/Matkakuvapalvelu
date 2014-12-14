@@ -30,16 +30,15 @@ public class ImageController {
             @RequestHeader(value="If-None-Match", defaultValue="") String userAgent){
 
         FileObject fileObject = imageService.getImageData(id);
-        if (fileObject == null) {
-            fileObject = new FileObject();
-            fileObject.setContent(new byte[0]);
-            fileObject.setContentLength(0l);
-            fileObject.setContentType("image/png");
-            fileObject.setName("No image");
-        }
-
 
         if (userAgent.isEmpty()) {
+            if (fileObject == null) {
+                fileObject = new FileObject();
+                fileObject.setContent(new byte[0]);
+                fileObject.setContentLength(0l);
+                fileObject.setContentType("image/png");
+                fileObject.setName("No image");
+            }
             return imageResponseEntity(fileObject);
         } else {
             return notModifiedResponseEntity(id);
