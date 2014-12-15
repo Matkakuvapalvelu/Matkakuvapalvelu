@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import wadp.domain.Post;
 import wadp.domain.Trip;
@@ -24,7 +25,10 @@ public class TripService {
         return tripRepository.findByCreator(user);
     }
 
-
+    public List<Trip> getUserTripsInSortedOrder(User user) {    
+        return tripRepository.findByCreator(user, new Sort(Sort.Direction.DESC, "creationDate"));
+    }
+    
     /**
      * Returns list of trips by user if requester has right to see them
      * @param user User whose trips will be returned
@@ -144,12 +148,14 @@ public class TripService {
 
         trips.stream()
                 .forEach(trip -> { 
-                    Post p = trip.getPosts()
+                    if(trip.getPosts().size() > 0){
+                        Post p = trip.getPosts()
                             .stream()
                             .filter(i -> i.getImage().getLocation())
                             .sorted((p1, p2) -> p1.getImage().getCaptureDate().compareTo(p2.getImage().getCaptureDate())).findFirst().get();
-                    
-                    coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude(), trip.getId()});
+                        
+                            coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude(), trip.getId()});                     
+                    }                    
                 });
         
         return coordinates;
@@ -193,5 +199,13 @@ public class TripService {
                 .collect(Collectors.toList());
 
 
+    }
+    
+    public void deleteTrip(Long tripId, User deleter) {        
+        if (tripRepository.findOne(tripId).getCreator().getId() != deleter.getId()) {
+            throw new IllegalArgumentException("Only trip creator has right to delete trip");
+        }
+        throw new IllegalArgumentException("Not implemented yet!");
+//        tripRepository.delete(tripId);
     }
 }

@@ -18,45 +18,66 @@
         <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
     </head>
     <body>
+        <script type="text/javascript" th:inline="javascript">            
+            function toggleFormVisibility() {
+                var e = document.getElementById('editripform');
+                if(e.style.display === 'block'){   
+                    e.style.display = 'none';                    
+                } else {
+                   e.style.display = 'block';
+                }
+            }
+        </script>
         <div th:replace="fragments/header :: header">header</div>
         
         <div id="main-wrapper">
             <div id="main" class="container">
                 <div class="row">
-                    <div class="12u">
-                        <div class="content">
+                    <div class="3u">
+                        <div class="sidebar">
+                            <!-- Sidebar -->
+                            <section>
+                                <h2 class="major"><span>Create new trip</span></h2>
+                                <ul class="divided">
+                                    <li>
+                                        <article class="box post-summary">
+                                            <form method="POST" th:action="@{/trips}" >
+                                                <label for="description">Trip description</label>
+                                                <br/>            
+                                                <input type="text" id="description" name="description" />
+                                                <br/>
+                                                <label for="description">Who can see my trip</label>
+                                                <br/>
+                                                <select id="visibility" name="visibility">          
+                                                    <option th:each="visibility : ${visibilities}" th:value="${visibility}" 
+                                                            th:text="${#strings.capitalizeWords(#strings.toLowerCase(visibility))}">Option 1</option>
+                                                </select>
+                                                <br/>
+                                                <br/>
+                                                <input type="submit" value="Save"/>
+                                            </form>
+                                        </article>
+                                    </li>
+                                </ul>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="9u important(collapse)">
+                        <div class="content content-right">
                             <article class="box page-content">
                                 <header>
-                                    <h2>Existing trips</h2>
+                                    <h2>Your trips</h2>
                                     <p>Semper amet scelerisque metus faucibus morbi congue mattis</p>
                                 </header>
                             </article>
+                            <div id="triplist" th:replace="fragments/triplist :: triplist">trip list</div>                            
                         </div>
                     </div>
                 </div>
                 <div class="row 200%">
                     <div class="12u">        
                         <!-- Features -->
-
-                        <div th:replace="fragments/triplist :: triplist">trip list</div>
-                        <h2 class="major"><span>Add new trip</span></h2>
-                        <div>
-                            <form method="POST" th:action="@{/trips}" >
-                                <label for="description">Trip description</label>
-                                <br/>            
-                                <input type="text" id="description" name="description" />
-                                <br/>
-                                <label for="description">Who can see my trip</label>
-                                <br/>
-                                <select id="visibility" name="visibility">          
-                                    <option th:each="visibility : ${visibilities}" th:value="${visibility}" 
-                                            th:text="${#strings.capitalizeWords(#strings.toLowerCase(visibility))}">Option 1</option>
-                                </select>
-                                <br/>
-                                <br/>
-                                <input type="submit" value="Create new trip"/>
-                            </form> 
-                        </div>
+                                                
                     </div>
                 </div>
             </div>       

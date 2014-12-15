@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head lang="en">
-        <title>Edit Trip</title>
+        <title>Edit Trip</title> 
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <!--[if lte IE 8]><script src="/css/ie/html5shiv.js"></script><![endif]-->
@@ -18,27 +18,49 @@
         <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
     </head>
     <body>
-        <h2>
-            <label th:if="${trip != null}" th:text="'Edit trip '+${trip.description}" >Edit trip</label>
-        </h2> 
-        <form method="POST" th:action="@{'/trips/'+${trip.id}+'/edit'}" >
-            <label for="description">Trip description</label>
-            <br/>            
-            <input type="text" id="description" name="description" th:value='${trip.description}'/>
-            <br/>
-            <label for="description">Who can see my trip</label>
-            <br/>
-            <select id="visibility" name="visibility"> 
-                <option th:each="visibility : ${visibilities}" th:value="${visibility}" 
-                        th:text="${#strings.capitalizeWords(#strings.toLowerCase(visibility))}"
-                        th:selected="${#strings.toLowerCase(visibility) == #strings.toLowerCase(trip.visibility)}">Option 1</option>
-            </select>
-            <br/>
-            <br/>
-            <input th:if="${trip != null}" type="hidden" name="tripId" th:value="${trip.id}"></input>
-            <input type="submit" value="Save changes"/>
-        </form>
-                
-        <div id="links"><a href="/index.html" th:href="@{/index}">Front page</a></div>
+        <div th:replace="fragments/header :: header">header</div>
+        <div id="main-wrapper">
+            <div id="main" class="container">
+                <div class="row">
+                    <div class="12u">
+                        <div class="content">
+                            <article class="box page-content">
+                                <header>
+                                    <h2>Edit trip</h2>
+                                    <p th:if="${trip != null}" th:text="${trip.description}" >Trip name</p>
+                                    <ul class="meta">
+                                            <li class="icon fa-clock-o">5 days ago</li>
+                                            <li class="icon fa-comments"><a href="#">1,024</a></li>
+                                        
+                                    </ul>
+                                </header>
+
+                                <section>
+                                    <!--<span class="image featured"><img src="images/pic05.jpg" alt="" /></span>-->
+                                    <form method="POST" th:action="@{'/trips/'+${trip.id}+'/edit'}" >
+                                        <label for="description">Trip description</label> 
+                                        <div class="6u">
+                                            <input type="text" id="description" name="description" th:value='${trip.description}'/>
+                                        </div>
+                                        <br/>
+                                        <label for="description">Who can see my trip</label>    
+                                        <div class="3u">
+                                            <select id="visibility" name="visibility"> 
+                                                <option th:each="visibility : ${visibilities}" th:value="${visibility}" 
+                                                        th:text="${#strings.capitalizeWords(#strings.toLowerCase(visibility))}"
+                                                        th:selected="${#strings.toLowerCase(visibility) == #strings.toLowerCase(trip.visibility)}">Option 1</option>
+                                            </select>
+                                        </div>
+                                        <br/>
+                                        <input th:if="${trip != null}" type="hidden" name="tripId" th:value="${trip.id}"></input>
+                                        <input type="submit" value="Save changes"/>
+                                    </form>
+                                </section>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

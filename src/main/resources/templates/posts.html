@@ -26,7 +26,32 @@
                 <div class="3u">
                     <div class="sidebar">
                         <section>
-                            <a href="/posts/new" class="button big">Create new post</a>
+                            <h2 class="major"><span>Add new post</span></h2>
+                            <form method="POST" th:action="@{/posts}" enctype="multipart/form-data">
+                                <label for="file">File</label>
+                                <input type="file" name="file" id="file" accept="image/*"/><br/><br/>
+
+                                <label for="image_text">Image text</label>
+                                <textarea  name="image_text"
+                                           id="image_text"
+                                           placeholder="Comment your image here!"
+                                           cols="55"
+                                           rows="10"></textarea><br/>
+                                <label for="trips">Trips</label>
+                                <select name="trips" id="trips" multiple="multiple" style='height: 150px'>
+                                    <option th:each="trip : ${trips}" value="Helsinki" th:value="${trip.id}" th:text="${trip.description}">
+                                        Helsinki
+                                    </option>
+                                    <!--/*-->
+                                    <option value="Tallinna">Tallinna</option>
+                                    <option value="Moskova">Moskova</option>
+                                    <option value="Tukholma">Tukholma</option>
+                                    <option value="Berliini">Berliini</option>
+                                    <!--*/-->
+                                </select>
+
+                                <br/><input type="submit" value="Add!"/>
+                            </form>
                         </section>
                     </div>
                 </div>
@@ -38,23 +63,18 @@
                                 <p>something here?</p>
                             </header>
                         </article>
-                    </div>
-                </div>                
-            </div>
-            
-            <div class="row 200%">
-                <div class="12u">
-                    <section class="box features">
-                        <h2 class="major"><span>Existing posts</span></h2>
                         <div class="row" th:if="${posts != null}">
                             <div class="3u" th:each="post : ${posts}">
                                 <section class="box feature">
-                                    <a href="#" th:href="@{'/posts/'+${post.id}}" th:text="${post.imageText}"></a>
+                                    <a href="#" th:href="@{'/posts/'+${post.id}}">
+                                        <img id="user-image" th:attr="src=@{'/user_images/' + ${post.image.galleryThumbnailId}}"/>
+                                    </a>
+                                    <p th:text="${post.imageText}"></p>
                                 </section>
                             </div>
                         </div>
-                    </section>
-                </div>
+                    </div>
+                </div>                
             </div>
         </div>
     </div>

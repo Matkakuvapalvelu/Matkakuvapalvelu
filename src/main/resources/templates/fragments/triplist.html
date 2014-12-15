@@ -2,7 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Header</title>
-
 </head>
 <body>
 <div th:fragment="triplist">
@@ -17,15 +16,16 @@
                     <p>
                         Small description from the trip
                     </p>
-                    <p><label th:text="${trip.creationDate}">Today</label></p>
+                    <label th:text="${#calendars.format(trip.creationDate,'dd MMMM yyyy HH:mm')}">Today</label>
                     <div th:if="${show_edit == true}">
-                        <a href="/trips.html" th:href="@{'/trips/'+${trip.id}+'/edit'}" th:text="Edit">Trip to Russia</a>
-                    </div>
+                        <a href="/trips.html" th:href="@{'/trips/'+${trip.id}+'/edit'}" th:text="Edit">Edit</a>                                                                   
+                        <a href="#" th:text="Delete" onclick="document.getElementById('delete-form').submit();">Delete</a>
+                        <form style="visibility: hidden" id ="delete-form" method="post" th:action="@{'/trips/' + ${trip.id} + '/delete'}"><input type="submit" value="Delete"/></form>
+                    </div>                    
                 </section>
             </div>
         </div>
     </section>
-
 </div>
 </body>
 </html>

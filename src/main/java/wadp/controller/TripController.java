@@ -2,7 +2,6 @@ package wadp.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import wadp.domain.Comment;
-import wadp.domain.Post;
 import wadp.domain.Trip;
 import wadp.service.CommentService;
 import wadp.service.TripService;
@@ -35,7 +33,7 @@ public class TripController {
         
     @RequestMapping(method = RequestMethod.GET)
     public String view(Model model){
-        model.addAttribute("trips", tripService.getUserTrips(userService.getAuthenticatedUser()));
+        model.addAttribute("trips", tripService.getUserTripsInSortedOrder(userService.getAuthenticatedUser()));
         model.addAttribute("show_edit", true);
         model.addAttribute("visibilities", new ArrayList<>(Arrays.asList(Trip.Visibility.values())));
         
@@ -86,6 +84,12 @@ public class TripController {
             tripService.updateTripChanges(id, description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
         }
 
+        return "redirect:/trips/";
+    }
+    
+    @RequestMapping(value="/{id}/delete", method = RequestMethod.POST)
+    public String deleteTrip(@PathVariable("id") Long id){
+        tripService.deleteTrip(id, userService.getAuthenticatedUser());
         return "redirect:/trips/";
     }
     

@@ -45,6 +45,7 @@ public class PostController {
     @RequestMapping(method = RequestMethod.GET)
     public String showPosts(Model model) {
         model.addAttribute("posts", postService.getUserPosts(userService.getAuthenticatedUser()));
+        model.addAttribute("trips", tripService.getUserTrips(userService.getAuthenticatedUser()));
         return "posts";
     }
 
