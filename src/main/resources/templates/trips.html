@@ -67,7 +67,7 @@
                             <article class="box page-content">
                                 <header>
                                     <h2>Your trips</h2>
-                                    <p>Semper amet scelerisque metus faucibus morbi congue mattis</p>
+                                    <p th:if="${#lists.isEmpty(trips)}">You are yet to experience the wonders of the world</p>
                                 </header>
                             </article>
                             <div id="triplist" th:replace="fragments/triplist :: triplist">trip list</div>                            

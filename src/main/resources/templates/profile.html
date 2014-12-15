@@ -21,22 +21,6 @@
 <body>
 
     <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
-    <span th:if="${unreadnotifications} != null">
-        <span th:switch="${unreadnotifications > 0}">
-            <span th:case="${true}">
-                <a href="/notification" th:text="@{'You have ' + ${unreadnotifications} +  ' unread notification(s)'}" ></a>
-            </span>
-            <span th:case="${false}">
-                <a href="/notification">No unread private messages</a>
-            </span>
-        </span>
-    </span>
-    <a href="/friends.html" th:href="@{/friendship}">Friends</a>
-    <span th:if="${canrequestfriendship} == ${true}">
-        <a class="btn btn-default" href="#" onclick="document.getElementById('friendship-form').submit();"><span>Send friendship request!</span></a>
-        <form style="visibility: hidden" id ="friendship-form" method="post" action="#" th:action="@{'/friendship/request/' + ${user.id}}"><input type="submit" value="Friend"/></form>
-    </span>
-
     <div id="main-wrapper">
         <div id="main" class="container">
             <div class="row">
@@ -75,6 +59,20 @@
                                 Hi! I like to travel.
                             </p>
                             <a href="#" class="button alt">Edit my profile</a>
+                        </section>
+                        <section th:if="${canrequestfriendship} == ${true}">
+                            <a class="button" href="#" onclick="document.getElementById('friendship-form').submit();"><span>Send friendship request!</span></a>
+                            <form style="visibility: hidden" id ="friendship-form" method="post" action="#" th:action="@{'/friendship/request/' + ${user.id}}"><input type="submit" value="Friend"/></form>
+                        </section>
+                        <section th:if="${unreadnotifications} != null">
+                            <span th:switch="${unreadnotifications > 0}">
+                                <span th:case="${true}">
+                                    <a class="button" href="/notification" th:text="@{'You have ' + ${unreadnotifications} +  ' unread notification(s)'}" ></a>
+                                </span>
+                                <span th:case="${false}">
+                                    <a class="button" href="/notification">No unread notifications</a>
+                                </span>
+                            </span>
                         </section>
                     </div>
                 </div>

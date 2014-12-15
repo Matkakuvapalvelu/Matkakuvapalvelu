@@ -21,32 +21,64 @@
     </head>
     <body>
         <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
+        <div id="main-wrapper">
+            <div id="main" class="container">
+                <div class="row">
+                    <div class="9u important(collapse)">
+                        <div class="content content-left">
+                            <!-- Content -->
+                            <article class="box page-content">
+                                <section>
+                                    <h1 class="major" th:if="${friends} != null">Your friends</h1>
+                                    <header>
+                                        <p th:if="${#lists.isEmpty(friends)}">No friends</p>
+                                    </header>
+                                    <div class="row">
+                                        <div class="3u" th:each="friend : ${friends}">
+                                            <section class="box feature">
+                                                <div>
+                                                    <a href="#" th:href="@{'profile/' + ${friend.id}}" th:text="${friend.username}">link to friend profile</a>
+                                                    <a href="#" class="button" onclick="document.getElementById('unfriend-form').submit();"><span>Unfriend</span></a>
+                                                    <form style="visibility: hidden" id ="unfriend-form" th:method="delete" action="#" th:action="@{'/friendship/unfriend/'+${friend.id}}"><input type="submit" value="unfriend"/></form>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section th:if="${friendRequests} != null" class="box features">
+                                    <header>
+                                        <p th:if="${!#lists.isEmpty(friendRequests)}">Outstanding friend requests</p>
+                                    </header>
+                                    <div class="row">
+                                        <div class="3u" th:each="request : ${friendRequests}">
+                                            <section class="box feature">
+                                                <div class="big">
+                                                   <span>Invite from</span>
+                                                   <a href="profile.html" th:href="@{'profile/' + ${request.sourceUser.id}}" th:text="${request.sourceUser.username}">Friend name</a>
+                                                </div>
 
-        <h1 th:if="${friends} != null">Your friends</h1>
-        <div th:each="friend : ${friends}">
-            <div>
-                <a href="#" th:href="@{'profile/' + ${friend.id}}" th:text="${friend.username}">link to friend profile</a>
-                <a href="#" class="btn btn-default" onclick="document.getElementById('unfriend-form').submit();"><span>Unfriend</span></a>
-                <form style="visibility: hidden" id ="unfriend-form" th:method="delete" action="#" th:action="@{'/friendship/unfriend/'+${friend.id}}"><input type="submit" value="unfriend"/></form>
+                                                <div>
+                                                    <a href="#" class="button" onclick="document.getElementById('accept-form').submit();">Accept</a>
+                                                    <a href="#" class="button" onclick="document.getElementById('reject-form').submit();">Reject</a>
+
+
+                                                    <form style="visibility: hidden" id ="accept-form" method="post" action="#" th:action="@{'/friendship/request/accept/' + ${request.id}}">
+                                                        <input type="submit" value="unfriend"/>
+                                                    </form>
+                                                    <form style="visibility: hidden" id ="reject-form" method="post" action="#" th:action="@{'/friendship/request/reject/' + ${request.id}}">
+                                                        <input type="submit" value="reject"/>
+                                                    </form>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </div>
+                                </section>
+                            </article>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <h1 th:if="${friendRequests} != null">Outstanding friend requests</h1>
-        <div th:each="request : ${friendRequests}">
-            <h3 th:text="@{'Request from ' + ${request.sourceUser.username}}">Friend request maker name here</h3>
-            <div>
-                <a href="#" class="btn btn-default" onclick="document.getElementById('accept-form').submit();"><span>Accept</span></a>
-                <form style="visibility: hidden" id ="accept-form" method="post" action="#" th:action="@{'/friendship/request/accept/' + ${request.id}}">
-                    <input type="submit" value="unfriend"/>
-                </form>
-
-                <a href="#" class="btn btn-default" onclick="document.getElementById('reject-form').submit();"><span>Reject</span></a>
-                <form style="visibility: hidden" id ="reject-form" method="post" action="#" th:action="@{'/friendship/request/reject/' + ${request.id}}">
-                    <input type="submit" value="reject"/>
-                </form>
-            </div>
-        </div>
-
 
     </body>
 </html>

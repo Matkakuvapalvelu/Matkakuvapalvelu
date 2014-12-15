@@ -9,16 +9,25 @@
             <nav id="nav" class="skel-layers-fixed">
                 <ul>
                     <li class="current"><a href="/index">Index</a></li>
-                    <li><a href="/profile">Profile</a></li>
-                    <li><a href="/trips.html" th:href="@{/trips}">Trips</a></li>
-                    <li><a href="/posts">Posts</a></li>
-                    <li sec:authorize="isAuthenticated()">                        
-                        <a href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>                        
-                    </li>
-                    <li sec:authorize="isAnonymous()">
-                        <a href="/login">Login</a>
-                    </li>
                     <li><a href="/search">Search</a></li>
+                    <span sec:authorize="isAuthenticated()">
+                        <li>
+                            <a href="/friends.html" th:href="@{/friendship}">Friends</a>
+                        </li>
+
+                        <li><a href="/profile">Profile</a></li>
+                        <li><a href="/trips.html" th:href="@{/trips}">Trips</a></li>
+                        <li><a href="/posts">Posts</a></li>
+                        <li>
+                            <a href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
+                        </li>
+
+                    </span>
+                    <span sec:authorize="isAnonymous()">
+                        <li><a href="/login">Login</a></li>
+                        <li><a href="/signup">Sign up!</a></li>
+                    </span>
+
                 </ul>
 
             </nav>

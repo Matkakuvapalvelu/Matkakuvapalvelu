@@ -24,37 +24,26 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class PostController {
 
     @Autowired
-    PostService postService;
+    private PostService postService;
 
     @Autowired
-    ImageService imageService;
+    private ImageService imageService;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    TripService tripService;
+    private TripService tripService;
     
     @Autowired
-    CommentService commentService;
+    private CommentService commentService;
 
-    /*
-    * For now, shows list of posts made by user (this functionality should be considered as placeholder; feel free to
-    * change if needed) and shows button where new post can be created
-    * */
     @RequestMapping(method = RequestMethod.GET)
     public String showPosts(Model model) {
         model.addAttribute("posts", postService.getUserPosts(userService.getAuthenticatedUser()));
         model.addAttribute("trips", tripService.getUserTrips(userService.getAuthenticatedUser()));
         return "posts";
     }
-
-    @RequestMapping(value="/new", method = RequestMethod.GET)
-    public String showNewPostCreation(Model model) {
-        model.addAttribute("trips", tripService.getUserTrips(userService.getAuthenticatedUser()));
-        return "newpost";
-    }
-
 
     @RequestMapping(method = RequestMethod.POST)
     public String createNewPost(

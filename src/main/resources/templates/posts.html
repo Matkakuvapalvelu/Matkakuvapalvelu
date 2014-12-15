@@ -60,7 +60,7 @@
                         <article class="box page-content">
                             <header>
                                 <h2>Existing posts</h2>
-                                <p>something here?</p>
+                                <p th:if="${#lists.isEmpty(posts)}">Nothing here but the allure of future travels</p>
                             </header>
                         </article>
                         <div class="row" th:if="${posts != null}">
