@@ -54,7 +54,7 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST)
     public String createProfilePicture(@RequestParam("file") MultipartFile file, Model model) {
         try {
-            profilePicService.createProfilePic(file.getContentType(), file.getName(), file.getBytes(), userService.getAuthenticatedUser());
+            profilePicService.createProfilePic(file.getContentType(), file.getOriginalFilename(), file.getBytes(), userService.getAuthenticatedUser());
 
         } catch (ImageValidationException ex) {
             model.addAttribute("error", "Unknown image type");
@@ -63,11 +63,8 @@ public class ProfileController {
             model.addAttribute("error", "An internal error has occurred while processing the image");
             return "/profile";
         }
-
         return "/profile";
     }
-
-
 
 
     private void addUserDetails(User user, Model model, boolean isLoggedInUser) {

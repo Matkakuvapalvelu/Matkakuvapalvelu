@@ -29,12 +29,29 @@ public class ThumbnailService {
         return createThumbnail(content, filename, 640, 640);
     }
 
-    public FileObject createProfileThumb(byte[] content, String filename) {
-        return createThumbnail(content, filename, 260, 145);
-    }
+    public byte[] createProfileThumb(byte[] content) {
+        int width = 250;
+        int height = 145;
+        BufferedImage thumbnail;
+        try {
+            thumbnail = Scalr.resize(ImageIO.read(new ByteArrayInputStream(content)),
+                    Scalr.Method.QUALITY,
+                    Scalr.Mode.FIT_TO_WIDTH,
+                    width, height, Scalr.OP_ANTIALIAS);
+        } catch (IOException ex) {
+            Logger.getLogger(ThumbnailService.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
 
-    public FileObject createCustomThumbnail(byte[] content, String filename, int width, int height) {
-        return createThumbnail(content, filename, width, height);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(thumbnail, "png", baos);
+        } catch (IOException ex) {
+            Logger.getLogger(ThumbnailService.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        byte[] bytes = baos.toByteArray();
+        return bytes;
     }
 
     private FileObject createThumbnail(byte[] content, String filename, int width, int height) {

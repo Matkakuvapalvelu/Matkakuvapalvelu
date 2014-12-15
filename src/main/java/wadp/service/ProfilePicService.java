@@ -36,17 +36,22 @@ public class ProfilePicService {
         profilePic.setName(name);
         profilePic.setContentType(mediatype);
         profilePic.setContentLength(new Long(content.length));
-        profilePic.setContent(content);
 
-        profilePic = thumbnailService.createProfileThumb(profilePic.getContent(), profilePic.getName());
-
+        profilePic.setContent(thumbnailService.createProfileThumb(content));
         profilePic = fileObjectRepository.save(profilePic);
+
         userService.getUser(user.getId()).setProfilePicId(profilePic.getId());
         userRepository.save(user);
         return profilePic;
     }
 
+    @Transactional
     public FileObject getProfilePic(User user) {
         return fileObjectRepository.findOne(user.getProfilePicId());
+    }
+
+    public void removeCurrentProfilePic(User user) {
+        userService.getUser(user.getId()).setProfilePicId(null);
+        userRepository.save(user);
     }
 }
