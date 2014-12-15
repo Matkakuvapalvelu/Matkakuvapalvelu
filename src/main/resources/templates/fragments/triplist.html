@@ -13,9 +13,6 @@
                     <a th:if="${!#lists.isEmpty(trip.posts)}" href="#" th:href="@{'/posts/'+${trip.posts[0].id}}">
                         <img id="user-image" th:attr="src=@{'/user_images/' + ${trip.posts[0].image.galleryThumbnailId}}"/>
                     </a>
-                    <p>
-                        Small description from the trip
-                    </p>
                     <label th:text="${#calendars.format(trip.creationDate,'dd MMMM yyyy HH:mm')}">Today</label>
                     <div th:if="${show_edit == true}">
                         <a href="/trips.html" th:href="@{'/trips/'+${trip.id}+'/edit'}" th:text="Edit">Edit</a>                                                                   

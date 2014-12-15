@@ -73,6 +73,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="row 200%">
+                    <div class="12u">
+                        <!-- Features -->
+                        <section class="box features">
+                            <label th:if="${trip.posts != null and !#lists.isEmpty(trip.posts)}">Posts included in this trip: </label>
+                            <label th:if="${trip.posts == null || #lists.isEmpty(trip.posts)}">No posts in this trip</label>
+                            <ul>
+                                <li th:each="post : ${trip.posts}">
+                                    <a th:id="'post_'+${post.id}" href="#" th:onclick="'javascript:toggleVisibility(\'postDiv_' + ${post.id} + '\');'" th:text="${post.imageText}"></a>
+                                    <div th:id="'postDiv_' + ${post.id}" class="postDiv" style="display: none;">
+                                        <div th:replace="fragments/trippost :: trippost"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </section>
+                    </div>
+                </div>
             </div>  
         </div>
     </body>
