@@ -9,8 +9,10 @@ import wadp.repository.FileObjectRepository;
 import wadp.repository.UserRepository;
 
 /**
- *
+ * Service for handling profilepics for users
  */
+
+
 @Service
 public class ProfilePicService {
 
@@ -26,7 +28,7 @@ public class ProfilePicService {
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional
+    @Transactional  // @Transactional has to be used when directly handling FileObjects
     public FileObject createProfilePic(String mediatype, String name, byte[] content, User user) {
         if (!mediatype.startsWith("/image")) {
             throw new ImageValidationException("Invalid image format!");
@@ -45,11 +47,17 @@ public class ProfilePicService {
         return profilePic;
     }
 
+    /**
+     * Returns the fileobject referenced in User.ProfilePicId
+     */
     @Transactional
     public FileObject getProfilePic(User user) {
         return fileObjectRepository.findOne(user.getProfilePicId());
     }
 
+    /**
+     * Only removes the reference to a users profilepic
+     */
     public void removeCurrentProfilePic(User user) {
         userService.getUser(user.getId()).setProfilePicId(null);
         userRepository.save(user);
