@@ -2,6 +2,7 @@ package wadp.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
@@ -25,6 +26,8 @@ public class User extends AbstractPersistable<Long> {
 
     @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
     private List<Trip> trips;
+
+    private Long profilePicId;
 
     public User() {
         trips = new ArrayList<>();
@@ -74,6 +77,14 @@ public class User extends AbstractPersistable<Long> {
 
     public boolean passwordEquals(String plaintextPassword) {
         return BCrypt.checkpw(plaintextPassword, password);
+    }
+
+    public Long getProfilePicId() {
+        return profilePicId;
+    }
+
+    public void setProfilePicId(Long profilePicId) {
+        this.profilePicId = profilePicId;
     }
 
 }
