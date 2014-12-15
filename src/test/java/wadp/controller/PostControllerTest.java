@@ -105,14 +105,6 @@ public class PostControllerTest {
     }
 
     @Test
-    public void newPostCreationAddsTripsToModel() throws Exception {
-        MvcResult result = mockMvcTesting.makeGet(URI + "/new", "newpost", "trips");
-        List<Trip> trips = (List<Trip>)result.getModelAndView().getModel().get("trips");
-        assertEquals(1, trips.size());
-        assertEquals(loggedInUserTrip.getId(), trips.get(0).getId());
-    }
-
-    @Test
     @Transactional
     public void canCreateNewPost() throws Exception {
         Map<String, String> parameters = new HashMap<>();
