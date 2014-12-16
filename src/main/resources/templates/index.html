@@ -82,19 +82,16 @@
                                         <!-- Trip -->
                                         <article class="box post"> 
                                             <header>
-                                                <h3><a href="/trips.html" th:href="@{'/trips/'+${(entry.key).id}}" th:text="${(entry.key).description}"></a></h3>
-                                                <p>With a smaller subtitle that attempts to elaborate small description in here!?</p>
+                                                <h3><a href="/trips.html" th:href="@{'/trips/'+${(entry.key).id}}" th:text="${(entry.key).header}"></a></h3>                                                
                                                 <ul class="meta">
                                                     <li class="icon fa-clock-o" th:text="'Created on ' + ${#calendars.format((entry.key).creationDate,'dd MMMM yyyy HH:mm')}">15 minutes ago</li>
                                                     <li class="icon fa-comments"><a href="#" th:text="${#lists.size((entry.key).comments)}">8</a></li>
                                                 </ul>
+                                                <p th:text="${(entry.key).description}">Small description in here!</p>
                                             </header>
                                             <div th:if="${!#lists.isEmpty((entry.key).posts)}" >
                                                 <span class="image featured" th:replace="fragments/map :: map"></span>
-                                            </div>                                            
-                                            <p>
-                                                Small description from the trip
-                                            </p>
+                                            </div>
                                             <a href="#" class="button" th:href="@{'/trips/'+${(entry.key).id}}">Continue Reading</a>
                                         </article>
                                     </div>

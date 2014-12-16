@@ -42,17 +42,21 @@
                                     <li>
                                         <article class="box post-summary">
                                             <form method="POST" th:action="@{/trips}" >
+                                                <label for="trip_header">Trip header</label>        
+                                                <input type="text" id="trip_header" name="header" />
+                                                <br/>
                                                 <label for="description">Trip description</label>
-                                                <br/>            
-                                                <input type="text" id="description" name="description" />
+                                                <textarea name="description"
+                                                          id="description"
+                                                          placeholder="Write description from your trip!"
+                                                          cols="55"
+                                                          rows="10"></textarea>
                                                 <br/>
                                                 <label for="description">Who can see my trip</label>
-                                                <br/>
                                                 <select id="visibility" name="visibility">          
                                                     <option th:each="visibility : ${visibilities}" th:value="${visibility}" 
                                                             th:text="${#strings.capitalizeWords(#strings.toLowerCase(visibility))}">Option 1</option>
                                                 </select>
-                                                <br/>
                                                 <br/>
                                                 <input type="submit" value="Save"/>
                                             </form>

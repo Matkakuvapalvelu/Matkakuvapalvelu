@@ -64,21 +64,21 @@ public class TripServiceTest {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(loggedInUser.getUsername(), loggedInUser.getPassword()));
 
-        publicTrip = tripService.createTrip("PublicTrip", Trip.Visibility.PUBLIC, loggedInUser);
-        friendTrip = tripService.createTrip("FriendTrip", Trip.Visibility.FRIENDS, loggedInUser);
-        privateTrip = tripService.createTrip("PrivateTrip", Trip.Visibility.PRIVATE, loggedInUser);
+        publicTrip = tripService.createTrip("PublicTrip", "It is public", Trip.Visibility.PUBLIC, loggedInUser);
+        friendTrip = tripService.createTrip("FriendTrip", "It is forfriends", Trip.Visibility.FRIENDS, loggedInUser);
+        privateTrip = tripService.createTrip("PrivateTrip", "It is private", Trip.Visibility.PRIVATE, loggedInUser);
 
     }
 
     @Test
     public void canCreateTrip() {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
         assertNotNull(tripService.getTrip(t.getId()));
     }
 
     @Test
     public void canUpdateTrip() {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
         t.setDescription("A new description");
         tripService.updateTrip(t, loggedInUser);
         assertEquals("A new description", tripService.getTrip(t.getId()).getDescription());
@@ -86,14 +86,14 @@ public class TripServiceTest {
 
     @Test(expected=IllegalArgumentException.class)
     public void updateTripThrowsIfDoneByNonOwner() {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
         t.setDescription("A new description");
         tripService.updateTrip(t, stranger);
     }
 
     @Test
     public void updateTripDoesNotChangeValuesIfDoneByNonOwner() {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
         t.setDescription("A new description");
         try {
             tripService.updateTrip(t, stranger);
@@ -105,8 +105,8 @@ public class TripServiceTest {
 
     @Test
     public void updateTripChangesWorks() {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
-        tripService.updateTripChanges(t.getId(), "A new description", Trip.Visibility.PRIVATE, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
+        tripService.updateTripChanges(t.getId(), "New header", "A new description", Trip.Visibility.PRIVATE, loggedInUser);
 
         assertEquals("A new description", tripService.getTrip(t.getId()).getDescription());
         assertEquals(Trip.Visibility.PRIVATE, tripService.getTrip(t.getId()).getVisibility());
@@ -114,15 +114,15 @@ public class TripServiceTest {
 
     @Test(expected=IllegalArgumentException.class)
     public void updateTripChangesThrowsIfDoneByNonOwner() {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
-        tripService.updateTripChanges(t.getId(), "A new description", Trip.Visibility.PRIVATE, stranger);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
+        tripService.updateTripChanges(t.getId(), "New header",  "A new description", Trip.Visibility.PRIVATE, stranger);
     }
 
     @Test
     public void updateTripChangesDoesNotChangeValuesIfDoneByNonOwner() {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
         try {
-            tripService.updateTripChanges(t.getId(), "A new description", Trip.Visibility.PRIVATE, stranger);
+            tripService.updateTripChanges(t.getId(), "New header", "A new description", Trip.Visibility.PRIVATE, stranger);
         } catch (IllegalArgumentException ex) {
             // intentionally empty
         }
@@ -132,7 +132,7 @@ public class TripServiceTest {
 
     @Test
     public void createdTripHasCorrectValues() {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
         assertEquals("Description", t.getDescription());
         assertEquals(Trip.Visibility.PUBLIC, t.getVisibility());
         assertEquals(loggedInUser, t.getCreator());
@@ -245,7 +245,7 @@ public class TripServiceTest {
 
     @Test
     public void getUserTripsReturnsCorrectTrips() {
-        tripService.createTrip("sdasd", Trip.Visibility.PUBLIC, stranger);
+        tripService.createTrip("header", "sdasd", Trip.Visibility.PUBLIC, stranger);
         List<Trip> trips = tripService.getUserTrips(loggedInUser);
         assertEquals(3, trips.size());
         assertEquals(1, trips.stream()
@@ -264,7 +264,7 @@ public class TripServiceTest {
     @Test
     @Transactional
     public void getTripImageCoordinatesReturnCorrectCoordinates() throws IOException {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
 
         Image firstImage = createPost("src/test/testimg.jpg", "Hello!",t);
         Image secondImage = createPost("src/test/testimg3.jpg", "Hello!", t);
@@ -296,16 +296,16 @@ public class TripServiceTest {
     @Transactional
     public void searchReturnsTripsWithKeywords() throws IOException {
 
-        final Trip myPrivateTrip = tripService.createTrip("My awesome trip to Spain", Trip.Visibility.PRIVATE, loggedInUser);
+        final Trip myPrivateTrip = tripService.createTrip("My awesome trip to Spain", "Was fun",Trip.Visibility.PRIVATE, loggedInUser);
 
-        final Trip friendFriendTrip = tripService.createTrip("Traveling in Spain", Trip.Visibility.FRIENDS, friend);
-        tripService.createTrip("Private Portugal trip", Trip.Visibility.PRIVATE, friend);
+        final Trip friendFriendTrip = tripService.createTrip("Traveling in Spain", "IT was nice", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", "Fun by myself", Trip.Visibility.PRIVATE, friend);
 
 
-        final Trip strangerPublicTrip = tripService.createTrip("My travels", Trip.Visibility.PUBLIC, stranger);
+        final Trip strangerPublicTrip = tripService.createTrip("My travels", "My description", Trip.Visibility.PUBLIC, stranger);
         createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
-        tripService.createTrip("Images for friends", Trip.Visibility.FRIENDS, stranger);
-        tripService.createTrip("Private stuff", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Images for friends", "For friends only", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", "for me only", Trip.Visibility.FRIENDS, stranger);
 
         List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("Spain"), loggedInUser);
 
@@ -336,16 +336,16 @@ public class TripServiceTest {
     @Transactional
     public void searchForKeywordsInNonVisibleTripsReturnsEmptyList() throws IOException {
 
-        tripService.createTrip("My awesome trip to Spain", Trip.Visibility.PRIVATE, loggedInUser);
+        tripService.createTrip("My awesome trip to Spain", "Spain", Trip.Visibility.PRIVATE, loggedInUser);
 
-        tripService.createTrip("Traveling in Spain", Trip.Visibility.FRIENDS, friend);
-        tripService.createTrip("Private Portugal trip", Trip.Visibility.PRIVATE, friend);
+        tripService.createTrip("Traveling in Spain", "Spain", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", "Portugal", Trip.Visibility.PRIVATE, friend);
 
 
-        final Trip strangerPublicTrip = tripService.createTrip("My travels", Trip.Visibility.PUBLIC, stranger);
+        final Trip strangerPublicTrip = tripService.createTrip("My travels", "travels", Trip.Visibility.PUBLIC, stranger);
         createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
-        tripService.createTrip("Images for friends", Trip.Visibility.FRIENDS, stranger);
-        tripService.createTrip("Private stuff", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Images for friends", "for friends", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", "Private", Trip.Visibility.FRIENDS, stranger);
 
         List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("Portugal", "stuff", "friends"), loggedInUser);
 
@@ -357,16 +357,16 @@ public class TripServiceTest {
     @Transactional
     public void searchWithMultipleKeywordsAndDifferentCasingReturnsCorrectTrips() throws IOException {
 
-        tripService.createTrip("My awesome trip to Spain", Trip.Visibility.PRIVATE, loggedInUser);
+        tripService.createTrip("My awesome trip to Spain", "Spain", Trip.Visibility.PRIVATE, loggedInUser);
 
-        final Trip friendFriendTrip = tripService.createTrip("Traveling in Spain", Trip.Visibility.FRIENDS, friend);
-        tripService.createTrip("Private Portugal trip", Trip.Visibility.PRIVATE, friend);
+        final Trip friendFriendTrip = tripService.createTrip("Traveling in Spain", "Spain", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", "Portugal", Trip.Visibility.PRIVATE, friend);
 
 
-        final Trip strangerPublicTrip = tripService.createTrip("My travels", Trip.Visibility.PUBLIC, stranger);
+        final Trip strangerPublicTrip = tripService.createTrip("My travels", "travels", Trip.Visibility.PUBLIC, stranger);
         createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
-        tripService.createTrip("Images for friends", Trip.Visibility.FRIENDS, stranger);
-        tripService.createTrip("Private stuff", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Images for friends", "for friends", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", "Private", Trip.Visibility.FRIENDS, stranger);
 
         List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("TRAvels", "TrAvElInG" ), loggedInUser);
 
@@ -391,16 +391,16 @@ public class TripServiceTest {
     @Transactional
     public void searchWithNullUserDefaultToPublicVisibility() throws IOException {
 
-        tripService.createTrip("My awesome trip to Spain", Trip.Visibility.PRIVATE, loggedInUser);
+        tripService.createTrip("My awesome trip to Spain", "Spain", Trip.Visibility.PRIVATE, loggedInUser);
 
-        tripService.createTrip("Traveling in Spain", Trip.Visibility.FRIENDS, friend);
-        tripService.createTrip("Private Portugal trip", Trip.Visibility.PRIVATE, friend);
+        tripService.createTrip("Traveling in Spain", "Spain", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", "Portugal", Trip.Visibility.PRIVATE, friend);
 
 
-        final Trip strangerPublicTrip = tripService.createTrip("My travels", Trip.Visibility.PUBLIC, stranger);
+        final Trip strangerPublicTrip = tripService.createTrip("My travels", "travels", Trip.Visibility.PUBLIC, stranger);
         createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
-        tripService.createTrip("Images for friends", Trip.Visibility.FRIENDS, stranger);
-        tripService.createTrip("Private stuff", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Images for friends", "for friends", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", "Private", Trip.Visibility.FRIENDS, stranger);
 
         List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("spain"), null);
 

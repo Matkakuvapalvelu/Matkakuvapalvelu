@@ -39,7 +39,7 @@
                                            rows="10"></textarea><br/>
                                 <label for="trips">Trips</label>
                                 <select name="trips" id="trips" multiple="multiple" style='height: 150px'>
-                                    <option th:each="trip : ${trips}" value="Helsinki" th:value="${trip.id}" th:text="${trip.description}">
+                                    <option th:each="trip : ${trips}" value="Helsinki" th:value="${trip.id}" th:text="${trip.header}">
                                         Helsinki
                                     </option>
                                     <!--/*-->

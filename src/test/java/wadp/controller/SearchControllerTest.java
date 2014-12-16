@@ -86,16 +86,16 @@ public class SearchControllerTest {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(loggedInUser.getUsername(), loggedInUser.getPassword()));
 
-        myPrivateTrip = tripService.createTrip("My awesome trip to Spain", Trip.Visibility.PRIVATE, loggedInUser);
+        myPrivateTrip = tripService.createTrip("My awesome trip to Spain", "It was awesome", Trip.Visibility.PRIVATE, loggedInUser);
 
-        friendFriendTrip = tripService.createTrip("Traveling in Spain", Trip.Visibility.FRIENDS, friend);
-        tripService.createTrip("Private Portugal trip", Trip.Visibility.PRIVATE, friend);
+        friendFriendTrip = tripService.createTrip("Traveling in Spain", "It was fun", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", "it was nice", Trip.Visibility.PRIVATE, friend);
 
 
-        strangerPublicTrip = tripService.createTrip("My travels", Trip.Visibility.PUBLIC, stranger);
+        strangerPublicTrip = tripService.createTrip("My travels", "are allways fun", Trip.Visibility.PUBLIC, stranger);
         createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
-        tripService.createTrip("Images for friends", Trip.Visibility.FRIENDS, stranger);
-        tripService.createTrip("Private stuff", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Images for friends", "I hope they like 'em", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", "This stuff is only for me", Trip.Visibility.FRIENDS, stranger);
     }
 
     @Test

@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Entity
 public class Trip extends AbstractPersistable<Long> {
 
+    private String header;
     private String description;
     private Visibility visibility;    
     @Temporal(TemporalType.TIMESTAMP)
@@ -32,6 +33,14 @@ public class Trip extends AbstractPersistable<Long> {
         this.creationDate = new Date();
         comments = new ArrayList<>();
         posts = new ArrayList<>();
+    }
+        
+    public String getHeader() {
+        return header;
+    }
+
+    public void setHeader(String header) {
+        this.header = header;
     }
     
     public String getDescription() {

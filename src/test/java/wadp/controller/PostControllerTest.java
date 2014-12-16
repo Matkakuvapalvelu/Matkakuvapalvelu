@@ -84,7 +84,7 @@ public class PostControllerTest {
 
         Image img = imageService.addImage("image/", "img1", data);
 
-        loggedInUserTrip = tripService.createTrip("loggedInUserTrip", Trip.Visibility.PUBLIC, loggedInUser);
+        loggedInUserTrip = tripService.createTrip("header", "loggedInUserTrip", Trip.Visibility.PUBLIC, loggedInUser);
 
         post = postService.createPost(img, "desc1", Arrays.asList(loggedInUserTrip), loggedInUser);
 
@@ -149,7 +149,7 @@ public class PostControllerTest {
         Map<String, String> parameters = new HashMap<>();
         String imageText = "This is image text";
 
-        Trip otherTrip = tripService.createTrip("Other trip", Trip.Visibility.PUBLIC, otherUser);
+        Trip otherTrip = tripService.createTrip("Other header", "Other trip", Trip.Visibility.PUBLIC, otherUser);
         parameters.put("image_text", imageText);
         parameters.put("trips", otherTrip.getId().toString());
         MvcResult res = mockMvcTesting.makePostWithFile(URI, "", status().is2xxSuccessful(), data, "image/jpg", parameters);
