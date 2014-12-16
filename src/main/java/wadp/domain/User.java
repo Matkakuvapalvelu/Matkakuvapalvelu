@@ -1,6 +1,7 @@
 package wadp.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -18,8 +19,10 @@ public class User extends AbstractPersistable<Long> {
     @Column(unique = true)
     private String username;
     private String password;
-
     private String userRole;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date signupDate;
 
     @OneToMany
     private List<Comment> comments;
@@ -33,6 +36,7 @@ public class User extends AbstractPersistable<Long> {
         trips = new ArrayList<>();
         comments = new ArrayList<>();
         userRole = "USER";
+        signupDate = new Date();
     }
 
     public String getUsername() {
@@ -86,5 +90,12 @@ public class User extends AbstractPersistable<Long> {
     public void setProfilePicId(Long profilePicId) {
         this.profilePicId = profilePicId;
     }
+    
+    public Date getSignupDate() {
+        return signupDate;
+    }
 
+    public void setSignupDate(Date signupDate) {
+        this.signupDate = signupDate;
+    }
 }

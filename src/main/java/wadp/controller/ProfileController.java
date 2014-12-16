@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import wadp.domain.Trip;
 import wadp.domain.User;
 import wadp.service.*;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -39,6 +38,9 @@ public class ProfileController {
     @Autowired
     private ProfilePicService profilePicService;
 
+    @Autowired
+    private CommentService commentService;
+    
     @RequestMapping(method = RequestMethod.GET)
     public String showProfilePage(Model model) {
         addUserDetails(userService.getAuthenticatedUser(), model, true);
@@ -77,9 +79,10 @@ public class ProfileController {
             model.addAttribute("canrequestfriendship",
                     !friendshipService.friendshipEntityExists(user, userService.getAuthenticatedUser()));
         }
-
-        List<Trip> trips = tripService.getTrips(user, userService.getAuthenticatedUser());
+        
+        List<Trip> trips = tripService.getNewestTrips(user, userService.getAuthenticatedUser(), 4);
         model.addAttribute("trips", trips);
+        model.addAttribute("show_edit", false);
 
         List<double[]> coordinates = tripService.getStartpointCoordinatesOfTrips(user, userService.getAuthenticatedUser());
 
@@ -89,7 +92,12 @@ public class ProfileController {
             model.addAttribute("startPoint", new double[]{0.00, 0.00});
         }
         model.addAttribute("coordinates", coordinates);
-        model.addAttribute("isTripMap", false);
-
+        model.addAttribute("isTripMap", false);                
+        
+        model.addAttribute("signupDate", user.getSignupDate());        
+        model.addAttribute("tripCount", user.getTrips().size());
+        model.addAttribute("commentCount", user.getComments().size());
+        model.addAttribute("postCount", postService.getUserPosts(user).size());
+        
     }
 }

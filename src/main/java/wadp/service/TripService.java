@@ -30,6 +30,14 @@ public class TripService {
         return tripRepository.findByCreator(user, new Sort(Sort.Direction.DESC, "creationDate"));
     }
     
+    public List<Trip> getNewestTrips(User user, User requester, int top) {        
+        List<Trip> trips = tripRepository.findByCreator(user, new PageRequest(0, top, Sort.Direction.DESC, "creationDate"));
+ 
+        return trips.stream()
+                .filter(t -> hasRightToSeeTrip(user, requester, t.getVisibility()))
+                .collect(Collectors.toList());
+    }
+    
     /**
      * Returns list of trips by user if requester has right to see them
      * @param user User whose trips will be returned

@@ -10,6 +10,7 @@ import wadp.domain.User;
 public interface TripRepository extends JpaRepository<Trip, Long>{
     List<Trip> findByCreator(User creator);
     List<Trip> findByCreator(User creator, Sort sort);
+    List<Trip> findByCreator(User creator, Pageable pageable);
     List<Trip> findByVisibility(Trip.Visibility visibility);
     List<Trip> findByVisibility(Trip.Visibility visibility, Pageable pageable);
 }

@@ -7,7 +7,6 @@ import wadp.domain.Post;
 import wadp.domain.Trip;
 import wadp.domain.User;
 import wadp.repository.PostRepository;
-
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -94,5 +93,5 @@ public class PostService {
     @Transactional
     public List<Post> getNewestPosts(Trip trip, int top) {
         return postRepository.findByTrips(trip, new PageRequest(0, top, Sort.Direction.DESC, "postDate"));
-    }
+    }    
 }

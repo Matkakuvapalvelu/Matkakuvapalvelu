@@ -29,20 +29,12 @@
                         <article class="box page-content">
                             <header>
                                 <h2 th:text="@{'Profile of ' + ${user.username}}"></h2>
-                                <p>Semper amet scelerisque metus faucibus morbi congue mattis</p>
-                                <ul class="meta">
-                                    <li class="icon fa-clock-o">5 days ago</li>
-                                    <li class="icon fa-comments"><a href="#">1,024</a></li>
-                                </ul>
+                                <p>Map has all the trip markers</p>                                
                             </header>
 
                             <section>
                                 <span class="image featured" th:replace="fragments/map :: map"></span>
                                 <p>
-                                    Phasellus quam turpis, feugiat sit amet ornare in, hendrerit in lectus. 
-                                    Praesent semper mod quis eget mi. Etiam eu ante risus. Aliquam erat volutpat. 
-                                    Aliquam luctus et mattis lectus sit amet pulvinar. Nam turpis nisi 
-                                    consequat etiam lorem ipsum dolor sit amet nullam.
                                 </p>
                             </section>
                         </article>
@@ -53,10 +45,16 @@
                         <!-- Sidebar profile -->
                         <section>
                             <h2 class="major"><span th:text="@{${user.username}}"></span></h2>
+                            <ul class="meta">
+                                <li class="icon fa-clock-o" th:text="'Active since ' + ${#calendars.format(signupDate,'dd MMMM yyyy HH:mm')}">01.01.2014</li>
+                            </ul>
                             <a href="#" class="image featured"><img src="images/pic03.jpg" alt="profile image" /></a>
-                            <p>
-                                Hi! I like to travel.
-                            </p>
+                            <ul class="meta">
+                                <li></li>                                    
+                                <li th:text="'Posts made by traveler: ' + ${postCount}">No posts made</li>
+                                <li th:text="'Comments made by traveler: ' + ${commentCount}">No comments made</li>
+                                <li th:text="'Trips made by traveler: ' + ${tripCount}">No trips made</li>
+                            </ul>                            
                             <a href="#" class="button alt">Edit my profile</a>
                         </section>
                         <section th:if="${canrequestfriendship} == ${true}">
@@ -82,31 +80,11 @@
                 <section class="box features">
                     <h2 class="major"><span>Recent trips</span></h2>
                     <div>
-                        <div class="row">
-                            <div class="3u" th:each="trip : ${trips}">
-                                <!-- Feature -->
-                                <section class="box feature">
-                                    <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
-                                    <h3><a href="#" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.header}">trip header</a></h3>
-                                    <p th:text="${trip.description}"></p>
-                                </section>
-                            </div>
-                            <div class="3u">
-                                <!-- Feature -->
-                                <section class="box feature">
-                                        <a href="#" class="image featured"><img src="images/pic02.jpg" alt="" /></a>
-                                        <h3><a href="#">Another Subheading</a></h3>
-                                        <p>
-                                            Phasellus quam turpis, feugiat sit amet ornare in, a hendrerit in 
-                                            lectus dolore. Praesent semper mod quis eget sed etiam eu ante risus.
-                                        </p>
-                                </section>
-                            </div>
-                        </div>
+                        <div id="triplist" th:replace="fragments/triplist :: triplist">trip list</div>
                         <div class="row">
                             <div class="12u">
                                 <ul class="actions">
-                                    <li><a href="#" class="button big">Show all</a></li>
+                                    <li><a href="#" class="button big">Browse all trips</a></li>
                                 </ul>
                             </div>
                         </div>

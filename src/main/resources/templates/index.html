@@ -99,12 +99,12 @@
                                 <div class="3u" th:if="${!#lists.isEmpty((entry.key).posts)}" >
                                     <div class="sidebar">
                                         <!-- Recent Posts -->
-                                        <section>
+                                        <section class="box feature">
                                             <h2 class="major"><span>Recent Posts</span></h2>
                                             <ul class="divided">
                                                 <!-- Post -->
                                                 <li th:each="post: ${(entry.value)}">
-                                                    <article class="box post-summary">                                                        
+                                                    <article class="box feature">                                                        
                                                         <ul class="meta">
                                                             <li class="icon fa-clock-o" th:text="${#calendars.format(post.postDate,'dd MMMM yyyy HH:mm')}">6 hours ago</li>
                                                             <li class="icon fa-comments"><a href="#" th:text="${#lists.size(post.comments)}">0</a></li>
