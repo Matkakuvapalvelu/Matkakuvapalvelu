@@ -71,9 +71,9 @@ public class TripService {
      * @param creator Trip creator
      * @return Instance of trip after it has been saved to database
      */
-    public Trip createTrip(String description, Trip.Visibility visibility, User creator) {
+    public Trip createTrip(String header, String description, Trip.Visibility visibility, User creator) {
         Trip trip = new Trip();
-
+        trip.setHeader(header);
         trip.setDescription(description);
         trip.setVisibility(visibility);
         trip.setCreator(creator);
@@ -93,8 +93,9 @@ public class TripService {
         tripRepository.save(trip);
     }
 
-    public void updateTripChanges(Long id, String description, Trip.Visibility visibility, User updater) {
+    public void updateTripChanges(Long id, String header, String description, Trip.Visibility visibility, User updater) {
         Trip oldTrip = getTrip(id);
+        oldTrip.setHeader(header);
         oldTrip.setDescription(description);
         oldTrip.setVisibility(visibility);
         updateTrip(oldTrip, updater);
@@ -185,11 +186,11 @@ public class TripService {
     }
     
     /**
-     * Returns list of trips where either trip description or associated post description contains one or more keywords
+     * Returns list of trips where either trip description, header or associated post description contains one or more keywords
      * Note: It would be nice if database would handle the whole operation, but the query complexity exceeds what I am
      * capable of writing right now, so we do sorting here instead
      *
-     * @param keyWords List of keywords of which at least one must match trip or trip oost
+     * @param keyWords List of keywords of which at least one must match trip or trip post
      * @param searcher Who is searching for information
      * @return List of trips that match the keywords and have correct visibility setting
      */
@@ -200,8 +201,8 @@ public class TripService {
                 .filter(trip -> {
                     boolean containsKeyWord = keyWords
                             .stream()
-                            .anyMatch(string -> trip.getDescription().toLowerCase()
-                                    .contains(string.toLowerCase()));
+                            .anyMatch(string -> trip.getDescription().toLowerCase().contains(string.toLowerCase()) || 
+                                    trip.getHeader().toLowerCase().contains(string.toLowerCase()));
 
                     // if trip description did not contain keyword, check if any post description contains keyword
                     if (!containsKeyWord) {

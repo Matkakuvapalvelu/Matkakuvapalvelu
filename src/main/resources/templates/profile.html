@@ -88,10 +88,8 @@
                                 <!-- Feature -->
                                 <section class="box feature">
                                     <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
-                                    <h3><a href="#" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.description}">trip description</a></h3>
-                                    <p th:text="${trip.description}">
-                                        
-                                    </p>
+                                    <h3><a href="#" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.header}">trip header</a></h3>
+                                    <p th:text="${trip.description}"></p>
                                 </section>
                             </div>
                             <div class="3u">

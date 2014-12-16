@@ -75,8 +75,8 @@ public class TripControllerTest {
 
     @Test
     public void tripListHasModelAttributesSetWithCorrectValues() throws Exception {
-        Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, loggedInUser);
-        tripService.createTrip("description", Trip.Visibility.PRIVATE, otherUser);
+        Trip t = tripService.createTrip("header", "description", Trip.Visibility.PUBLIC, loggedInUser);
+        tripService.createTrip("header", "description", Trip.Visibility.PRIVATE, otherUser);
 
         MvcResult result = mockMvcTesting.makeGet(URI, "trips", "trips", "visibilities");
 
@@ -89,7 +89,7 @@ public class TripControllerTest {
 
     @Test
     public void editModelAttributesAreSetProperlyWhenRequestingAView() throws Exception {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
 
         MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId() + "/edit", "tripedit", "trip", "visibilities");
 
@@ -110,7 +110,7 @@ public class TripControllerTest {
 
     @Test
     public void nothingIsAddedToModelIfUserHasNoRightToSeeTrip() throws Exception {
-        Trip t = tripService.createTrip("description", Trip.Visibility.PRIVATE, otherUser);
+        Trip t = tripService.createTrip("header", "description", Trip.Visibility.PRIVATE, otherUser);
 
         MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trips");
         assertNull(result.getModelAndView().getModel().get("startPoint"));
@@ -120,7 +120,7 @@ public class TripControllerTest {
 
     @Test
     public void attributesAreAddedToModelWhenViewingSingleTripWhenFriends() throws Exception {
-        Trip t = tripService.createTrip("description", Trip.Visibility.FRIENDS, otherUser);
+        Trip t = tripService.createTrip("header", "description", Trip.Visibility.FRIENDS, otherUser);
 
         Friendship f = friendshipService.createNewFriendshipRequest(otherUser, loggedInUser);
         friendshipService.acceptRequest(f.getId());
@@ -129,14 +129,14 @@ public class TripControllerTest {
 
     @Test
     public void attributesAreAddedToModelWhenViewingSingleTripWhenTripIsPublic() throws Exception {
-        Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
+        Trip t = tripService.createTrip("header", "description", Trip.Visibility.PUBLIC, otherUser);
 
         mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip", "startPoint", "trip", "coordinates");
     }
 
     @Test
     public void tripAttributeHasCorrectValueWhenViewingSingleTrip() throws Exception {
-        Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
+        Trip t = tripService.createTrip("header", "description", Trip.Visibility.PUBLIC, otherUser);
 
         MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip");
         Trip modelTrip = (Trip)result.getModelAndView().getModel().get("trip");
@@ -146,7 +146,7 @@ public class TripControllerTest {
     @Test
     public void startPointHasDefaultValueWhenTripHasNoPosts() throws Exception {
 
-        Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
+        Trip t = tripService.createTrip("header", "description", Trip.Visibility.PUBLIC, otherUser);
         MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip");
 
         double[] latitudeLongitudeId = (double[])result.getModelAndView().getModel().get("startPoint");
@@ -159,7 +159,7 @@ public class TripControllerTest {
     @Test
     public void coordinatesListIsEmptyWhenTripHasNoPosts() throws Exception {
 
-        Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
+        Trip t = tripService.createTrip("header", "description", Trip.Visibility.PUBLIC, otherUser);
 
         MvcResult result = mockMvcTesting.makeGet(URI + "/" + t.getId(), "trip");
 
@@ -170,7 +170,7 @@ public class TripControllerTest {
     @Test
     public void startPointAttributeHasCorrectValueWhenViewingSingleTripWithPosts() throws Exception {
 
-        Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
+        Trip t = tripService.createTrip("header", "description", Trip.Visibility.PUBLIC, otherUser);
 
         Image firstImage = loadTestImage("src/test/testimg.jpg", t);
         Image secondImage = loadTestImage("src/test/testimg3.jpg", t);
@@ -189,7 +189,7 @@ public class TripControllerTest {
     @Transactional
     public void coordinatesHaveCorrectValueWhenViewingSingleTripWithPosts() throws Exception {
 
-        Trip t = tripService.createTrip("description", Trip.Visibility.PUBLIC, otherUser);
+        Trip t = tripService.createTrip("header", "description", Trip.Visibility.PUBLIC, otherUser);
 
         Image firstImage = loadTestImage("src/test/testimg.jpg", t);
         Image secondImage = loadTestImage("src/test/testimg3.jpg", t);
@@ -240,7 +240,7 @@ public class TripControllerTest {
 
     @Test
     public void canEditTrip() throws Exception {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, loggedInUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, loggedInUser);
 
         Map<String, String> parameters = new HashMap<>();
         String description = "new description";
@@ -257,7 +257,7 @@ public class TripControllerTest {
     @Test
     @Transactional
     public void canCommentTrips() throws Exception {
-        Trip t = tripService.createTrip("Description", Trip.Visibility.PUBLIC, otherUser);
+        Trip t = tripService.createTrip("header", "Description", Trip.Visibility.PUBLIC, otherUser);
 
         Map<String, String> parameters = new HashMap<>();
         String commentText = "This is my comment. There are many like it, but this one is mine";

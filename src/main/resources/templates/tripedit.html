@@ -27,7 +27,7 @@
                             <article class="box page-content">
                                 <header>
                                     <h2>Edit trip</h2>
-                                    <p th:if="${trip != null}" th:text="${trip.description}" >Trip name</p>
+                                    <p th:if="${trip != null}" th:text="${trip.header}" >Trip name</p>
                                     <ul class="meta">
                                             <li class="icon fa-clock-o">5 days ago</li>
                                             <li class="icon fa-comments"><a href="#">1,024</a></li>
@@ -38,12 +38,19 @@
                                 <section>
                                     <!--<span class="image featured"><img src="images/pic05.jpg" alt="" /></span>-->
                                     <form method="POST" th:action="@{'/trips/'+${trip.id}+'/edit'}" >
-                                        <label for="description">Trip description</label> 
+                                        <label for="trip_header">Trip header</label> 
                                         <div class="6u">
-                                            <input type="text" id="description" name="description" th:value='${trip.description}'/>
+                                            <input type="text" id="trip_header" name="header" th:value='${trip.header}'/>
                                         </div>
                                         <br/>
-                                        <label for="description">Who can see my trip</label>    
+                                        <label for="description">Trip description</label>
+                                        <textarea name="description" th:value='${trip.description}' th:field="*{trip.description}"
+                                                  id="description"
+                                                  cols="55"
+                                                  rows="10"></textarea>
+                                        
+                                        <br/>
+                                        <label for="visibility">Who can see my trip</label>
                                         <div class="3u">
                                             <select id="visibility" name="visibility"> 
                                                 <option th:each="visibility : ${visibilities}" th:value="${visibility}" 

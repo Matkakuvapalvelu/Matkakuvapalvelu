@@ -141,7 +141,7 @@ public class PostServiceTest {
     @Transactional
     public void postIsAddedToTripWhenCreatingNewPost() {
 
-        Trip trip = tripService.createTrip("description", Trip.Visibility.PRIVATE, userService.getAuthenticatedUser());
+        Trip trip = tripService.createTrip("header", "description", Trip.Visibility.PRIVATE, userService.getAuthenticatedUser());
         List<Trip> trips = Arrays.asList(trip);
         Post post = postService.createPost(new Image(), "Hello", trips, userService.getAuthenticatedUser());
         assertTrue(trip.getPosts().contains(post));

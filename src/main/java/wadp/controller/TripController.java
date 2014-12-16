@@ -64,8 +64,8 @@ public class TripController {
     }
     
     @RequestMapping(method = RequestMethod.POST)
-    public String createTrip(@RequestParam("description") String description, @RequestParam("visibility") String visibility){
-        tripService.createTrip(description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
+    public String createTrip(@RequestParam("header") String header, @RequestParam("description") String description, @RequestParam("visibility") String visibility){
+        tripService.createTrip(header, description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
         return "redirect:/trips/";
     }
 
@@ -77,11 +77,12 @@ public class TripController {
     }
     
     @RequestMapping(value="/{id}/edit", method = RequestMethod.POST)
-    public String editTrip(@RequestParam(required = false, value="description") String description, 
+    public String editTrip(@RequestParam(required = true, value="header") String header, 
+            @RequestParam(required = false, value="description") String description, 
             @RequestParam(required = false, value="visibility") String visibility, @PathVariable("id") Long id){
         
-        if(description != null && !description.isEmpty()){
-            tripService.updateTripChanges(id, description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
+        if(header != null && !header.isEmpty()){
+            tripService.updateTripChanges(id, header, description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
         }
 
         return "redirect:/trips/";
