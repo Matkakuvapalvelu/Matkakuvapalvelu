@@ -31,13 +31,11 @@ public class IndexController {
     @RequestMapping(method = RequestMethod.GET)
     public String showIndex(Model model) {
 
-        List<User> activeUsers = userService.getMostActiveUsers(5);
-
         Map<User, Integer> activeUserPostCounts = new HashMap<>();
 
-        for (User u : activeUsers) {
-            activeUserPostCounts.put(u, postService.getUserPosts(u).size());
-        }
+        userService.getMostActiveUsers(5).forEach(user ->
+                activeUserPostCounts.put(user, postService.getUserPosts(user).size()));
+
 
         model.addAttribute("activeUsers", activeUserPostCounts);
 
@@ -53,9 +51,9 @@ public class IndexController {
                 
         Map<Trip, List<Post>> tripMap = new LinkedHashMap(); 
         
-        tripService.getNewestPublicTrips(3).forEach(trip -> {
-            tripMap.put(trip, postService.getNewestPosts(trip, 3));
-        });
+        tripService.getNewestPublicTrips(3).forEach(trip ->
+                tripMap.put(trip, postService.getNewestPosts(trip, 3)));
+        
         if(tripMap.size() > 0){
             model.addAttribute("tripsInMap", tripMap);
         }        
