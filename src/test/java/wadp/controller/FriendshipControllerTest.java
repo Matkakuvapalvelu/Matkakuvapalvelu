@@ -41,7 +41,7 @@ public class FriendshipControllerTest {
     @Autowired
     private FilterChainProxy springSecurityFilter;
 
-    MockMvcTesting mockMvcTesting;
+    private MockMvcTesting mockMvcTesting;
 
     @Autowired
     private FriendshipService friendshipService;

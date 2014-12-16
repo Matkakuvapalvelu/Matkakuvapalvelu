@@ -207,12 +207,16 @@ public class UserServiceTest {
             for (int i = 0; i < postCount; ++i) {
 
                 Image image = imageService.addImage("image/jpg", "image name", data);
-                Post post = postService.createPost(image, "Image text", new ArrayList<Trip>(), creator);
 
+                List<Trip> addTripList = new ArrayList<Trip>();
                 if (i % 2 == 0) {
                     Trip trip = tripService.createTrip("Trip header", "Trip description", Trip.Visibility.PUBLIC, creator);
                     trips.add(trip);
+                    addTripList.add(trip);
                 }
+
+                Post post = postService.createPost(image, "Image text", addTripList, creator);
+
                 posts.add(post);
             }
         } catch (IOException ex) {
