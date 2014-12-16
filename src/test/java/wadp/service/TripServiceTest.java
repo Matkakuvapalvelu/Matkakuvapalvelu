@@ -64,9 +64,9 @@ public class TripServiceTest {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(loggedInUser.getUsername(), loggedInUser.getPassword()));
 
-        publicTrip = tripService.createTrip("PublicTrip", "It is public", Trip.Visibility.PUBLIC, loggedInUser);
-        friendTrip = tripService.createTrip("FriendTrip", "It is forfriends", Trip.Visibility.FRIENDS, loggedInUser);
-        privateTrip = tripService.createTrip("PrivateTrip", "It is private", Trip.Visibility.PRIVATE, loggedInUser);
+        publicTrip = tripService.createTrip("PublicTrip", "PublicTrip", Trip.Visibility.PUBLIC, loggedInUser);
+        friendTrip = tripService.createTrip("FriendTrip", "FriendTrip", Trip.Visibility.FRIENDS, loggedInUser);
+        privateTrip = tripService.createTrip("PrivateTrip", "PrivateTrip", Trip.Visibility.PRIVATE, loggedInUser);
 
     }
 
@@ -145,17 +145,17 @@ public class TripServiceTest {
         assertEquals(3, trips.size());
 
         assertEquals(1, trips.stream()
-                .filter(t -> t.getDescription().equals("PublicTrip"))
+                .filter(t -> t.getHeader().equals("PublicTrip"))
                 .collect(Collectors.toList())
                 .size());
 
         assertEquals(1, trips.stream()
-                .filter(t -> t.getDescription().equals("FriendTrip"))
+                .filter(t -> t.getHeader().equals("FriendTrip"))
                 .collect(Collectors.toList())
                 .size());
 
         assertEquals(1, trips.stream()
-                .filter(t -> t.getDescription().equals("PrivateTrip"))
+                .filter(t -> t.getHeader().equals("PrivateTrip"))
                 .collect(Collectors.toList())
                 .size());
     }
@@ -170,12 +170,12 @@ public class TripServiceTest {
         assertEquals(2, trips.size());
 
         assertEquals(1, trips.stream()
-                .filter(t -> t.getDescription().equals("PublicTrip"))
+                .filter(t -> t.getHeader().equals("PublicTrip"))
                 .collect(Collectors.toList())
                 .size());
 
         assertEquals(1, trips.stream()
-                .filter(t -> t.getDescription().equals("FriendTrip"))
+                .filter(t -> t.getHeader().equals("FriendTrip"))
                 .collect(Collectors.toList())
                 .size());
     }
@@ -187,7 +187,7 @@ public class TripServiceTest {
         assertEquals(1, trips.size());
 
         assertEquals(1, trips.stream()
-                .filter(t -> t.getDescription().equals("PublicTrip"))
+                .filter(t -> t.getHeader().equals("PublicTrip"))
                 .collect(Collectors.toList())
                 .size());
     }
@@ -199,7 +199,7 @@ public class TripServiceTest {
         assertEquals(1, trips.size());
 
         assertEquals(1, trips.stream()
-                .filter(t -> t.getDescription().equals("PublicTrip"))
+                .filter(t -> t.getHeader().equals("PublicTrip"))
                 .collect(Collectors.toList())
                 .size());
     }
@@ -339,13 +339,13 @@ public class TripServiceTest {
         tripService.createTrip("My awesome trip to Spain", "Spain", Trip.Visibility.PRIVATE, loggedInUser);
 
         tripService.createTrip("Traveling in Spain", "Spain", Trip.Visibility.FRIENDS, friend);
-        tripService.createTrip("Private Portugal trip", "Portugal", Trip.Visibility.PRIVATE, friend);
+        tripService.createTrip("Private Portugal trip", "Private Portugal trip", Trip.Visibility.PRIVATE, friend);
 
 
         final Trip strangerPublicTrip = tripService.createTrip("My travels", "travels", Trip.Visibility.PUBLIC, stranger);
         createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
-        tripService.createTrip("Images for friends", "for friends", Trip.Visibility.FRIENDS, stranger);
-        tripService.createTrip("Private stuff", "Private", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Images for friends", "Images for friends", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", "Private stuff", Trip.Visibility.FRIENDS, stranger);
 
         List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("Portugal", "stuff", "friends"), loggedInUser);
 

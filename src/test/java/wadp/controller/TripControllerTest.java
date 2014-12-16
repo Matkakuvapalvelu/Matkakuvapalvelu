@@ -225,6 +225,7 @@ public class TripControllerTest {
     public void canPostNewTrips() throws Exception {
 
         Map<String, String> parameters = new HashMap<>();
+        parameters.put("header", "my trip header");
         parameters.put("description", "my trip description");
         parameters.put("visibility", "FRIENDS");
 
@@ -233,6 +234,7 @@ public class TripControllerTest {
         List<Trip> trips = tripService.getTrips(loggedInUser, loggedInUser);
         assertEquals(1, trips.size());
 
+        assertEquals("my trip header", trips.get(0).getHeader());
         assertEquals("my trip description", trips.get(0).getDescription());
         assertEquals(Trip.Visibility.FRIENDS, trips.get(0).getVisibility());
     }
@@ -244,11 +246,14 @@ public class TripControllerTest {
 
         Map<String, String> parameters = new HashMap<>();
         String description = "new description";
+        String header = "new header";
+        parameters.put("header", header);
         parameters.put("description", description);
         parameters.put("visibility", Trip.Visibility.PRIVATE.toString());
 
         mockMvcTesting.makePost(URI + "/" + t.getId() + "/edit", "/trips/", parameters);
 
+        assertEquals(header, tripService.getTrip(t.getId()).getHeader());
         assertEquals(description, tripService.getTrip(t.getId()).getDescription());
         assertEquals(Trip.Visibility.PRIVATE, tripService.getTrip(t.getId()).getVisibility());
 
