@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Comments</title>
+    </head>
+    <body>
+        <div th:fragment="commentForm" >
+            <label for="commentText">Post a comments</label><br />
+            <textarea
+                cols="80"
+                rows="5"
+                name="commentText"
+                id="commentText"
+                placeholder="Type your comment here."></textarea>
+            <br />
+            <input type="submit" value="post"/>
+        </div>
+        <section th:if="${!#lists.isEmpty(comments)}" th:fragment="recentComments">
+            <h2 class="major"><span>Recent Comments</span></h2>
+            <ul class="divided">
+                <li th:each="comment : ${comments}">
+                    <article class="box post-summary">
+                        <h3><span th:if="${comment.user != null}" th:text="${comment.user.username}" >Anonymous</span></h3>
+                        <ul class="meta">
+                            <li class="icon fa-clock-o"><span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span></li>
+                        </ul>
+                        <p th:text="${comment.commentText}">There are no comments on this post.</p>
+                    </article>
+                </li>
+            </ul>
+        </section>
+    </body>
+</html>

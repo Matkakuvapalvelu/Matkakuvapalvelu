@@ -53,23 +53,17 @@
                     <div class="3u">
                         <div class="sidebar">
                             <!-- Sidebar -->
-                            <h3>Comments</h3><br />
-                            <div th:each="comment : ${trip.comments}">
-                                ---<br/>
-                                <span th:if="${comment.user != null}" th:text="${comment.user.username} + ', '" >Anonymous, </span>
-                                <span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span>
-                                <p th:text="${comment.commentText}">There are no comments on this post.</p>
-                            </div>
-                            <form method="POST" th:action="@{'/trips/' + ${trip.id} + '/comment'}">
-                                <label for="commentText">Post a comment</label><br />
-                                <textarea
-                                          cols="40"
-                                          rows="5"
-                                          name="commentText"
-                                          id="commentText"
-                                          placeholder="Type your comment here."></textarea>
-                                <input type="submit" value="post"/><br />
-                            </form>
+                            <!-- Comment posting -->
+                            <section>
+                                <form method="POST" th:action="@{'/trips/' + ${trip.id} + '/comment'}">
+                                    <div th:replace="fragments/comment :: commentForm"></div>
+                                </form>
+                            </section>
+                            <!-- Recent Comments -->
+                            <section th:replace="fragments/comment :: recentComments">    
+                                No comments posted
+                            </section>
+
                         </div>
                     </div>
                 </div>

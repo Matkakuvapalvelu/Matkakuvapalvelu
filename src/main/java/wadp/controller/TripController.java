@@ -55,10 +55,12 @@ public class TripController {
         } else {
             model.addAttribute("startPoint", new double[]{0.00, 0.00});
         }
-            
-        model.addAttribute("trip", tripService.getTrip(id));
+        
+        Trip trip = tripService.getTrip(id);
+        model.addAttribute("trip", trip);
         model.addAttribute("coordinates", coordinates);
         model.addAttribute("isTripMap", true);
+        model.addAttribute("comments", trip.getComments());
         
         return "trip";
     }
