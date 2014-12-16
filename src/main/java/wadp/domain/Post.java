@@ -27,6 +27,7 @@ public class Post extends AbstractPersistable<Long> {
     @ManyToMany(mappedBy = "posts")
     private List<Trip> trips;
 
+    @Column(length = 1234)
     private String imageText;
 
     @Temporal(TemporalType.TIMESTAMP)

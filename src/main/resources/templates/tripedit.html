@@ -28,11 +28,6 @@
                                 <header>
                                     <h2>Edit trip</h2>
                                     <p th:if="${trip != null}" th:text="${trip.header}" >Trip name</p>
-                                    <ul class="meta">
-                                            <li class="icon fa-clock-o">5 days ago</li>
-                                            <li class="icon fa-comments"><a href="#">1,024</a></li>
-                                        
-                                    </ul>
                                 </header>
 
                                 <section>
@@ -44,10 +39,12 @@
                                         </div>
                                         <br/>
                                         <label for="description">Trip description</label>
-                                        <textarea name="description" th:value='${trip.description}' th:field="*{trip.description}"
-                                                  id="description"
-                                                  cols="55"
-                                                  rows="10"></textarea>
+                                        <div class="9u">
+                                            <textarea name="description" th:value='${trip.description}' th:field="*{trip.description}"
+                                                      id="description"
+                                                      cols="55"
+                                                      rows="10"></textarea>
+                                        </div>
                                         
                                         <br/>
                                         <label for="visibility">Who can see my trip</label>

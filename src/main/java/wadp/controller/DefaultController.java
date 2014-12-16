@@ -68,9 +68,11 @@ public class DefaultController {
         Map<Trip, List<Post>> tripMap = new LinkedHashMap(); 
         
         tripService.getNewestPublicTrips(3).forEach(trip -> {
-            tripMap.put(trip, postService.getNewestPosts(trip, 4));
-        });                
-        model.addAttribute("tripsInMap", tripMap);
+            tripMap.put(trip, postService.getNewestPosts(trip, 3));
+        });
+        if(tripMap.size() > 0){
+            model.addAttribute("tripsInMap", tripMap);
+        }        
                 
         return "index";
     }

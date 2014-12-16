@@ -105,11 +105,14 @@
                                                 <!-- Post -->
                                                 <li th:each="post: ${(entry.value)}">
                                                     <article class="box post-summary">
-                                                        <h3><a href="#" th:text="${post.imageText}" th:href="@{'/posts/'+${post.id}}">Post heading</a></h3>
                                                         <ul class="meta">
                                                             <li class="icon fa-clock-o" th:text="'Posted on ' + ${#calendars.format(post.postDate,'dd MMMM yyyy HH:mm')}">6 hours ago</li>
                                                             <li class="icon fa-comments"><a href="#" th:text="${#lists.size(post.comments)}">0</a></li>
                                                         </ul>
+                                                        <p></p>
+                                                        <a href="#" th:href="@{'/posts/'+${post.id}}">
+                                                            <img id="user-image" th:attr="src=@{'/user_images/' + ${post.image.galleryThumbnailId}}"/>
+                                                        </a>
                                                     </article>
                                                 </li>
                                             </ul>      
