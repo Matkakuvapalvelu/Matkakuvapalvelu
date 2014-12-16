@@ -422,7 +422,37 @@ public class TripServiceTest {
         assertEquals(0.0, coordinates.get(0)[1], 0.0001);
 
         assertEquals((long)publicTrip.getId(), (long)coordinates.get(0)[2]);
+    }
 
+
+    @Test
+    @Transactional
+    public void tripsCanBeDeletedAndTripIsRemovedFromPost() throws IOException {
+        Long id = publicTrip.getId();
+        createPost("src/test/testimg.jpg", "Test", publicTrip);
+        Post p = publicTrip.getPosts().get(0);
+
+        tripService.deleteTrip(id, loggedInUser);
+        assertNull(tripService.getTrip(id));
+        assertEquals(0, p.getTrips().size());
+    }
+
+    @Test
+    @Transactional
+    public void otherUserCannotDeleteTrip() throws IOException {
+        Long id = publicTrip.getId();
+        createPost("src/test/testimg.jpg", "Test", publicTrip);
+        Post p = publicTrip.getPosts().get(0);
+
+        boolean thrown = false;
+        try {
+            tripService.deleteTrip(publicTrip.getId(), stranger);
+        } catch (IllegalArgumentException ex) {
+            thrown = true;
+        }
+        assertTrue(thrown);
+        assertNotNull(tripService.getTrip(id));
+        assertEquals(1, p.getTrips().size());
     }
 
 

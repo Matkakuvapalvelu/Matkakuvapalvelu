@@ -23,6 +23,9 @@ public class TripService {
     @Autowired
     private FriendshipService friendshipService;
 
+    @Autowired
+    private PostService postService;
+
     public List<Trip> getUserTrips(User user) {
         return tripRepository.findByCreator(user);
     }
@@ -246,7 +249,18 @@ public class TripService {
         if (tripRepository.findOne(tripId).getCreator().getId() != deleter.getId()) {
             throw new IllegalArgumentException("Only trip creator has right to delete trip");
         }
-        throw new IllegalArgumentException("Not implemented yet!");
-//        tripRepository.delete(tripId);
+
+        Trip trip = tripRepository.findOne(tripId);
+        List<Post> posts = trip.getPosts();
+        for (Post p : posts) {
+            p.setTrips(p.getTrips()
+                    .stream()
+                    .filter(t -> t.getId() != tripId)
+                    .collect(Collectors.toList()));
+
+            postService.updatePost(p);
+        }
+
+        tripRepository.delete(tripId);
     }
 }

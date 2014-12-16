@@ -93,5 +93,9 @@ public class PostService {
     @Transactional
     public List<Post> getNewestPosts(Trip trip, int top) {
         return postRepository.findByTrips(trip, new PageRequest(0, top, Sort.Direction.DESC, "postDate"));
-    }    
+    }
+
+    public void updatePost(Post post) {
+        postRepository.save(post);
+    }
 }
