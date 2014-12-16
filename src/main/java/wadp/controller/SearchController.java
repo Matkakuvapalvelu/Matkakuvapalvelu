@@ -2,6 +2,7 @@ package wadp.controller;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,7 +46,9 @@ public class SearchController {
 
         for (Trip t : trips) {
             Hibernate.initialize(t.getPosts());
+            Hibernate.initialize(t.getComments());
         }
+        
         redirectAttributes.addFlashAttribute("trips", trips);
         return "redirect:search";
     }
