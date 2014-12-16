@@ -20,26 +20,8 @@
 <body class="homepage">
     <div th:replace="fragments/header :: header">header</div>
     <br/>
-    <div id="links5"><a href="/signup.html" th:href="@{/signup}">Signup</a></div>
     <div th:each="user : ${users}">
         <a href="#" th:href="@{'profile/' + ${user.id}}" th:text="${user.username}">user name</a>
-    </div>
-    <!-- Header -->
-    <header id="header">
-        <div class="logo container">
-            <div>
-                <h1><a href="index.html" id="logo">TXT</a></h1>
-                <p>A responsive site template by HTML5 UP</p>
-            </div>
-        </div>
-    </header>
-    <!-- Banner -->
-    <div id="banner-wrapper">
-        <section id="banner">
-            <h2>Welcome to TXT by HTML5 UP</h2>
-            <p>A free responsive site template built on HTML5, CSS3, skel, and some other stuff</p>
-            <a href="#" class="button">Alright let's go</a>
-        </section>
     </div>
 
     <!-- Main -->
@@ -49,80 +31,38 @@
                 <div class="12u">
                     <!-- Highlight -->
                     <section class="box highlight">
-                        <ul class="special">
-                            <li><a href="#" class="icon fa-search"><span class="label">Magnifier</span></a></li>
-                            <li><a href="#" class="icon fa-tablet"><span class="label">Tablet</span></a></li>
-                            <li><a href="#" class="icon fa-flask"><span class="label">Flask</span></a></li>
-                            <li><a href="#" class="icon fa-cog"><span class="label">Cog?</span></a></li>
-                        </ul>
                         <header>
-                            <h2>A random assortment of icons in circles</h2>
-                            <p>And some text that attempts to explain their significance</p>
+                            <h2>Below you can browse public trips and travelers</h2>
+                            <p>To access more features, please sign up!</p>
                         </header>
-                        <p>
-                            Phasellus quam turpis, feugiat sit amet ornare in, hendrerit in lectus. Praesent semper mod quis eget mi. Etiam eu<br />
-                            ante risus. Aliquam erat volutpat. Aliquam luctus et mattis lectus amet pulvinar. Nam nec turpis consequat.
-                        </p>
+                        <div class="image featured" th:replace="fragments/map :: map"></div>
                     </section>
                 </div>
             </div>
-            <div class="row 200%">
+            <div class="row 200%" th:if="${activeUsers != null} and ${!#lists.isEmpty(activeUsers)}">
                 <div class="12u">
-                    <!-- Features -->
+                    <!-- Most Active users -->
                     <section class="box features">
-                        <h2 class="major"><span>A Major Heading</span></h2>
+                        <h2 class="major"><span>Most active users</span></h2>
                         <div>
                             <div class="row">
-                                <div class="3u">
-                                    <!-- Feature -->
+                                <div class="3u" th:each="entry: ${activeUsers}">
+                                    <!-- User -->
                                     <section class="box feature">
-                                        <a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
-                                        <h3><a href="#">A Subheading</a></h3>
-                                        <p>
-                                            Phasellus quam turpis, feugiat sit amet ornare in, a hendrerit in 
-                                            lectus dolore. Praesent semper mod quis eget sed etiam eu ante risus.
-                                        </p>
-                                    </section>
-                                </div>
-                                <div class="3u">
-                                    <!-- Feature -->
-                                    <section class="box feature">
-                                        <a href="#" class="image featured"><img src="images/pic02.jpg" alt="" /></a>
-                                        <h3><a href="#">Another Subheading</a></h3>
-                                        <p>
-                                            Phasellus quam turpis, feugiat sit amet ornare in, a hendrerit in 
-                                            lectus dolore. Praesent semper mod quis eget sed etiam eu ante risus.
-                                        </p>
-                                    </section>
-                                </div>
-                                <div class="3u">
-                                    <!-- Feature -->
-                                    <section class="box feature">
-                                        <a href="#" class="image featured"><img src="images/pic03.jpg" alt="" /></a>
-                                        <h3><a href="#">And Another</a></h3>
-                                        <p>
-                                            Phasellus quam turpis, feugiat sit amet ornare in, a hendrerit in 
-                                            lectus dolore. Praesent semper mod quis eget sed etiam eu ante risus.
-                                        </p>
-                                    </section>
-                                </div>
-                                <div class="3u">
-                                    <!-- Feature -->
-                                    <section class="box feature">
-                                        <a href="#" class="image featured"><img src="images/pic04.jpg" alt="" /></a>
-                                        <h3><a href="#">And One More</a></h3>
-                                        <p>
-                                            Phasellus quam turpis, feugiat sit amet ornare in, a hendrerit in 
-                                            lectus dolore. Praesent semper mod quis eget sed etiam eu ante risus.
-                                        </p>
+                                        <a href="#" class="image featured" th:href="@{'profile/' + ${(entry.key).id}}">
+                                            <img src="images/pic01.jpg" alt="" />
+                                        </a>
+                                        <h3><a href="#" th:href="@{'profile/' + ${(entry.key).id}}" th:text="${(entry.key).username}">Traveler one</a></h3>
+                                        <p th:text="'Posts made by traveler: ' + ${(entry.value) - #lists.size((entry.key).comments)}">No posts made</p>
+                                        <p th:text="'Comments made by traveler: ' + ${#lists.size((entry.key).comments)}">No comments made</p>
+                                        <p th:text="'Trips made by traveler: ' + ${#lists.size((entry.key).trips)}">No trips made</p>
                                     </section>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" th:if="${#lists.size(activeUsers) > 5}">
                                 <div class="12u">
                                     <ul class="actions">
-                                        <li><a href="#" class="button big">Do Something</a></li>
-                                        <li><a href="#" class="button alt big">Think About It</a></li>
+                                        <li><a href="#" class="button big">Show all users</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -130,91 +70,59 @@
                     </section>
                 </div>
             </div>
-            <div class="row 200%">
+            <div class="row 200%" th:if="${tripsInMap != null} and ${!#lists.isEmpty(tripsInMap)}">
                 <div class="12u">
-                    <!-- Blog -->
                     <section class="box blog">
-                        <h2 class="major"><span>Another Major Heading</span></h2>
+                        <h2 class="major"><span>Top three newest trips</span></h2>
                         <div>
-                            <div class="row">
+                            <!-- One trip-->
+                            <div class="row" th:each="entry: ${tripsInMap}">
                                 <div class="9u">
                                     <div class="content content-left">
-                                        <!-- Featured Post -->
-                                        <article class="box post">
+                                        <!-- Trip -->
+                                        <article class="box post"> 
                                             <header>
-                                                <h3><a href="#">Here's a really big heading</a></h3>
-                                                <p>With a smaller subtitle that attempts to elaborate</p>
+                                                <h3><a href="/trips.html" th:href="@{'/trips/'+${(entry.key).id}}" th:text="${(entry.key).description}"></a></h3>
+                                                <p>With a smaller subtitle that attempts to elaborate small description in here!?</p>
                                                 <ul class="meta">
-                                                    <li class="icon fa-clock-o">15 minutes ago</li>
-                                                    <li class="icon fa-comments"><a href="#">8</a></li>
+                                                    <li class="icon fa-clock-o" th:text="'Created on ' + ${#calendars.format((entry.key).creationDate,'dd MMMM yyyy HH:mm')}">15 minutes ago</li>
+                                                    <li class="icon fa-comments"><a href="#" th:text="${#lists.size((entry.key).comments)}">8</a></li>
                                                 </ul>
                                             </header>
-                                            <a href="#" class="image featured"><img src="images/pic05.jpg" alt="" /></a>
+                                            <div th:if="${!#lists.isEmpty((entry.key).posts)}" >
+                                                <span class="image featured" th:replace="fragments/map :: map"></span>
+                                            </div>                                            
                                             <p>
-                                                Phasellus quam turpis, feugiat sit amet ornare in, a hendrerit in lectus. Praesent 
-                                                semper mod quis eget mi. Etiam sed ante risus aliquam erat et volutpat. Praesent a 
-                                                dapibus velit. Curabitur sed nisi nunc, accumsan vestibulum lectus. Lorem ipsum 
-                                                dolor sit non aliquet sed, tempor et dolor.  Praesent a dapibus velit. Curabitur 
-                                                accumsan.
+                                                Small description from the trip
                                             </p>
-                                            <a href="#" class="button">Continue Reading</a>
+                                            <a href="#" class="button" th:href="@{'/trips/'+${(entry.key).id}}">Continue Reading</a>
                                         </article>
                                     </div>
                                 </div>
-                                <div class="3u">
+                                <div class="3u" th:if="${!#lists.isEmpty((entry.key).posts)}" >
                                     <div class="sidebar">
-                                        <!-- Archives -->
-                                        <ul class="divided">
-                                            <li>
-                                                <article class="box post-summary">
-                                                    <h3><a href="#">A Subheading</a></h3>
-                                                    <ul class="meta">
-                                                        <li class="icon fa-clock-o">6 hours ago</li>
-                                                        <li class="icon fa-comments"><a href="#">34</a></li>
-                                                    </ul>
-                                                </article>
-                                            </li>
-                                            <li>
-                                                <article class="box post-summary">
-                                                    <h3><a href="#">Another Subheading</a></h3>
-                                                    <ul class="meta">
-                                                        <li class="icon fa-clock-o">9 hours ago</li>
-                                                        <li class="icon fa-comments"><a href="#">27</a></li>
-                                                    </ul>
-                                                </article>
-                                            </li>
-                                            <li>
-                                                <article class="box post-summary">
-                                                    <h3><a href="#">And Another</a></h3>
-                                                    <ul class="meta">
-                                                        <li class="icon fa-clock-o">Yesterday</li>
-                                                        <li class="icon fa-comments"><a href="#">184</a></li>
-                                                    </ul>
-                                                </article>
-                                            </li>
-                                            <li>
-                                                <article class="box post-summary">
-                                                    <h3><a href="#">And Another</a></h3>
-                                                    <ul class="meta">
-                                                        <li class="icon fa-clock-o">2 days ago</li>
-                                                        <li class="icon fa-comments"><a href="#">286</a></li>
-                                                    </ul>
-                                                </article>
-                                            </li>
-                                            <li>
-                                                <article class="box post-summary">
-                                                    <h3><a href="#">And One More</a></h3>
-                                                    <ul class="meta">
-                                                        <li class="icon fa-clock-o">3 days ago</li>
-                                                        <li class="icon fa-comments"><a href="#">8,086</a></li>
-                                                    </ul>
-                                                </article>
-                                            </li>
-                                        </ul>
-                                        <a href="#" class="button alt">Browse Archives</a>
+                                        <!-- Recent Posts -->
+                                        <section>
+                                            <h2 class="major"><span>Recent Posts</span></h2>
+                                            <ul class="divided">
+                                                <!-- Post -->
+                                                <li th:each="post: ${(entry.value)}">
+                                                    <article class="box post-summary">
+                                                        <h3><a href="#" th:text="${post.imageText}" th:href="@{'/posts/'+${post.id}}">Post heading</a></h3>
+                                                        <ul class="meta">
+                                                            <li class="icon fa-clock-o" th:text="'Posted on ' + ${#calendars.format(post.postDate,'dd MMMM yyyy HH:mm')}">6 hours ago</li>
+                                                            <li class="icon fa-comments"><a href="#" th:text="${#lists.size(post.comments)}">0</a></li>
+                                                        </ul>
+                                                    </article>
+                                                </li>
+                                            </ul>      
+                                            <a href="#" class="button alt" th:href="@{'/trips/'+${(entry.key).id}}">Browse Archives</a>
+                                        </section>                                                                                
                                     </div>
                                 </div>
-                            </div>
+                                <!-- End of one trip-->
+                                <div style="width: 20px"></div>
+                            </div>                            
                         </div>
                     </section>
                 </div>

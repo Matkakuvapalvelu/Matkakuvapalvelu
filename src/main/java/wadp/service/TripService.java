@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import wadp.domain.Post;
@@ -46,6 +47,22 @@ public class TripService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns list of public trips
+     * @return List of trips
+     */
+    public List<Trip> getPublicTrips() {
+        return tripRepository.findByVisibility(Trip.Visibility.PUBLIC);
+    }
+    
+    /**
+     * Returns list of top x public trips sorted by value
+     * @return List of trips
+     */
+    public List<Trip> getNewestPublicTrips(int top) {
+        return tripRepository.findByVisibility(Trip.Visibility.PUBLIC, new PageRequest(0, top, Sort.Direction.DESC, "creationDate"));
+    }
+    
     /**
      * Creates a new trip with given description and visibility. Sets given user as the owner.
      *
@@ -137,6 +154,7 @@ public class TripService {
     /**
      * Returns list of trip start point coordinates and tripId (latitude/longitude/id) sorted by capture date
      * Get trips by user where requester has right to see them
+     * If user is null, then get only public trips
      * @param user User whose trips will be returned
      * @param requester User who is requesting list of trips
      * @return List of double arrays with latitude/longitude/id as values
@@ -144,6 +162,11 @@ public class TripService {
     public List<double[]> getStartpointCoordinatesOfTrips(User user, User requester) {
 
         List<Trip> trips = getTrips(user, requester);
+        
+        if(user == null){
+            trips = getPublicTrips();
+        }
+        
         final List<double[]> coordinates = new ArrayList<>();
 
         trips.stream()

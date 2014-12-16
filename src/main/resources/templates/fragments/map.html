@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>        
     </head>
     <body th:fragment="map">
-        <div th:id="'googleMap'" style="width: 600px; height: 600px;"></div>
+        <div th:id="'googleMap'" style="height: 400px;"></div>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
         <script type="text/javascript" src="/js/googlemap.js"></script>
         <script type="text/javascript" th:inline="javascript">
@@ -16,21 +16,19 @@
                 (function() {
                     var latLng = /*[[${startPoint}]]*/ 0.0;
                     var tripMap = /*[[${isTripMap}]]*/ 0;
+                    var height = /*[[${mapHeight}]]*/ 400;
+                    
                     googleMap = initialize(latLng[0], latLng[1], 'googleMap', tripMap);
+                    
+                    if (height !== null){
+                        document.getElementById("googleMap").style.height = height + 'px';
+                    }
                 })();
                 
                 if(googleMap){
                     drawMarkers(googleMap, /*[[${coordinates}]]*/ 0.0);                    
                     drawPolyLinePath(googleMap);
-                }       
-                /*var mapdiv = document.getElementById("googleMap");
-                mapdiv.style.width = '100%';
-                mapdiv.style.height = '100%';
-                google.maps.event.addListenerOnce(tripMap, 'idle', function() {
-                    tripMap.style.width = '100%';
-                    tripMap.style.height = '100%';
-                    google.maps.event.trigger(tripMap, 'resize');
-                 });*/
+                }
             });            
         </script>
     </body>

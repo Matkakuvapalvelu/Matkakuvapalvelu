@@ -9,6 +9,8 @@ import wadp.domain.User;
 import wadp.repository.PostRepository;
 
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 // postgresql barfs without the @Transactional annotation as images might be split into multiple values inside database
@@ -81,5 +83,16 @@ public class PostService {
     @Transactional
     public Post getPost(Long id) {
         return postRepository.findOne(id);
+    }
+    
+    /**
+     *  Returns List of newest posts from specific trip
+     * @param trip trip which posts are wanted
+     * @param top how many values we want
+     * @return List of top posts
+     */
+    @Transactional
+    public List<Post> getNewestPosts(Trip trip, int top) {
+        return postRepository.findByTrips(trip, new PageRequest(0, top, Sort.Direction.DESC, "postDate"));
     }
 }
