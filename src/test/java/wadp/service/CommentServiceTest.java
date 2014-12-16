@@ -90,14 +90,14 @@ public class CommentServiceTest {
 
     @Test
     public void addingCommentToAPostSavesTheCommentToARepository() {
-        commentService.addCommentToPost(comment, post);
+        commentService.addCommentToPost(comment, post, loggedInUser);
         Long id = comment.getId();
         assertNotNull(commentRepository.findOne(id));
     }
 
     @Test
     public void addedCommentHasCorrectCommentText() {
-        commentService.addCommentToPost(comment, post);
+        commentService.addCommentToPost(comment, post, loggedInUser);
         assertEquals(comment.getCommentText(), commentService.getComment(comment.getId()).getCommentText());
     }
 
@@ -106,7 +106,7 @@ public class CommentServiceTest {
         Comment comment2 = new Comment();
         comment2.setUser(user);
         commentRepository.save(comment2);
-        commentService.addCommentToPost(comment, post);
+        commentService.addCommentToPost(comment, post, loggedInUser);
         
         assertEquals(2, commentService.getComments().size());
     }
@@ -115,8 +115,8 @@ public class CommentServiceTest {
     @Test
     public void findCommentsByUserReturnsCorrectComments() {
         Comment comment3 = new Comment();
-        commentService.addCommentToPost(comment, post);
-        commentService.addCommentToPost(comment3, post);
+        commentService.addCommentToPost(comment, post, loggedInUser);
+        commentService.addCommentToPost(comment3, post, loggedInUser);
         
         List<Comment> comments = commentService.getUserComments(loggedInUser);
         

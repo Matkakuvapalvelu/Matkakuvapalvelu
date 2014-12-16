@@ -98,7 +98,7 @@ public class TripController {
     
     @RequestMapping(value = "/{id}/comment", method = RequestMethod.POST)
     public String addCommentToTrip(@ModelAttribute Comment comment, @PathVariable Long id) {
-        commentService.addCommentToTrip(comment, tripService.getTrip(id));
+        commentService.addCommentToTrip(comment, tripService.getTrip(id), userService.getAuthenticatedUser());
         return "redirect:/trips/" + id;
     }
 }

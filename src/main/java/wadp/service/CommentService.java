@@ -19,39 +19,40 @@ public class CommentService {
     @Autowired
     private CommentRepository commentRepository;
 
-    @Autowired
-    private PostRepository PostRepository;
-
-    @Autowired
-    private UserService userService;
-
     /**
+     * Adds comment to given post with given commenter
      *
-     *
-     * @param comment
-     * @param post
+     * @param comment Comment to be added
+     * @param post Post that is commented
+     * @param commenter Commenter
      */
     @Transactional
-    public void addCommentToPost(Comment comment, Post post) {
-        addPostingInfo(comment);
+    public void addCommentToPost(Comment comment, Post post, User commenter) {
+        addPostingInfo(comment, commenter);
         post.getComments().add(comment);
         commentRepository.save(comment);
     }
 
+    /**
+     * Adds comment to given trip with given commenter
+     *
+     * @param comment Comment to be added
+     * @param trip Trip that is commented
+     * @param commenter Commenter
+     */
     @Transactional
-    public void addCommentToTrip(Comment comment, Trip trip) {
-        addPostingInfo(comment);
+    public void addCommentToTrip(Comment comment, Trip trip, User commenter) {
+        addPostingInfo(comment, commenter);
         trip.getComments().add(comment);
         commentRepository.save(comment);
     }
 
     @Transactional
-    private void addPostingInfo(Comment comment) {
-        User user = userService.getAuthenticatedUser();
-        comment.setUser(user);
+    private void addPostingInfo(Comment comment, User commenter) {
+        comment.setUser(commenter);
         comment.setCreationTime(Date.from(Instant.now()));
 
-        user.getComments().add(comment);
+        commenter.getComments().add(comment);
     }
 
     @Transactional

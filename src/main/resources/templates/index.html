@@ -53,7 +53,7 @@
                                             <img src="images/pic01.jpg" alt="" />
                                         </a>
                                         <h3><a href="#" th:href="@{'profile/' + ${(entry.key).id}}" th:text="${(entry.key).username}">Traveler one</a></h3>
-                                        <p th:text="'Posts made by traveler: ' + ${(entry.value) - #lists.size((entry.key).comments)}">No posts made</p>
+                                        <p th:text="'Posts made by traveler: ' + ${(entry.value)}">No posts made</p>
                                         <p th:text="'Comments made by traveler: ' + ${#lists.size((entry.key).comments)}">No comments made</p>
                                         <p th:text="'Trips made by traveler: ' + ${#lists.size((entry.key).trips)}">No trips made</p>
                                     </section>
