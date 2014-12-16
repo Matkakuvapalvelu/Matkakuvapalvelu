@@ -1,7 +1,6 @@
 package wadp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,7 +8,11 @@ import org.springframework.stereotype.Service;
 import wadp.domain.User;
 import wadp.repository.UserRepository;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service that handles anything user related, such as creation, authentication and getting the authenticated user
@@ -19,6 +22,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PostService postService;
 
     /**
      * Creates and saves new user into database and returns the resulting object.
@@ -81,5 +87,35 @@ public class UserService {
 
     public User getUser(Long id) {
         return userRepository.getOne(id);
+    }
+
+    /**
+     *
+     * Returns list of users ordered by activity, up to userCount users
+     *
+     * @param userCount number of active users
+     * @return List of n active users, where n is usercount or number of users in system, whichever is smaller, ordered by
+     * activity
+     */
+    public List<User> getMostActiveUsers(int userCount) {
+        List<User> users = userRepository.findAll();
+        final Map<User, Integer> userPostCounts = new HashMap<>();
+        for (User u : users) {
+            userPostCounts.put(u, postService.getUserPosts(u).size());
+        }
+
+        // really really really should be done on database level
+        return users
+                .stream()
+                .sorted((o1, o2) -> {
+                    int firstPostCommentCount = 0;
+                    int secondPostCommentCount = 0;
+
+                    firstPostCommentCount = o1.getComments().size() + userPostCounts.get(o1);
+                    secondPostCommentCount = o2.getComments().size() +  userPostCounts.get(o2);
+
+                    return secondPostCommentCount - firstPostCommentCount;
+                })
+                .limit(userCount).collect(Collectors.toList());
     }
 }

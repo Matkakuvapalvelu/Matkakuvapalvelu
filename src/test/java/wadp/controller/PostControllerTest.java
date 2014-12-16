@@ -199,7 +199,7 @@ public class PostControllerTest {
         String commentText = "commentText asdasdasdasdad";
         Comment comment = new Comment();
         comment.setCommentText(commentText);
-        commentService.addCommentToPost(comment, post);
+        commentService.addCommentToPost(comment, post, loggedInUser);
 
         MvcResult result = mockMvcTesting.makeGet(URI + "/" + post.getId(), "post", "post", "comments");
 

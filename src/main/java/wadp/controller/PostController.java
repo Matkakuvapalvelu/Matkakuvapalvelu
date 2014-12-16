@@ -88,7 +88,7 @@ public class PostController {
             @ModelAttribute Comment comment,
             @PathVariable Long id) {        
         Post post = postService.getPost(id);
-        commentService.addCommentToPost(comment, post);
+        commentService.addCommentToPost(comment, post, userService.getAuthenticatedUser());
         return "redirect:/posts/" + id;
     }
 
