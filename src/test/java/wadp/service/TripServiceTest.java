@@ -409,6 +409,23 @@ public class TripServiceTest {
 
     }
 
+    // test for a found bug
+    @Test
+    @Transactional
+    public void getStartpointCoordinatesOfTripsHandlesPostListWithNoLocationData() throws IOException {
+
+        createPost("src/test/no_gps.jpg", "Test", publicTrip);
+
+        List<double[]> coordinates = tripService.getStartpointCoordinatesOfTrips(null, null);
+        assertEquals(1, coordinates.size());
+        assertEquals(0.0, coordinates.get(0)[0], 0.0001);
+        assertEquals(0.0, coordinates.get(0)[1], 0.0001);
+
+        assertEquals((long)publicTrip.getId(), (long)coordinates.get(0)[2]);
+
+    }
+
+
 
     private Image createPost(String imageName, String postDescription, Trip trip) throws IOException {
         File imageFile = new File(imageName);
@@ -420,6 +437,8 @@ public class TripServiceTest {
         Post post = postService.createPost(image, postDescription, Arrays.asList(trip), trip.getCreator());
         return image;
     }
+
+
 
 
 

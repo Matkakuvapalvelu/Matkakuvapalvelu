@@ -2,6 +2,7 @@ package wadp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,15 +180,23 @@ public class TripService {
         final List<double[]> coordinates = new ArrayList<>();
 
         trips.stream()
-                .forEach(trip -> { 
+                .forEach(trip -> {
                     if(trip.getPosts().size() > 0){
-                        Post p = trip.getPosts()
-                            .stream()
-                            .filter(i -> i.getImage().getLocation())
-                            .sorted((p1, p2) -> p1.getImage().getCaptureDate().compareTo(p2.getImage().getCaptureDate())).findFirst().get();
-                        
-                            coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude(), trip.getId()});                     
-                    }                    
+                        try {
+                            Post p = trip.getPosts()
+                                    .stream()
+                                    .filter(i -> i.getImage().getLocation())
+                                    .sorted((p1, p2) -> p1.getImage().getCaptureDate().compareTo(p2.getImage().getCaptureDate()))
+                                    .findFirst()
+                                    .get();
+
+                            coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude(), trip.getId()});
+                        // quick & dirty fix for case where filter removes all entities (no images with location data) and following operations throw
+                        } catch (NoSuchElementException ex) {
+                            coordinates.add(new double[]{0.0, 0.0, trip.getId()});
+                        }
+                    }
+
                 });
         
         return coordinates;
