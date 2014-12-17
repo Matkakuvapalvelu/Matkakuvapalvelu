@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Comments</title>
@@ -20,7 +15,7 @@ and open the template in the editor.
             <br />
             <input type="submit" value="post"/>
         </div>
-        <section th:if="${!#lists.isEmpty(comments)}" th:fragment="recentComments">
+        <section th:if="${!#lists.isEmpty(comments)}" th:fragment="recentTripComments">
             <h2 class="major"><span>Recent Comments</span></h2>
             <ul class="divided">
                 <li th:each="comment : ${comments}">
@@ -30,6 +25,24 @@ and open the template in the editor.
                             <li class="icon fa-clock-o"><span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span></li>
                         </ul>
                         <p th:text="${comment.commentText}">There are no comments on this post.</p>
+                        <a href="#" th:text="Delete" onclick="document.getElementById('delete-form').submit();">Delete</a>
+                        <form style="visibility: hidden" id ="delete-form" method="post" th:action="@{'/trips/' + ${trip.id} + '/comment/' + ${comment.id} + '/delete'}"><input type="submit" value="Delete"/></form>
+                    </article>
+                </li>
+            </ul>
+        </section>
+        <section th:if="${!#lists.isEmpty(comments)}" th:fragment="recentPostComments">
+            <h2 class="major"><span>Recent Comments</span></h2>
+            <ul class="divided">
+                <li th:each="comment : ${comments}">
+                    <article class="box post-summary">
+                        <h3><span th:if="${comment.user != null}" th:text="${comment.user.username}" >Anonymous</span></h3>
+                        <ul class="meta">
+                            <li class="icon fa-clock-o"><span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span></li>
+                        </ul>
+                        <p th:text="${comment.commentText}">There are no comments on this post.</p>
+                        <a href="#" th:text="Delete" onclick="document.getElementById('delete-form').submit();">Delete</a>
+                        <form style="visibility: hidden" id ="delete-form" method="post" th:action="@{'/posts/' + ${post.id} + '/comment/' + ${comment.id} + '/delete'}"><input type="submit" value="Delete"/></form>
                     </article>
                 </li>
             </ul>

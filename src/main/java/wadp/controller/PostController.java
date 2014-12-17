@@ -91,6 +91,12 @@ public class PostController {
         commentService.addCommentToPost(comment, post, userService.getAuthenticatedUser());
         return "redirect:/posts/" + id;
     }
+    
+    @RequestMapping(value = "/{pId}/comment/{cId}/delete", method = RequestMethod.POST)
+    public String deleteCommentFromPost(@PathVariable("pId") Long pId, @PathVariable("cId") Long cId) {
+        commentService.deleteCommentFromPost(postService.getPost(pId), userService.getAuthenticatedUser(), commentService.getComment(cId));
+        return "redirect:/posts/" + pId;
+    }
 
     private void addTripsToList(String[] tripIds, List<Trip> trips, User postCreator) {
         if (tripIds != null) {

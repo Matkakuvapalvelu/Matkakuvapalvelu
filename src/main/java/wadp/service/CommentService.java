@@ -56,6 +56,20 @@ public class CommentService {
     }
 
     @Transactional
+    public void deleteCommentFromTrip(Trip trip, User user, Comment comment) {
+        trip.getComments().remove(comment);
+        user.getComments().remove(comment);
+        commentRepository.delete(comment);
+    }
+
+    @Transactional
+    public void deleteCommentFromPost(Post post, User user, Comment comment) {
+        post.getComments().remove(comment);
+        user.getComments().remove(comment);
+        commentRepository.delete(comment);
+    }
+
+    @Transactional
     public List<Comment> getComments() {
         return commentRepository.findAll();
     }
@@ -68,5 +82,6 @@ public class CommentService {
     @Transactional
     public Comment getComment(Long id) {
         return commentRepository.findOne(id);
-    }    
+    }
+
 }
