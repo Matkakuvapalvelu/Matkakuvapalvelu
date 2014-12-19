@@ -14,7 +14,8 @@ function initialize(latitude, longitude, mapId, isTripMap) {
     var mapOptions = {        
         center: { lat: latitude, lng: longitude},
         zoom: 8,
-        scrollwheel: false
+        scrollwheel: false,
+        draggable: false
     };
     var map = new google.maps.Map(document.getElementById(mapId), mapOptions);
     
