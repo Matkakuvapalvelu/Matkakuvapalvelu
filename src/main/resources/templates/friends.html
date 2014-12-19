@@ -36,6 +36,8 @@
                                         <div class="3u" th:each="friend : ${friends}">
                                             <section class="box feature">
                                                 <div>
+                                                    <img id="user-image" th:attr="src=@{'/user_images/' + @{${friend.profilePicId}}}"/>
+
                                                     <a href="#" th:href="@{'profile/' + ${friend.id}}" th:text="${friend.username}">link to friend profile</a>
                                                     <a href="#" class="button" onclick="document.getElementById('unfriend-form').submit();"><span>Unfriend</span></a>
                                                     <form style="visibility: hidden" id ="unfriend-form" th:method="delete" action="#" th:action="@{'/friendship/unfriend/'+${friend.id}}"><input type="submit" value="unfriend"/></form>

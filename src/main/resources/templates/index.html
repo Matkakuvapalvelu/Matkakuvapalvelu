@@ -100,7 +100,7 @@
                                     <!-- User -->
                                     <section class="box feature">
                                         <a href="#" class="image featured" th:href="@{'profile/' + ${(entry.key).id}}">
-                                            <img src="images/pic01.jpg" alt="" />
+                                            <img id="user-image" th:attr="src=@{'/user_images/' + @{${entry.key.profilePicId}}}" alt="No picture"/>
                                         </a>
                                         <h3><a href="#" th:href="@{'profile/' + ${(entry.key).id}}" th:text="${(entry.key).username}">Traveler one</a></h3>
                                         <ul class="meta">
