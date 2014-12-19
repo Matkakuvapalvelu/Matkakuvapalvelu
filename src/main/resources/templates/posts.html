@@ -64,8 +64,12 @@
                             </header>
                         </article>
                         <div class="row" th:if="${posts != null}">
-                            <div class="3u" th:each="post : ${posts}">
-                                <section class="box feature">
+                            <div class="5u" th:each="post : ${posts}">
+                                <section class="box feature post-summary">
+                                    <ul class="meta">
+                                        <li class="icon fa-clock-o" th:text="'Posted on ' + ${#calendars.format(post.postDate,'dd MMMM yyyy HH:mm')}">15 minutes ago</li>
+                                        <li class="icon fa-comments"><label th:text="${#lists.size(post.comments)}">8</label></li>
+                                    </ul> 
                                     <a href="#" th:href="@{'/posts/'+${post.id}}">
                                         <img id="user-image" th:attr="src=@{'/user_images/' + ${post.image.galleryThumbnailId}}"/>
                                     </a>

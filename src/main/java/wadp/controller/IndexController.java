@@ -31,7 +31,7 @@ public class IndexController {
     @RequestMapping(method = RequestMethod.GET)
     public String showIndex(Model model) {
 
-        Map<User, Integer> activeUserPostCounts = new HashMap<>();
+        Map<User, Integer> activeUserPostCounts = new LinkedHashMap<>();
 
         userService.getMostActiveUsers(5).forEach(user ->
                 activeUserPostCounts.put(user, postService.getUserPosts(user).size()));
@@ -56,8 +56,24 @@ public class IndexController {
         
         if(tripMap.size() > 0){
             model.addAttribute("tripsInMap", tripMap);
-        }        
-                
+        }      
+        
+        int i = 1;
+        for (Map.Entry<Trip, List<Post>> entry : tripMap.entrySet())
+        {
+            List<double[]> coord = tripService.getTripImageCoordinates(entry.getKey().getId());
+
+            if (coord.size() > 0) {
+                model.addAttribute("startPoint" + i, coord.get(0));
+            } else {
+                model.addAttribute("startPoint" + i, new double[]{0.00, 0.00});
+            }            
+            model.addAttribute("coordinates" + i, coord);
+            i++;
+        }
+        
+        
+        
         return "index";
     }
 }

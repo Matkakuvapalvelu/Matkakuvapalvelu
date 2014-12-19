@@ -8,11 +8,11 @@
     <section class="box features">
         <div class="row" th:if="${trips != null}">
             <div class="5u" th:each="trip: ${trips}">
-                <section class="box feature">
+                <section class="box feature post-summary">
                     <h3><a href="/trips.html" th:href="@{'/trips/'+${trip.id}}" th:text="${trip.header}">Trip to Russia</a></h3>                    
                     <ul class="meta">
                         <li class="icon fa-clock-o" th:text="'Created on ' + ${#calendars.format(trip.creationDate,'dd MMMM yyyy HH:mm')}">15 minutes ago</li>
-                        <li class="icon fa-comments"><a href="#" th:text="${#lists.size(trip.comments)}">8</a></li>
+                        <li class="icon fa-comments"><label th:text="${#lists.size(trip.comments)}">8</label></li>
                     </ul>                    
                     <a th:if="${!#lists.isEmpty(trip.posts)}" href="#" th:href="@{'/trips/'+${trip.id}}">
                         <img id="user-image" th:attr="src=@{'/user_images/' + ${trip.posts[0].image.galleryThumbnailId}}"/>

@@ -16,8 +16,58 @@
     <script src="/js/skel.min.js"></script>
     <script src="/js/skel-layers.min.js"></script>
     <script src="/js/init.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGBcJ-D045wfMa-cBIrfKARkx93_U98sU"></script>
+    <script type="text/javascript" src="/js/googlemap.js"></script>
 </head>
 <body class="homepage">
+    <script type="text/javascript" th:inline="javascript">
+        $(function(){            
+            var googleMap1;
+            var googleMap2;
+            var googleMap3;
+            var mapCoordinates1 = /*[[${coordinates1}]]*/ 0.0;
+            var mapCoordinates2 =/*[[${coordinates2}]]*/ 0.0;
+            var mapCoordinates3 =/*[[${coordinates3}]]*/ 0.0;
+
+            (function() {
+                var latLng = /*[[${startPoint1}]]*/ 0.0;
+                if(mapCoordinates1 !== null) {
+                    if (mapCoordinates1.length > 0){
+                        googleMap1 = initialize(latLng[0], latLng[1], 'googleMap1', true);
+                    }
+                }                
+                
+                latLng = /*[[${startPoint2}]]*/ 0.0;
+                if(mapCoordinates2 !== null) {
+                    if (mapCoordinates2.length > 0){
+                        googleMap2 = initialize(latLng[0], latLng[1], 'googleMap2', true);
+                    }
+                }
+                
+                latLng = /*[[${startPoint3}]]*/ 0.0;
+                if(mapCoordinates3 !== null) {
+                    if (mapCoordinates3.length > 0){                                            
+                        googleMap3 = initialize(latLng[0], latLng[1], 'googleMap3', true);
+                    }
+                }
+            })();
+
+            if(googleMap1){
+                drawMarkers(googleMap1, mapCoordinates1);
+                drawPolyLinePath(googleMap1);
+            }
+            
+            if(googleMap2){
+                drawMarkers(googleMap2, mapCoordinates2);
+                drawPolyLinePath(googleMap2);
+            }
+            
+            if(googleMap3){
+                drawMarkers(googleMap3, mapCoordinates3);
+                drawPolyLinePath(googleMap3);
+            }
+        });
+    </script>
     <div th:replace="fragments/header :: header">header</div>
     <br/>
     <div th:each="user : ${users}">
@@ -79,7 +129,7 @@
                         <h2 class="major"><span>Top three newest trips</span></h2>
                         <div>
                             <!-- One trip-->
-                            <div class="row" th:each="entry: ${tripsInMap}">
+                            <div class="row" th:each="entry, iterStat: ${tripsInMap}">
                                 <div class="9u">
                                     <div class="content content-left">
                                         <!-- Trip -->
@@ -88,12 +138,14 @@
                                                 <h3><a href="/trips.html" th:href="@{'/trips/'+${(entry.key).id}}" th:text="${(entry.key).header}"></a></h3>                                                
                                                 <ul class="meta">
                                                     <li class="icon fa-clock-o" th:text="'Created on ' + ${#calendars.format((entry.key).creationDate,'dd MMMM yyyy HH:mm')}">15 minutes ago</li>
-                                                    <li class="icon fa-comments"><a href="#" th:text="${#lists.size((entry.key).comments)}">8</a></li>
+                                                    <li class="icon fa-comments"><label th:text="${#lists.size((entry.key).comments)}">8</label></li>
                                                 </ul>
                                                 <p th:text="${(entry.key).description}">Small description in here!</p>
                                             </header>
-                                            <div th:if="${!#lists.isEmpty((entry.key).posts)}" >
-                                                <span class="image featured" th:replace="fragments/map :: map"></span>
+                                            <div th:if="(${iterStat.count} == 1 and ${!#lists.isEmpty(coordinates1)}) or 
+                                                 (${iterStat.count} == 2 and ${!#lists.isEmpty(coordinates2)}) or 
+                                                 (${iterStat.count} == 3 and ${!#lists.isEmpty(coordinates3)})" >
+                                                <div class="image featured" th:id="'googleMap' + ${iterStat.count}" style="height: 600px;"></div>
                                             </div>
                                             <a href="#" class="button" th:href="@{'/trips/'+${(entry.key).id}}">Continue Reading</a>
                                         </article>
@@ -110,7 +162,7 @@
                                                     <article class="box feature">                                                        
                                                         <ul class="meta">
                                                             <li class="icon fa-clock-o" th:text="${#calendars.format(post.postDate,'dd MMMM yyyy HH:mm')}">6 hours ago</li>
-                                                            <li class="icon fa-comments"><a href="#" th:text="${#lists.size(post.comments)}">0</a></li>
+                                                            <li class="icon fa-comments"><label th:text="${#lists.size(post.comments)}">0</label></li>
                                                         </ul>
                                                         <a href="#" th:href="@{'/posts/'+${post.id}}">
                                                             <img id="user-image" th:attr="src=@{'/user_images/' + ${post.image.galleryThumbnailId}}"/>

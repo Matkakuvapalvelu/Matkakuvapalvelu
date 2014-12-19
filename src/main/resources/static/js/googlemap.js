@@ -20,6 +20,7 @@ function initialize(latitude, longitude, mapId, isTripMap) {
 }
 
 function drawMarkers(tripMap, coordinates) {
+    tripPath = [];
     coordinates.forEach(function(coordinate) {
         drawNewMarker(tripMap, coordinate[0], coordinate[1], coordinate[2]);
         tripPath.push(new google.maps.LatLng(coordinate[0], coordinate[1]));
