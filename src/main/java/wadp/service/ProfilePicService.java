@@ -35,15 +35,10 @@ public class ProfilePicService {
             throw new ImageValidationException("Invalid image format!");
         }
 
-        FileObject profilePic = new FileObject();
-        profilePic.setName(name);
-        profilePic.setContentType(mediatype);
-        profilePic.setContentLength(new Long(content.length));
-
-        profilePic.setContent(thumbnailService.createProfileThumb(content));
-        profilePic = fileObjectRepository.save(profilePic);
+        FileObject profilePic = fileObjectRepository.save(thumbnailService.createProfileThumb(content, name));
         userService.getUser(user.getId()).setProfilePicId(profilePic.getId());
-        userRepository.save(user);
+        userRepository.save(user);                
+        
         return profilePic;
     }
 

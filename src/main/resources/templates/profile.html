@@ -34,15 +34,10 @@
                     <article class="box page-content">
                         <header>
                             <h2 th:text="@{'Profile of ' + ${user.username}}"></h2>
-
-                            <p>Map has all the trip markers</p>
+                            <p>Every trip is marked on the map</p>
                         </header>
-
                         <section>
                             <span class="image featured" th:replace="fragments/map :: map"></span>
-
-                            <p>
-                            </p>
                         </section>
                     </article>
                 </div>
@@ -50,26 +45,24 @@
             <div class="3u">
                 <div class="sidebar">
                     <!-- Sidebar profile -->
-                    <section>
+                    <section class="box feature post-summary">
                         <h2 class="major"><span th:text="@{${user.username}}"></span></h2>
                         <ul class="meta">
-                            <li class="icon fa-clock-o"
-                                th:text="'Active since ' + ${#calendars.format(signupDate,'dd MMMM yyyy HH:mm')}">
-                                01.01.2014
-                            </li>
+                            <li class="icon fa-clock-o" th:text="'Active since ' + ${#calendars.format(signupDate,'dd MMMM yyyy HH:mm')}">01.01.2014</li>
                         </ul>
                         <img id="user-image" th:attr="src=@{'/user_images/' + @{${user.profilePicId}}}"/>
-                        <ul class="meta">
+                        <ul>
                             <li></li>
                             <li th:text="'Trips made by traveler: ' + ${tripCount}">No trips made</li>
                             <li th:text="'Posts made by traveler: ' + ${postCount}">No posts made</li>
                             <li th:text="'Comments made by traveler: ' + ${commentCount}">No comments made</li>
                         </ul>
-
+                    </section>
+                    <section th:if='${canrequestfriendship} == null'>
                         <form method="POST" th:action="@{/profile}" enctype="multipart/form-data">
-                            <label for="file">File</label>
-                            <input type="file" name="file" id="file" accept="image/*"/>
-                            <input type="submit" value="Add profilepic!"/>
+                            <label for="file">Update profile picture!</label>
+                            <input type="file" name="file" id="file" accept="image/*" />
+                            <input type="submit" value="Update!"/>                            
                         </form>
                     </section>
                     <section th:if="${canrequestfriendship} == ${true}">
