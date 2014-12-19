@@ -56,17 +56,23 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteCommentFromTrip(Trip trip, User user, Comment comment) {
+    public void deleteCommentFromTrip(Trip trip, User deleter, Comment comment) {
         trip.getComments().remove(comment);
-        user.getComments().remove(comment);
+        deleter.getComments().remove(comment);
         commentRepository.delete(comment);
     }
 
     @Transactional
-    public void deleteCommentFromPost(Post post, User user, Comment comment) {
+    public void deleteCommentFromPost(Post post, User deleter, Comment comment) {
         post.getComments().remove(comment);
-        user.getComments().remove(comment);
+        deleter.getComments().remove(comment);
         commentRepository.delete(comment);
+    }
+    
+    private void verifyUser(User user, Comment comment) {
+        if (commentRepository.findOne(comment.getId()).getUser().getId() != user.getId()) {
+            throw new IllegalArgumentException("You do not have the right to edit or delete this comment");
+        }
     }
 
     @Transactional
