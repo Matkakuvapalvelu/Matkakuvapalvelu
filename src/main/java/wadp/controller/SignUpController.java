@@ -15,7 +15,7 @@ import wadp.service.UsernameAlreadyTakenException;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/signup")
+@RequestMapping("/register")
 public class SignUpController {
 
     @Autowired
@@ -24,7 +24,7 @@ public class SignUpController {
     @RequestMapping(method = RequestMethod.POST)
     public String createUser(@ModelAttribute("user") @Valid UserForm user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "signup";
+            return "register";
         }
 
         // there is probably a cleaner way to handle this, feels kinda hacky
@@ -32,7 +32,7 @@ public class SignUpController {
             userService.createUser(user.getUsername(), user.getPassword());
         } catch (UsernameAlreadyTakenException ex) {
             bindingResult.addError(new FieldError("user", "username", "Username already taken"));
-            return "signup";
+            return "register";
         }
 
         return "redirect:index";
@@ -41,7 +41,7 @@ public class SignUpController {
     @RequestMapping(method = RequestMethod.GET)
     public String showSignUpPage(Model model) {
         model.addAttribute("user", new UserForm());
-        return "signup";
+        return "register";
     }
 
 }

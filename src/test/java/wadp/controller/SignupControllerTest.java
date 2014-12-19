@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class SignupControllerTest {
 
-    private final String URI = "/signup";
+    private final String URI = "/register";
 
     @Autowired
     private WebApplicationContext webAppContext;
@@ -50,7 +50,7 @@ public class SignupControllerTest {
 
     @Test
     public void userSignupPageIsShown() throws Exception {
-        MvcResult res = mockMvcTesting.makeGet(URI, "signup", "user");
+        MvcResult res = mockMvcTesting.makeGet(URI, "register", "user");
         assertNotNull(res.getModelAndView().getModel().get("user"));
         assertTrue(res.getModelAndView().getModel().get("user") instanceof UserForm);
     }
@@ -77,7 +77,7 @@ public class SignupControllerTest {
         parameters.put("username", "foobar");
         parameters.put("password", "short");
         parameters.put("confirmpassword", "short");
-        mockMvcTesting.makePostExpectErrors(URI, "signup", parameters, "user");
+        mockMvcTesting.makePostExpectErrors(URI, "register", parameters, "user");
 
         assertEquals(0, userService.getUsers().size());
     }
@@ -89,7 +89,7 @@ public class SignupControllerTest {
         parameters.put("username", "foobar");
         parameters.put("password", "verygoodpassword");
         parameters.put("confirmpassword", "verybadpassword");
-        mockMvcTesting.makePostExpectErrors(URI, "signup", parameters, "user");
+        mockMvcTesting.makePostExpectErrors(URI, "register", parameters, "user");
 
         assertEquals(0, userService.getUsers().size());
     }
@@ -102,7 +102,7 @@ public class SignupControllerTest {
         parameters.put("username", "foobar");
         parameters.put("password", "happyfluffybunnies");
         parameters.put("confirmpassword", "happyfluffybunnies");
-        mockMvcTesting.makePostExpectErrors(URI, "signup", parameters, "user");
+        mockMvcTesting.makePostExpectErrors(URI, "register", parameters, "user");
 
         assertEquals(1, userService.getUsers().size());
         assertTrue(userService.getUsers().get(0).passwordEquals("averygoodpassword"));
@@ -115,7 +115,7 @@ public class SignupControllerTest {
         parameters.put("username", "ab");
         parameters.put("password", "happyfluffybunnies");
         parameters.put("confirmpassword", "happyfluffybunnies");
-        mockMvcTesting.makePostExpectErrors(URI, "signup", parameters, "user");
+        mockMvcTesting.makePostExpectErrors(URI, "register", parameters, "user");
 
         assertEquals(0, userService.getUsers().size());
     }
@@ -126,7 +126,7 @@ public class SignupControllerTest {
         parameters.put("username", null);
         parameters.put("password", "happyfluffybunnies");
         parameters.put("confirmpassword", "happyfluffybunnies");
-        mockMvcTesting.makePostExpectErrors(URI, "signup", parameters, "user");
+        mockMvcTesting.makePostExpectErrors(URI, "register", parameters, "user");
 
         assertEquals(0, userService.getUsers().size());
     }
