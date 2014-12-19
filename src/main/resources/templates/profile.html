@@ -3,14 +3,16 @@
 <head>
     <title>Profile</title>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>    
-    <link rel="stylesheet" href="/css/skel.css" />
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/style-desktop.css" />
-    <!--[if lte IE 8]><link rel="stylesheet" href="/css/ie/v8.css" /><![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="/css/skel.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/style-desktop.css"/>
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="/css/ie/v8.css"/><![endif]-->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.min.css"/>
-    <!--[if lte IE 8]><script src="/css/ie/html5shiv.js"></script><![endif]-->
+    <!--[if lte IE 8]>
+    <script src="/css/ie/html5shiv.js"></script><![endif]-->
     <script src="/js/jquery.min.js"></script>
     <script src="/js/jquery.dropotron.min.js"></script>
     <script src="/js/skel.min.js"></script>
@@ -19,66 +21,82 @@
 </head>
 <body>
 
-    <span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
-    <div id="main-wrapper">
-        <div id="main" class="container">
-            <div class="row">
-                <div class="9u important(collapse)">
-                    <div class="content content-left">
-                        <!-- Content -->
-                        <article class="box page-content">
-                            <header>
-                                <h2 th:text="@{'Profile of ' + ${user.username}}"></h2>
-                                <p>Map has all the trip markers</p>                                
-                            </header>
+<span th:replace="fragments/header :: header"><a href="#">header</a> <a href="#">links</a></span>
 
-                            <section>
-                                <span class="image featured" th:replace="fragments/map :: map"></span>
-                                <p>
-                                </p>
-                            </section>
-                        </article>
-                    </div>
-                </div>
-                <div class="3u">
-                    <div class="sidebar">
-                        <!-- Sidebar profile -->
+<div id="main-wrapper">
+    <div id="main" class="container">
+        <div class="row">
+            <div class="9u important(collapse)">
+                <div class="content content-left">
+                    <!-- Content -->
+                    <article class="box page-content">
+                        <header>
+                            <h2 th:text="@{'Profile of ' + ${user.username}}"></h2>
+
+                            <p>Map has all the trip markers</p>
+                        </header>
+
                         <section>
-                            <h2 class="major"><span th:text="@{${user.username}}"></span></h2>
-                            <ul class="meta">
-                                <li class="icon fa-clock-o" th:text="'Active since ' + ${#calendars.format(signupDate,'dd MMMM yyyy HH:mm')}">01.01.2014</li>
-                            </ul>
-                            <a href="#" class="image featured"><img src="images/pic03.jpg" alt="profile image" /></a>
-                            <ul class="meta">
-                                <li></li>                                    
-                                <li th:text="'Trips made by traveler: ' + ${tripCount}">No trips made</li>
-                                <li th:text="'Posts made by traveler: ' + ${postCount}">No posts made</li>
-                                <li th:text="'Comments made by traveler: ' + ${commentCount}">No comments made</li>                                
-                            </ul>                            
-                            <a href="#" class="button alt">Edit my profile</a>
+                            <span class="image featured" th:replace="fragments/map :: map"></span>
+
+                            <p>
+                            </p>
                         </section>
-                        <section th:if="${canrequestfriendship} == ${true}">
-                            <a class="button" href="#" onclick="document.getElementById('friendship-form').submit();"><span>Send friendship request!</span></a>
-                            <form style="visibility: hidden" id ="friendship-form" method="post" action="#" th:action="@{'/friendship/request/' + ${user.id}}"><input type="submit" value="Friend"/></form>
-                        </section>
-                        <section th:if="${unreadnotifications} != null">
+                    </article>
+                </div>
+            </div>
+            <div class="3u">
+                <div class="sidebar">
+                    <!-- Sidebar profile -->
+                    <section>
+                        <h2 class="major"><span th:text="@{${user.username}}"></span></h2>
+                        <ul class="meta">
+                            <li class="icon fa-clock-o"
+                                th:text="'Active since ' + ${#calendars.format(signupDate,'dd MMMM yyyy HH:mm')}">
+                                01.01.2014
+                            </li>
+                        </ul>
+                        <img id="user-image" th:attr="src=@{'/user_images/' + @{${user.profilePicId}}}"/>
+                        <ul class="meta">
+                            <li></li>
+                            <li th:text="'Trips made by traveler: ' + ${tripCount}">No trips made</li>
+                            <li th:text="'Posts made by traveler: ' + ${postCount}">No posts made</li>
+                            <li th:text="'Comments made by traveler: ' + ${commentCount}">No comments made</li>
+                        </ul>
+
+                        <form method="POST" th:action="@{/profile}" enctype="multipart/form-data">
+                            <label for="file">File</label>
+                            <input type="file" name="file" id="file" accept="image/*"/>
+                            <input type="submit" value="Add profilepic!"/>
+                        </form>
+                    </section>
+                    <section th:if="${canrequestfriendship} == ${true}">
+                        <a class="button" href="#" onclick="document.getElementById('friendship-form').submit();"><span>Send friendship request!</span></a>
+
+                        <form style="visibility: hidden" id="friendship-form" method="post" action="#"
+                              th:action="@{'/friendship/request/' + ${user.id}}"><input type="submit" value="Friend"/>
+                        </form>
+                    </section>
+                    <section th:if="${unreadnotifications} != null">
                             <span th:switch="${unreadnotifications > 0}">
                                 <span th:case="${true}">
-                                    <a class="button" href="/notification" th:text="@{'You have ' + ${unreadnotifications} +  ' unread notification(s)'}" ></a>
+                                    <a class="button" href="/notification"
+                                       th:text="@{'You have ' + ${unreadnotifications} +  ' unread notification(s)'}"></a>
                                 </span>
                                 <span th:case="${false}">
                                     <a class="button" href="/notification">No unread notifications</a>
                                 </span>
                             </span>
-                        </section>
-                    </div>
+                    </section>
                 </div>
             </div>
-            <div class="row 200%">
+        </div>
+        <div class="row 200%">
             <div class="12u">
                 <!-- Trips -->
                 <section class="box features">
                     <h2 class="major"><span>Recent trips</span></h2>
+
                     <div>
                         <div id="triplist" th:replace="fragments/triplist :: triplist">trip list</div>
                         <div class="row">
@@ -92,7 +110,7 @@
                 </section>
             </div>
         </div>
-</div>
+    </div>
 </div>
 
 </body>

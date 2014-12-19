@@ -67,31 +67,31 @@ public class ProfilePicServiceTest {
 
     @Test
     public void addedProfilePicExists() {
-        FileObject profPic = profilePicService.createProfilePic("/image", "testimg", data, user);
+        FileObject profPic = profilePicService.createProfilePic("image/", "testimg", data, user);
         Assert.assertTrue(fileObjectRepository.exists(profPic.getId()));
     }
 
     @Test
     @Transactional
     public void userHasAddedProfilePic() {
-        FileObject profPic = profilePicService.createProfilePic("/image", "testimg", data, user);
+        FileObject profPic = profilePicService.createProfilePic("image/", "testimg", data, user);
         Assert.assertEquals(profPic.getId(), userService.getUser(user.getId()).getProfilePicId());
     }
 
     @Test
     @Transactional
     public void switchingProfilePic() {
-        FileObject profPic = profilePicService.createProfilePic("/image", "testimg", data, user);
+        FileObject profPic = profilePicService.createProfilePic("image/", "testimg", data, user);
         Assert.assertEquals(profPic.getId(), userService.getUser(user.getId()).getProfilePicId());
 
-        FileObject newPic = profilePicService.createProfilePic("/image", "newpicture", data, user);
+        FileObject newPic = profilePicService.createProfilePic("image/", "newpicture", data, user);
         Assert.assertEquals(newPic.getId(), userService.getUser(user.getId()).getProfilePicId());
     }
 
     @Test
     @Transactional
     public void removeProfilePic() {
-        FileObject profPic = profilePicService.createProfilePic("/image", "testimg", data, user);
+        FileObject profPic = profilePicService.createProfilePic("image/", "testimg", data, user);
         profilePicService.removeCurrentProfilePic(user);
         Assert.assertNull(userService.getUser(user.getId()).getProfilePicId());
     }
@@ -99,14 +99,14 @@ public class ProfilePicServiceTest {
     @Test
     @Transactional
     public void addedProfilePicMatches() {
-        FileObject profPic = profilePicService.createProfilePic("/image", "testimg", data, user);
+        FileObject profPic = profilePicService.createProfilePic("image/", "testimg", data, user);
         Assert.assertEquals(profilePicService.getProfilePic(user), profPic);
     }
 
     @Test(expected = ImageValidationException.class)
     @Transactional
     public void invalidImageThrowsException() {
-        FileObject profPic = profilePicService.createProfilePic("/foomage", "testimg", data, user);
+        FileObject profPic = profilePicService.createProfilePic("foomage/", "testimg", data, user);
     }
 
 }
