@@ -24,9 +24,11 @@
                         <ul class="meta">
                             <li class="icon fa-clock-o"><span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span></li>
                         </ul>
-                        <p th:text="${comment.commentText}">There are no comments on this post.</p>
-                        <a href="#" th:text="Delete" onclick="document.getElementById('delete-form').submit();">Delete</a>
-                        <form style="visibility: hidden" id ="delete-form" method="post" th:action="@{'/trips/' + ${trip.id} + '/comment/' + ${comment.id} + '/delete'}"><input type="submit" value="Delete"/></form>
+                        <div th:if="${#authentication.name} == ${comment.user.username}">
+                            <p th:text="${comment.commentText}">There are no comments on this post.</p>
+                            <a href="#" th:text="Delete" onclick="document.getElementById('delete-form').submit();">Delete</a>
+                            <form style="visibility: hidden" id ="delete-form" method="post" th:action="@{'/trips/' + ${trip.id} + '/comment/' + ${comment.id} + '/delete'}"><input type="submit" value="Delete"/></form>
+                        </div>
                     </article>
                 </li>
             </ul>
@@ -41,8 +43,10 @@
                             <li class="icon fa-clock-o"><span th:text="${#calendars.format(comment.creationTime,'dd MMMM yyyy HH:mm')}" >Can't show time</span></li>
                         </ul>
                         <p th:text="${comment.commentText}">There are no comments on this post.</p>
-                        <a href="#" th:text="Delete" onclick="document.getElementById('delete-form').submit();">Delete</a>
-                        <form style="visibility: hidden" id ="delete-form" method="post" th:action="@{'/posts/' + ${post.id} + '/comment/' + ${comment.id} + '/delete'}"><input type="submit" value="Delete"/></form>
+                        <div th:if="${#authentication.name} == ${comment.user.username}">
+                            <a href="#" th:text="Delete" onclick="document.getElementById('delete-form').submit();">Delete</a>
+                            <form style="visibility: hidden" id ="delete-form" method="post" th:action="@{'/posts/' + ${post.id} + '/comment/' + ${comment.id} + '/delete'}"><input type="submit" value="Delete"/></form>
+                        </div>
                     </article>
                 </li>
             </ul>
