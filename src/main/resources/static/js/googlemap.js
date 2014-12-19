@@ -3,6 +3,7 @@ var infoWindow;
 var activeWindow = null;
 var activeWindowId = null;
 var isTripMap = false;
+var scroll = false;
 
 function initialize(latitude, longitude, mapId, isTripMap) {
     if (!latitude || !longitude) {
@@ -10,11 +11,12 @@ function initialize(latitude, longitude, mapId, isTripMap) {
     }   
     this.isTripMap = isTripMap;
     
-    var mapOptions = {
+    var mapOptions = {        
         center: { lat: latitude, lng: longitude},
-        zoom: 8
+        zoom: 8,
+        scrollwheel: false
     };
-    var map = new google.maps.Map(document.getElementById(mapId),mapOptions);
+    var map = new google.maps.Map(document.getElementById(mapId), mapOptions);
     
     return map;
 }
