@@ -3,6 +3,7 @@ package wadp.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.extras.springsecurity3.util.SpringVersionUtils;
 import wadp.domain.FileObject;
 import wadp.domain.User;
 import wadp.repository.FileObjectRepository;
@@ -30,7 +31,7 @@ public class ProfilePicService {
 
     @Transactional  // @Transactional has to be used when directly handling FileObjects
     public FileObject createProfilePic(String mediatype, String name, byte[] content, User user) {
-        if (!mediatype.startsWith("/image")) {
+        if (!validateFormat(mediatype)) {
             throw new ImageValidationException("Invalid image format!");
         }
 
@@ -41,7 +42,6 @@ public class ProfilePicService {
 
         profilePic.setContent(thumbnailService.createProfileThumb(content));
         profilePic = fileObjectRepository.save(profilePic);
-
         userService.getUser(user.getId()).setProfilePicId(profilePic.getId());
         userRepository.save(user);
         return profilePic;
@@ -61,5 +61,9 @@ public class ProfilePicService {
     public void removeCurrentProfilePic(User user) {
         userService.getUser(user.getId()).setProfilePicId(null);
         userRepository.save(user);
+    }
+
+    private boolean validateFormat(String mediaType) {
+        return mediaType.startsWith("image/");
     }
 }

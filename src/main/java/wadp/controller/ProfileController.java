@@ -60,12 +60,12 @@ public class ProfileController {
 
         } catch (ImageValidationException ex) {
             model.addAttribute("error", "Unknown image type");
-            return "/profile";
+            return "redirect:/profile/";
         } catch (IOException ioExceptiom) {
             model.addAttribute("error", "An internal error has occurred while processing the image");
-            return "/profile";
+            return "redirect:/profile/";
         }
-        return "/profile";
+        return "redirect:/profile/";
     }
 
 
