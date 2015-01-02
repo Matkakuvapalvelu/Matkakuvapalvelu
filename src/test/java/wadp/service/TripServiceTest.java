@@ -43,6 +43,9 @@ public class TripServiceTest {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private CommentService commentService;
+
     private User loggedInUser;
     private User friend;
     private User stranger;
@@ -389,6 +392,34 @@ public class TripServiceTest {
 
     @Test
     @Transactional
+    public void searchReturnsTripsIfPostsContainsKeywords() throws IOException {
+
+        Trip myTrip = tripService.createTrip("My awesome trip to Spain", "Spain", Trip.Visibility.PRIVATE, loggedInUser);
+        createPost("src/test/testimg.jpg", "random", myTrip);
+        final Trip friendFriendTrip = tripService.createTrip("Traveling in Spain", "Spain", Trip.Visibility.FRIENDS, friend);
+        tripService.createTrip("Private Portugal trip", "Portugal", Trip.Visibility.PRIVATE, friend);
+
+
+        final Trip strangerPublicTrip = tripService.createTrip("My travels", "travels", Trip.Visibility.PUBLIC, stranger);
+        createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
+        tripService.createTrip("Images for friends", "for friends", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", "Private", Trip.Visibility.FRIENDS, stranger);
+
+        List<Trip> trips = tripService.searchTripsWithKeywords(Arrays.asList("random" ), loggedInUser);
+
+        assertEquals(1, trips.size());
+
+        assertEquals(1,
+                trips
+                        .stream()
+                        .filter(t -> t.getId() == myTrip.getId())
+                        .collect(Collectors.toList())
+                        .size());
+    }
+
+
+    @Test
+    @Transactional
     public void searchWithNullUserDefaultToPublicVisibility() throws IOException {
 
         tripService.createTrip("My awesome trip to Spain", "Spain", Trip.Visibility.PRIVATE, loggedInUser);
@@ -417,24 +448,36 @@ public class TripServiceTest {
         createPost("src/test/no_gps.jpg", "Test", publicTrip);
 
         List<double[]> coordinates = tripService.getStartpointCoordinatesOfTrips(null, null);
-        assertEquals(1, coordinates.size());
-        assertEquals(0.0, coordinates.get(0)[0], 0.0001);
-        assertEquals(0.0, coordinates.get(0)[1], 0.0001);
-
-        assertEquals((long)publicTrip.getId(), (long)coordinates.get(0)[2]);
+        assertEquals(0, coordinates.size());
     }
 
 
     @Test
     @Transactional
-    public void tripsCanBeDeletedAndTripIsRemovedFromPost() throws IOException {
-        Long id = publicTrip.getId();
+    public void tripsCanBeDeletedAndAssociatedPostsAndImagesAndCommentsAreDeleted() throws IOException {
+        Long tripId = publicTrip.getId();
         createPost("src/test/testimg.jpg", "Test", publicTrip);
-        Post p = publicTrip.getPosts().get(0);
 
-        tripService.deleteTrip(id, loggedInUser);
-        assertNull(tripService.getTrip(id));
-        assertEquals(0, p.getTrips().size());
+
+        Post p = publicTrip.getPosts().get(0);
+        Comment c = new Comment();
+        c.setCommentText("Comment");
+        commentService.addCommentToPost(c, p, stranger);
+
+        Long commentId = p.getComments().get(0).getId();
+        Long postId = p.getId();
+        Long originalImageId = p.getImage().getOriginalId();
+        Long galleryThumbnailId= p.getImage().getGalleryThumbnailId();
+        Long postThumbnailId =  p.getImage().getPostThumbnailId();
+
+        tripService.deleteTrip(tripId, loggedInUser);
+
+        assertNull(tripService.getTrip(tripId));
+        assertNull(postService.getPost(postId));
+        assertNull(commentService.getComment(commentId));
+        assertNull(imageService.getImage(originalImageId));
+        assertNull(imageService.getImage(galleryThumbnailId));
+        assertNull(imageService.getImage(postThumbnailId));
     }
 
     @Test
@@ -452,7 +495,7 @@ public class TripServiceTest {
         }
         assertTrue(thrown);
         assertNotNull(tripService.getTrip(id));
-        assertEquals(1, p.getTrips().size());
+        assertNotNull(p.getTrip());
     }
 
 
@@ -464,7 +507,7 @@ public class TripServiceTest {
         is.close();
 
         Image image = imageService.addImage("image/", "foo", data);
-        Post post = postService.createPost(image, postDescription, Arrays.asList(trip), trip.getCreator());
+        Post post = postService.createPost(image, postDescription, trip);
         return image;
     }
 

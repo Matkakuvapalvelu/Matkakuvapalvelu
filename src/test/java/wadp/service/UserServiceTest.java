@@ -208,14 +208,10 @@ public class UserServiceTest {
 
                 Image image = imageService.addImage("image/jpg", "image name", data);
 
-                List<Trip> addTripList = new ArrayList<Trip>();
-                if (i % 2 == 0) {
-                    Trip trip = tripService.createTrip("Trip header", "Trip description", Trip.Visibility.PUBLIC, creator);
-                    trips.add(trip);
-                    addTripList.add(trip);
-                }
+                Trip trip = tripService.createTrip("Trip header", "Trip description", Trip.Visibility.PUBLIC, creator);
+                trips.add(trip);
 
-                Post post = postService.createPost(image, "Image text", addTripList, creator);
+                Post post = postService.createPost(image, "Image text", trip);
 
                 posts.add(post);
             }

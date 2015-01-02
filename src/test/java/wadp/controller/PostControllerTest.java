@@ -63,6 +63,8 @@ public class PostControllerTest {
     private User otherUser;
     private Post post;
     private Trip loggedInUserTrip;
+    private Trip otherTrip;
+
 
     private byte [] data;
 
@@ -86,10 +88,12 @@ public class PostControllerTest {
 
         loggedInUserTrip = tripService.createTrip("header", "loggedInUserTrip", Trip.Visibility.PUBLIC, loggedInUser);
 
-        post = postService.createPost(img, "desc1", Arrays.asList(loggedInUserTrip), loggedInUser);
+        post = postService.createPost(img, "desc1", loggedInUserTrip);
 
-        postService.createPost(img, "desc3", new ArrayList<>(), otherUser);
-        postService.createPost(img, "desc4", new ArrayList<>(), otherUser);
+        otherTrip = tripService.createTrip("Header", "Description", Trip.Visibility.PUBLIC, otherUser);
+
+        postService.createPost(img, "desc3", otherTrip);
+        postService.createPost(img, "desc4", otherTrip);
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(loggedInUser.getUsername(), loggedInUser.getPassword()));
@@ -111,7 +115,7 @@ public class PostControllerTest {
         String imageText = "This is image text with scändics änd öther stüff";
 
         parameters.put("image_text", imageText);
-        parameters.put("trips", loggedInUserTrip.getId().toString());
+        parameters.put("trip", loggedInUserTrip.getId().toString());
         mockMvcTesting.makePostWithFile(URI, "/posts/[0-9]+", status().is3xxRedirection(), data, "image/jpg", parameters);
 
         List<Post> posts = postService.getUserPosts(loggedInUser);
@@ -124,7 +128,7 @@ public class PostControllerTest {
         assertEquals(1, posts.size());
 
         assertEquals(imageText, posts.get(0).getImageText());
-        assertEquals(loggedInUserTrip.getId(), posts.get(0).getTrips().get(0).getId());
+        assertEquals(loggedInUserTrip.getId(), posts.get(0).getTrip().getId());
         assertNotNull(posts.get(0).getImage());
     }
 
@@ -135,7 +139,7 @@ public class PostControllerTest {
         String imageText = "This is image text";
 
         parameters.put("image_text", imageText);
-        parameters.put("trips", loggedInUserTrip.getId().toString());
+        parameters.put("trip", loggedInUserTrip.getId().toString());
         MvcResult res = mockMvcTesting.makePostWithFile(URI, "", status().is2xxSuccessful(), null, "image/jpg", parameters);
         String error = (String)res.getModelAndView().getModel().get("error");
         assertNotNull(error);
@@ -151,7 +155,7 @@ public class PostControllerTest {
 
         Trip otherTrip = tripService.createTrip("Other header", "Other trip", Trip.Visibility.PUBLIC, otherUser);
         parameters.put("image_text", imageText);
-        parameters.put("trips", otherTrip.getId().toString());
+        parameters.put("trip", otherTrip.getId().toString());
         MvcResult res = mockMvcTesting.makePostWithFile(URI, "", status().is2xxSuccessful(), data, "image/jpg", parameters);
         String error = (String)res.getModelAndView().getModel().get("error");
 
@@ -167,7 +171,7 @@ public class PostControllerTest {
         String imageText = "This is image text";
 
         parameters.put("image_text", imageText);
-        parameters.put("trips", loggedInUserTrip.getId().toString());
+        parameters.put("trip", loggedInUserTrip.getId().toString());
         MvcResult res = mockMvcTesting.makePostWithFile(URI, "", status().is2xxSuccessful(), data, "video/avi", parameters);
         String error = (String)res.getModelAndView().getModel().get("error");
         assertNotNull(error);

@@ -35,22 +35,21 @@ public class PostService {
      * @param image Image associated with the post. This is mandatory and must not be null
      * @param imageText Image text. Can be empty
      * @param trip The trip this post is associated with.
-     * @param poster User who created this post. Mandatory
      * @return Instance of post after it is saved to database
      */
 
     @Transactional
-    public Post createPost(Image image, String imageText, Trip trip, User poster) {
+    public Post createPost(Image image, String imageText, Trip trip) {
 
-        if (image == null || trip == null || poster == null) {
+        if (image == null || trip == null) {
             throw new IllegalArgumentException("Image, trip and poster must not be null when creating new post");
         }
 
         Post post = new Post();
         post.setImageText(imageText);
         post.setImage(image);
-        post.setPoster(poster);
         post.setTrip(trip);
+        post.setPoster(trip.getCreator());
 
         post = postRepository.save(post);
         trip.getPosts().add(post);
@@ -89,7 +88,7 @@ public class PostService {
      */
     @Transactional
     public List<Post> getNewestPosts(Trip trip, int top) {
-        return postRepository.findByTrips(trip, new PageRequest(0, top, Sort.Direction.DESC, "postDate"));
+        return postRepository.findByTrip(trip, new PageRequest(0, top, Sort.Direction.DESC, "postDate"));
     }
 
     public void updatePost(Post post) {
@@ -99,11 +98,9 @@ public class PostService {
     public void deletePost(Post p) {
         imageService.deleteImage(p.getImage());
 
-        List<Comment> comments = new ArrayList<Comment>(p.getComments());
+        List<Comment> comments = new ArrayList<>(p.getComments());
 
-        for (Comment c : comments) {
-            commentService.deleteComment(c);
-        }
+        comments.forEach(commentService::deleteComment);
 
         p.getTrip().getPosts().remove(p);
         postRepository.delete(p);

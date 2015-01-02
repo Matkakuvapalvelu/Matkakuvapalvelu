@@ -10,5 +10,5 @@ import wadp.domain.Trip;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByPoster(User poster);
-    List<Post> findByTrips(Trip trip, Pageable pageable);
+    List<Post> findByTrip(Trip trip, Pageable pageable);
 }

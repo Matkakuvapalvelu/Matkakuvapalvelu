@@ -152,7 +152,7 @@ public class IndexControllerTest {
         addPostsAndComments(3, 1, fifthMostActiveMostActive);
     }
 
-    // post count must be at least 1 due to how this function is set up
+    // post count must be at least 1 due to how this function is set up (that is, it's bad)
     private void addPostsAndComments(int postCount, int commentCount, User creator) {
         List<Post> posts = new ArrayList<>();
         List<Trip> trips = new ArrayList<>();
@@ -165,15 +165,10 @@ public class IndexControllerTest {
 
             for (int i = 0; i < postCount; ++i) {
 
-                List<Trip> addTripList = new ArrayList<Trip>();
-                if (i % 2 == 0) {
-                    Trip trip = tripService.createTrip("Trip header", "Trip description", Trip.Visibility.PUBLIC, creator);
-                    trips.add(trip);
-                    addTripList.add(trip);
-                }
-
+                Trip trip = tripService.createTrip("Trip header", "Trip description", Trip.Visibility.PUBLIC, creator);
+                trips.add(trip);
                 image = imageService.addImage("image/jpg", "image name", data);
-                Post post = postService.createPost(image, "Image text", addTripList, creator);
+                Post post = postService.createPost(image, "Image text", trip);
 
                 posts.add(post);
             }

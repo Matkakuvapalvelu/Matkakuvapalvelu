@@ -13,6 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import wadp.Application;
 import wadp.controller.utility.MockMvcTesting;
@@ -23,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +31,8 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -95,7 +97,9 @@ public class SearchControllerTest {
         strangerPublicTrip = tripService.createTrip("My travels", "are allways fun", Trip.Visibility.PUBLIC, stranger);
         createPost("src/test/testimg.jpg", "Daytrip to Spain!", strangerPublicTrip);
         tripService.createTrip("Images for friends", "I hope they like 'em", Trip.Visibility.FRIENDS, stranger);
-        tripService.createTrip("Private stuff", "This stuff is only for me", Trip.Visibility.FRIENDS, stranger);
+        tripService.createTrip("Private stuff", "This stuff is only for me", Trip.Visibility.PRIVATE, stranger);
+
+        tripService.createTrip("Spain", "spain spain spain", Trip.Visibility.PRIVATE, stranger);
     }
 
     @Test
@@ -115,6 +119,7 @@ public class SearchControllerTest {
     }
 
     @Test
+    @Transactional
     public void correctTripsAreAddedToModelWhenSearching() throws Exception {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("keywords", "spain");
@@ -122,16 +127,14 @@ public class SearchControllerTest {
 
         List<Trip> trips = (List<Trip>)result.getFlashMap().get("trips");
 
-
         assertNotNull(trips);
-
-        assertEquals(3, trips.size());
 
         assertTrue(trips.stream().anyMatch(t -> t.getId() == myPrivateTrip.getId()));
         assertTrue(trips.stream().anyMatch(t -> t.getId() == friendFriendTrip.getId()));
         assertTrue(trips.stream().anyMatch(t -> t.getId() == strangerPublicTrip.getId()));
-    }
 
+        assertEquals(3, trips.size());
+    }
 
     private Image createPost(String imageName, String postDescription, Trip trip) throws IOException {
         File imageFile = new File(imageName);
@@ -140,7 +143,7 @@ public class SearchControllerTest {
         is.close();
 
         Image image = imageService.addImage("image/", "foo", data);
-        Post post = postService.createPost(image, postDescription, Arrays.asList(trip), trip.getCreator());
+        Post post = postService.createPost(image, postDescription, trip);
         return image;
     }
 

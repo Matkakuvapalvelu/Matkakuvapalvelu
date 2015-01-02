@@ -196,7 +196,7 @@ public class TripService {
                             coordinates.add(new double[]{p.getImage().getLatitude(), p.getImage().getLongitude(), trip.getId()});
                         // quick & dirty fix for case where filter removes all entities (no images with location data) and following operations throw
                         } catch (NoSuchElementException ex) {
-                            coordinates.add(new double[]{0.0, 0.0, trip.getId()});
+
                         }
                     }
 
@@ -227,6 +227,7 @@ public class TripService {
                     // if trip description did not contain keyword, check if any post description contains keyword
                     if (!containsKeyWord) {
                         // I regret nothiiiiiiiing
+                        // (ok I regret this)
                         containsKeyWord = trip
                                 .getPosts()
                                 .stream()

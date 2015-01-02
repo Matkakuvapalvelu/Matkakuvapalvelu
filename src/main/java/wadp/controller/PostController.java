@@ -69,13 +69,12 @@ public class PostController {
             return "/posts";
         }
 
-        List<Trip> trips = new ArrayList<>();
-
         User user = userService.getAuthenticatedUser();
         Post post = null;
+
         try {
             Trip t = getTrip(tripId, user);
-            post = postService.createPost(image, text, t, user);
+            post = postService.createPost(image, text, t);
         } catch (IllegalArgumentException ex) {
             model.addAttribute("error", ex.getMessage());
             return "/posts";
@@ -108,7 +107,7 @@ public class PostController {
 
         Trip trip = tripService.getTrip(tripId);
         if (trip != null) {
-            if (!trip.getCreator().equals(postCreator.getId())) {
+            if (!trip.getCreator().equals(postCreator)) {
                 throw new IllegalArgumentException("Post must be added by the trip creator");
             }
         } else {

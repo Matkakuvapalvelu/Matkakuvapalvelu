@@ -46,20 +46,18 @@
                                     </span>
                                 </section>
                                 <section>
-                                    <h2 class="major"><span>Post associated with following trips:</span></h2>
+                                    <h2 class="major"><span>Post belongs to trip:</span></h2>
                                     <div>
-                                        <div class="row" th:if="${post.trips != null}">
-                                            <div class="3u" th:each="trip : ${post.trips}">
-                                                <!-- Trip -->
-                                                <section class="box feature">
-                                                    <!--<a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>-->
 
-                                                    <h3><a href="#" th:href="@{'/trips/' + ${trip.id}}" th:text="${trip.header}"></a></h3>
-                                                    <p>
-                                                    </p>
-                                                </section>
-                                            </div>
-                                        </div>
+                                        <!-- Trip -->
+                                        <section class="box feature">
+                                            <!--<a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>-->
+
+                                            <h3><a href="#" th:href="@{'/trips/' + ${post.trip.id}}" th:text="${post.trip.header}"></a></h3>
+                                            <p>
+                                            </p>
+                                        </section>
+
                                     </div>
                                 </section>
                             </article>

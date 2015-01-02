@@ -54,9 +54,16 @@ public class PostServiceTest {
     private Image image;
     private User user;
     private Post post;
+    private Trip trip;
 
     @Before
     public void setUp() throws IOException {
+
+        // tripService requires authenticated user for it to work
+        User loggedInUser = userService.createUser("loginuser", "loginuser");
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(loggedInUser.getUsername(), loggedInUser.getPassword()));
+
         File imageFile = new File("src/test/testimg.jpg");
         InputStream is = new FileInputStream(imageFile.getAbsoluteFile());
         byte[] data = IOUtils.toByteArray(is);
@@ -65,12 +72,16 @@ public class PostServiceTest {
         user = userService.createUser("adasdsdaads", "pisadjsods");
 
         image = imageService.addImage("image/", "foo", data);
-        post = postService.createPost(image, "Hello!", new ArrayList<Trip>(), user);
 
-        // tripService requires authenticated user for it to work
-        User loggedInUser = userService.createUser("loginuser", "loginuser");
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(loggedInUser.getUsername(), loggedInUser.getPassword()));
+        trip = tripService.createTrip("Header", "description", Trip.Visibility.PUBLIC, user);
+        post = postService.createPost(image, "Hello!", trip);
+
+
+    }
+
+    @Test
+    public void postHasPosterSetupCorrectly() {
+        assertEquals(trip.getCreator(), post.getPoster());
     }
 
     @Test
@@ -81,12 +92,12 @@ public class PostServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void creationThrowsIfImageIsNull() {
-        postService.createPost(null, "daaddas", new ArrayList<Trip>(), user);
+        postService.createPost(null, "daaddas", trip);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void creationThrowsIfTripListIsNull() {
-        postService.createPost(new Image(), "daaddas", null, user);
+    public void creationThrowsIfTripIsNull() {
+        postService.createPost(new Image(), "daaddas", null);
     }
 
     @Test
@@ -97,11 +108,6 @@ public class PostServiceTest {
     @Test
     public void createdPostStoresImageReference() {
         assertEquals(image, post.getImage());
-    }
-
-    @Test
-    public void createdPostContainsUserReference() {
-        assertEquals(user, post.getPoster());
     }
 
     @Test
@@ -118,12 +124,16 @@ public class PostServiceTest {
 
     @Test
     public void getUserPostsReturnAllUserPosts() {
+
+        postService.createPost(image, "Hello2!", trip);
+        postService.createPost(image, "Hello3!", trip);
+        postService.createPost(image, "Hello4!", trip);
+
+        // few posts that should not be part of the returned list
         User user2 = userService.createUser("dffdsfdfd", "pisadjsods");
-        postService.createPost(image, "Hello2!", new ArrayList<Trip>(), user);
-        postService.createPost(image, "Hello3!", new ArrayList<Trip>(), user);
-        postService.createPost(image, "Hello4!", new ArrayList<Trip>(), user);
-        postService.createPost(image, "Hi!", new ArrayList<Trip>(), user2);
-        postService.createPost(image, "Hi2!", new ArrayList<Trip>(), user2);
+        Trip trip2 = tripService.createTrip("Header2", "Description2", Trip.Visibility.PUBLIC, user2);
+        postService.createPost(image, "Hi!", trip2);
+        postService.createPost(image, "Hi2!", trip2);
 
         List<String> imageTexts = Arrays.asList("Hello!", "Hello2!", "Hello3!", "Hello4!");
 
@@ -132,7 +142,7 @@ public class PostServiceTest {
         assertEquals(4, posts.size());
         // check that each posts contains correct poster and correct image texts
         for (Post p : posts) {
-            assertEquals(user, p.getPoster());
+            assertEquals(user, p.getTrip().getCreator());
             assertTrue(imageTexts.contains(p.getImageText()));
         }
     }
@@ -140,10 +150,8 @@ public class PostServiceTest {
     @Test
     @Transactional
     public void postIsAddedToTripWhenCreatingNewPost() {
-
-        Trip trip = tripService.createTrip("header", "description", Trip.Visibility.PRIVATE, userService.getAuthenticatedUser());
-        List<Trip> trips = Arrays.asList(trip);
-        Post post = postService.createPost(new Image(), "Hello", trips, userService.getAuthenticatedUser());
-        assertTrue(trip.getPosts().contains(post));
+        Trip localTrip = tripService.createTrip("header", "description", Trip.Visibility.PRIVATE, userService.getAuthenticatedUser());
+        Post post = postService.createPost(image, "Hello", localTrip);
+        assertTrue(localTrip.getPosts().contains(post));
     }
 }

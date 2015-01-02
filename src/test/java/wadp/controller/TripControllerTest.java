@@ -168,6 +168,7 @@ public class TripControllerTest {
     }
 
     @Test
+    @Transactional
     public void startPointAttributeHasCorrectValueWhenViewingSingleTripWithPosts() throws Exception {
 
         Trip t = tripService.createTrip("header", "description", Trip.Visibility.PUBLIC, otherUser);
@@ -184,6 +185,7 @@ public class TripControllerTest {
         assertEquals(secondImage.getLongitude(), latitudeLongitudeId[1], 0.0001);
         assertEquals((double)secondImage.getId(), latitudeLongitudeId[2], 0.0001);
     }
+
 
     @Test
     @Transactional
@@ -216,7 +218,7 @@ public class TripControllerTest {
         is.close();
 
         Image image = imageService.addImage("image/", "foo", data);
-        Post post = postService.createPost(image, "Hello!", Arrays.asList(trip), otherUser);
+        Post post = postService.createPost(image, "Hello!", trip);
 
         return image;
     }
