@@ -26,7 +26,7 @@ public class Trip extends AbstractPersistable<Long> {
     @ManyToOne
     private User creator;
     
-    @ManyToMany
+    @OneToMany
     private List<Post> posts;
 
     public Trip(){

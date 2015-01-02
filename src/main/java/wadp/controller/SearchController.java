@@ -48,7 +48,7 @@ public class SearchController {
             Hibernate.initialize(t.getPosts());
             Hibernate.initialize(t.getComments());
         }
-        
+
         redirectAttributes.addFlashAttribute("trips", trips);
         return "redirect:search";
     }

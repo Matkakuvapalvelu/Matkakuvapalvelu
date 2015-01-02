@@ -130,4 +130,12 @@ public class ImageService {
     public FileObject getImageData(Long id) {
         return fileObjectRepository.findOne(id);
     }
+
+    public void deleteImage(Image image) {
+        fileObjectRepository.delete(image.getOriginalId());
+        fileObjectRepository.delete(image.getPostThumbnailId());
+        fileObjectRepository.delete(image.getGalleryThumbnailId());
+
+        imageRepository.delete(image);
+    }
 }

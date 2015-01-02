@@ -49,7 +49,7 @@ public class PostController {
     public String createNewPost(
             @RequestParam("file") MultipartFile file,
             @RequestParam("image_text") String text,
-            @RequestParam(value ="trips", required = false) String [] tripIds,
+            @RequestParam(value ="trip") Long tripId,
             Model model){
 
         if (file.isEmpty()) {
@@ -72,13 +72,15 @@ public class PostController {
         List<Trip> trips = new ArrayList<>();
 
         User user = userService.getAuthenticatedUser();
+        Post post = null;
         try {
-            addTripsToList(tripIds, trips, user);
+            Trip t = getTrip(tripId, user);
+            post = postService.createPost(image, text, t, user);
         } catch (IllegalArgumentException ex) {
             model.addAttribute("error", ex.getMessage());
             return "/posts";
         }
-        Post post = postService.createPost(image, text, trips, user);
+
 
         return "redirect:/posts/" + post.getId();
     }
@@ -98,23 +100,22 @@ public class PostController {
         return "redirect:/posts/" + pId;
     }
 
-    private void addTripsToList(String[] tripIds, List<Trip> trips, User postCreator) {
-        if (tripIds != null) {
-            for (String id : tripIds) {
-                try {
-                    Trip trip = tripService.getTrip(Long.parseLong(id));
-                    if (trip != null) {
-                        if (!trip.getCreator().getUsername().equals(postCreator.getUsername())) {
-                            throw new IllegalArgumentException("Post must be added by the trip creator");
-                        }
-                        trips.add(trip);
-                    }
-                } catch (NumberFormatException ex) {
-                    // TODO: Add logging code.
-                    // This shouldn't happen unless someone bypasses the ui and posts malformed requests
-                }
-            }
+
+    private Trip getTrip(Long tripId, User postCreator) {
+        if (tripId == null) {
+            throw new IllegalArgumentException("Post must be associated with trip");
         }
+
+        Trip trip = tripService.getTrip(tripId);
+        if (trip != null) {
+            if (!trip.getCreator().equals(postCreator.getId())) {
+                throw new IllegalArgumentException("Post must be added by the trip creator");
+            }
+        } else {
+            throw new IllegalArgumentException("Must be associated with existing trip");
+        }
+
+        return trip;
     }
 
     @RequestMapping(value="/{id}", method = RequestMethod.GET)

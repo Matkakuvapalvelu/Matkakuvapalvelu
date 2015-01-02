@@ -2,11 +2,10 @@ package wadp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import wadp.domain.Image;
-import wadp.domain.Post;
-import wadp.domain.Trip;
-import wadp.domain.User;
+import wadp.domain.*;
 import wadp.repository.PostRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,38 +24,36 @@ public class PostService {
     private PostRepository postRepository;
 
     @Autowired
-    TripService tripService;
+    private ImageService imageService;
+
+    @Autowired
+    private CommentService commentService;
 
     /**
      * This method creates and saves new post into database and returns the resulting object.
      *
      * @param image Image associated with the post. This is mandatory and must not be null
      * @param imageText Image text. Can be empty
-     * @param trips List of trips this image is associated with. Can be empty
+     * @param trip The trip this post is associated with.
      * @param poster User who created this post. Mandatory
      * @return Instance of post after it is saved to database
      */
 
     @Transactional
-    public Post createPost(Image image, String imageText, List<Trip> trips, User poster) {
+    public Post createPost(Image image, String imageText, Trip trip, User poster) {
 
-        if (image == null || trips == null) {
-            throw new IllegalArgumentException("Image must not be null when creating new post");
+        if (image == null || trip == null || poster == null) {
+            throw new IllegalArgumentException("Image, trip and poster must not be null when creating new post");
         }
 
         Post post = new Post();
         post.setImageText(imageText);
         post.setImage(image);
         post.setPoster(poster);
-        post.setTrips(trips);
-
+        post.setTrip(trip);
 
         post = postRepository.save(post);
-
-        for (Trip trip : trips) {
-            trip.getPosts().add(post);
-            tripService.updateTrip(trip, poster);
-        }
+        trip.getPosts().add(post);
 
         return post;
     }
@@ -98,4 +95,18 @@ public class PostService {
     public void updatePost(Post post) {
         postRepository.save(post);
     }
+
+    public void deletePost(Post p) {
+        imageService.deleteImage(p.getImage());
+
+        List<Comment> comments = new ArrayList<Comment>(p.getComments());
+
+        for (Comment c : comments) {
+            commentService.deleteComment(c);
+        }
+
+        p.getTrip().getPosts().remove(p);
+        postRepository.delete(p);
+    }
+
 }

@@ -24,8 +24,8 @@ public class Post extends AbstractPersistable<Long> {
     @ManyToOne
     private User poster;
 
-    @ManyToMany(mappedBy = "posts")
-    private List<Trip> trips;
+    @ManyToOne
+    private Trip trip;
 
     @Column(length = 1234)
     private String imageText;
@@ -79,11 +79,10 @@ public class Post extends AbstractPersistable<Long> {
         this.image = image;
     }
 
-    public List<Trip> getTrips() {
-        return trips;
+    public Trip getTrip() { return trip;
     }
 
-    public void setTrips(List<Trip> trips) {
-        this.trips = trips;
+    public void setTrip(Trip trip) {
+        this.trip = trip;
     }
 }

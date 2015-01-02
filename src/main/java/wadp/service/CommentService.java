@@ -57,6 +57,7 @@ public class CommentService {
 
     @Transactional
     public void deleteCommentFromTrip(Trip trip, User deleter, Comment comment) {
+        verifyUser(deleter, comment);
         trip.getComments().remove(comment);
         deleter.getComments().remove(comment);
         commentRepository.delete(comment);
@@ -64,6 +65,7 @@ public class CommentService {
 
     @Transactional
     public void deleteCommentFromPost(Post post, User deleter, Comment comment) {
+        verifyUser(deleter, comment);
         post.getComments().remove(comment);
         deleter.getComments().remove(comment);
         commentRepository.delete(comment);
@@ -90,4 +92,7 @@ public class CommentService {
         return commentRepository.findOne(id);
     }
 
+    public void deleteComment(Comment c) {
+       commentRepository.delete(c);
+   }
 }

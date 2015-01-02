@@ -251,14 +251,13 @@ public class TripService {
         }
 
         Trip trip = tripRepository.findOne(tripId);
-        List<Post> posts = trip.getPosts();
-        for (Post p : posts) {
-            p.setTrips(p.getTrips()
-                    .stream()
-                    .filter(t -> t.getId() != tripId)
-                    .collect(Collectors.toList()));
 
-            postService.updatePost(p);
+        // copy list to prevent any issues with concurrent modifications when deleting posts
+        List<Post> posts = new ArrayList<Post>(trip.getPosts());
+
+
+        for (Post p : posts) {
+            postService.deletePost(p);
         }
 
         tripRepository.delete(tripId);
