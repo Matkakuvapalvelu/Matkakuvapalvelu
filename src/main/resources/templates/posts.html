@@ -37,8 +37,8 @@
                                            placeholder="Comment your image here!"
                                            cols="55"
                                            rows="10"></textarea><br/>
-                                <label for="trips">Trips</label>
-                                <select name="trips" id="trips" multiple="multiple" style='height: 150px'>
+                                <label for="trip">Trip</label>
+                                <select name="trip" id="trip">
                                     <option th:each="trip : ${trips}" value="Helsinki" th:value="${trip.id}" th:text="${trip.header}">
                                         Helsinki
                                     </option>
