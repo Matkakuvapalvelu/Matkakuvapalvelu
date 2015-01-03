@@ -61,14 +61,15 @@ public class TripController {
         model.addAttribute("coordinates", coordinates);
         model.addAttribute("isTripMap", true);
         model.addAttribute("comments", trip.getComments());
+        model.addAttribute("isTripOwner", trip.getCreator().equals(userService.getAuthenticatedUser()));
 
         return "trip";
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String createTrip(@RequestParam("header") String header, @RequestParam("description") String description, @RequestParam("visibility") String visibility) {
-        tripService.createTrip(header, description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
-        return "redirect:/trips/";
+        Trip trip = tripService.createTrip(header, description, Trip.Visibility.valueOf(visibility), userService.getAuthenticatedUser());
+        return "redirect:/trips/" + trip.getId();
     }
 
     @RequestMapping(value = "/{id}/edit", method = RequestMethod.GET)

@@ -52,6 +52,22 @@
                     </div>
                     <div class="3u">
                         <div class="sidebar">
+                            <section th:if="${isTripOwner}">
+                                <h2 class="major"><span>Add new post</span></h2>
+                                <form method="POST" th:action="@{/posts}" enctype="multipart/form-data">
+                                    <label for="file">File</label>
+                                    <input type="file" name="file" id="file" accept="image/*"/><br/><br/>
+
+                                    <label for="image_text">Image text</label>
+                                    <textarea  name="image_text"
+                                               id="image_text"
+                                               placeholder="Comment your image here!"
+                                               cols="55"
+                                               rows="10"></textarea><br/>
+                                    <input type="hidden" name="trip" value="" th:value="${trip.id}"/>
+                                    <br/><input type="submit" value="Add!"/>
+                                </form>
+                            </section>
                             <!-- Sidebar -->
                             <!-- Comment posting -->
                             <section>

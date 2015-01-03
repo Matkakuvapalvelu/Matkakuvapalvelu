@@ -231,7 +231,7 @@ public class TripControllerTest {
         parameters.put("description", "my trip description");
         parameters.put("visibility", "FRIENDS");
 
-        mockMvcTesting.makePost(URI, "/trips/", parameters);
+        mockMvcTesting.makePost(URI, "/trips/1", parameters);
 
         List<Trip> trips = tripService.getTrips(loggedInUser, loggedInUser);
         assertEquals(1, trips.size());
@@ -258,7 +258,6 @@ public class TripControllerTest {
         assertEquals(header, tripService.getTrip(t.getId()).getHeader());
         assertEquals(description, tripService.getTrip(t.getId()).getDescription());
         assertEquals(Trip.Visibility.PRIVATE, tripService.getTrip(t.getId()).getVisibility());
-
     }
 
     @Test

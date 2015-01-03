@@ -113,8 +113,16 @@ public class PostServiceTest {
     @Test
     public void imagePostDateIsNowOrBefore() {
         assertNotNull(post.getPostDate());
+
+
+        // post date is (should be) set as current system time. In order to avoid random test failures, sleep the test for a second
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+
+        }
         Date date = new Date();
-        assertTrue(date.after(post.getPostDate()));
+        assertTrue("Picture date is not before current date: Current date is " + date + " and post date is " + post.getPostDate(), date.after(post.getPostDate()));
     }
 
     @Test
